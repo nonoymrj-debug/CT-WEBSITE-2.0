@@ -729,7 +729,7 @@
                 'postgres_changes',
                 { event: 'UPDATE', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
                 (payload) => {
-                    console.log("Real-time update received!", payload.new);
+                    console.log("🔥 LIVE DATABASE UPDATE DETECTED! 🔥", payload.new);
                     const updated = payload.new;
                     ACCOUNTS_DATA = updated.accounts || ACCOUNTS_DATA;
                     GRADE_COLUMNS = updated.columns || GRADE_COLUMNS;
@@ -743,7 +743,9 @@
                     populateDirectory();
                 }
             )
-            .subscribe();
+            .subscribe((status) => {
+                console.log("Realtime Subscription Status:", status);
+            });
 
         const SHOP_CATEGORIES = [
             {
