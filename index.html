@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="icon" type="image/png" href="ft_logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -650,32 +652,54 @@
         let GRADE_WEIGHTS = {};
         let GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
 
-        function loadAllData() {
-            const savedAcc = localStorage.getItem('faraday_acc_v7');
-            const savedCols = localStorage.getItem('faraday_cols_v7');
-            const savedWeights = localStorage.getItem('faraday_weights_v7');
-            const savedConv = localStorage.getItem('faraday_conv_v7');
-
-            ACCOUNTS_DATA = savedAcc ? JSON.parse(savedAcc) : JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
-            GRADE_COLUMNS = savedCols ? JSON.parse(savedCols) : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
-            GRADE_WEIGHTS = savedWeights ? JSON.parse(savedWeights) : JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
-            GRADE_CONV_RATE = savedConv ? parseFloat(savedConv) : DEFAULT_CONVERSION_RATE;
+        // Replaced localStorage with Server API (async fetch)
+        async function loadAllData() {
+            try {
+                const response = await fetch('/api/data');
+                const data = await response.json();
+                ACCOUNTS_DATA = data.accounts && data.accounts.length > 0 ? data.accounts : JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                GRADE_COLUMNS = data.columns && data.columns.length > 0 ? data.columns : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                GRADE_CONV_RATE = data.convRate !== undefined ? data.convRate : DEFAULT_CONVERSION_RATE;
+            } catch (err) {
+                console.error("Failed to load data from server, using defaults:", err);
+                ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+            }
         }
 
-        function saveAllData() {
-            localStorage.setItem('faraday_acc_v7', JSON.stringify(ACCOUNTS_DATA));
-            localStorage.setItem('faraday_cols_v7', JSON.stringify(GRADE_COLUMNS));
-            localStorage.setItem('faraday_weights_v7', JSON.stringify(GRADE_WEIGHTS));
-            localStorage.setItem('faraday_conv_v7', GRADE_CONV_RATE);
+        async function saveAllData() {
+            try {
+                await fetch('/api/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        accounts: ACCOUNTS_DATA,
+                        columns: GRADE_COLUMNS,
+                        weights: GRADE_WEIGHTS,
+                        convRate: GRADE_CONV_RATE
+                    })
+                });
+            } catch (err) {
+                console.error("Failed to save data to server:", err);
+            }
         }
 
-        function resetAllData() {
-            if (confirm("Reset all system data, passwords, grades, and receipts?")) {
-                localStorage.clear();
-                loadAllData();
-                currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id);
-                initApp();
-                showAlert("System fully reset.", "success");
+        async function resetAllData() {
+            if (confirm("Reset all system data, passwords, grades, and receipts on the server?")) {
+                try {
+                    await fetch('/api/reset', { method: 'POST' });
+                    await loadAllData();
+                    if (currentUser) {
+                        currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id) || null;
+                    }
+                    initApp();
+                    showAlert("System fully reset from server.", "success");
+                } catch (err) {
+                    showAlert("Failed to reset system data.", "danger");
+                }
             }
         }
 
@@ -722,8 +746,8 @@
         let currentUser = null;
         let cart = {};
 
-        function initApp() {
-            loadAllData();
+        async function initApp() {
+            await loadAllData();
             renderShopItems();
             populateTransferDropdown();
             populateDirectory();
@@ -735,9 +759,9 @@
             document.getElementById('gradeConvRateInput').value = GRADE_CONV_RATE;
         }
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
-            loadAllData();
+            await loadAllData();
             const idInput = document.getElementById('loginId').value.trim();
             const passInput = document.getElementById('loginPass').value.trim();
 
@@ -775,7 +799,7 @@
             showAlert('Logged out successfully.', 'success');
         }
 
-        function handleUserChangePassword(e) {
+        async function handleUserChangePassword(e) {
             e.preventDefault();
             const currentPass = document.getElementById('userCurrentPass').value;
             const newPass = document.getElementById('userNewPass').value.trim();
@@ -791,13 +815,13 @@
             }
 
             currentUser.pass = newPass;
-            saveAllData();
+            await saveAllData();
             document.getElementById('userCurrentPass').value = '';
             document.getElementById('userNewPass').value = '';
             showAlert('Your password has been changed successfully!', 'success');
         }
 
-        function handleAdminResetPassword(e) {
+        async function handleAdminResetPassword(e) {
             e.preventDefault();
             const targetId = document.getElementById('adminResetStudentSelect').value;
             const newPass = document.getElementById('adminNewStudentPass').value.trim();
@@ -805,7 +829,7 @@
             const student = ACCOUNTS_DATA.find(acc => acc.id === targetId);
             if (student && newPass) {
                 student.pass = newPass;
-                saveAllData();
+                await saveAllData();
                 document.getElementById('adminNewStudentPass').value = '';
                 showAlert(`Password for ${student.name} reset to "${newPass}"!`, 'success');
             }
@@ -890,7 +914,7 @@
                 .join('');
         }
 
-        function handleTransfer(e) {
+        async function handleTransfer(e) {
             e.preventDefault();
             const targetId = document.getElementById('transferRecipientSelect').value;
             const amount = parseFloat(document.getElementById('transferAmount').value);
@@ -913,7 +937,7 @@
 
             currentUser.balance -= amount;
             recipient.balance += amount;
-            saveAllData();
+            await saveAllData();
 
             updateUserDisplays();
             document.getElementById('transferAmount').value = '';
@@ -1032,7 +1056,7 @@
             document.getElementById('receiptArea').innerHTML = receiptHtml;
         }
 
-        function confirmCheckout(total) {
+        async function confirmCheckout(total) {
             currentUser.balance -= total; 
             
             const dateStr = new Date().toLocaleString();
@@ -1040,7 +1064,7 @@
             if (!currentUser.history) currentUser.history = [];
             currentUser.history.push(orderSummary);
 
-            saveAllData();
+            await saveAllData();
             cart = {};
             renderCart();
             document.getElementById('receiptArea').innerHTML = '';
@@ -1076,7 +1100,7 @@
             resetSelect.innerHTML = studentOptions;
         }
 
-        function handleAdminDeposit(e) {
+        async function handleAdminDeposit(e) {
             e.preventDefault();
             const targetId = document.getElementById('adminStudentSelect').value;
             const amount = parseFloat(document.getElementById('adminDepositAmount').value);
@@ -1084,14 +1108,14 @@
             const student = ACCOUNTS_DATA.find(acc => acc.id === targetId);
             if (student && amount > 0) {
                 student.balance += amount;
-                saveAllData();
+                await saveAllData();
                 updateUserDisplays();
                 document.getElementById('adminDepositAmount').value = '';
                 showAlert(`Awarded ${amount} FARADS to ${student.name}!`, 'success');
             }
         }
 
-        function saveWeights() {
+        async function saveWeights() {
             const w = parseFloat(document.getElementById('weightW').value) || 0;
             const p = parseFloat(document.getElementById('weightP').value) || 0;
             const e = parseFloat(document.getElementById('weightE').value) || 0;
@@ -1102,24 +1126,24 @@
             }
 
             GRADE_WEIGHTS = { w, p, e };
-            saveAllData();
+            await saveAllData();
             updateUserDisplays();
             renderGradebookSheet();
             showAlert('Grading weights updated successfully!', 'success');
         }
 
-        function saveConversionRate() {
+        async function saveConversionRate() {
             const rate = parseFloat(document.getElementById('gradeConvRateInput').value);
             if (isNaN(rate) || rate < 0) {
                 showAlert('Please enter a valid conversion rate!', 'danger');
                 return;
             }
             GRADE_CONV_RATE = rate;
-            saveAllData();
+            await saveAllData();
             showAlert(`Grade-to-Farads conversion rate saved (${GRADE_CONV_RATE} F per 1%).`, 'success');
         }
 
-        function applyGradeToFaradsConversion() {
+        async function applyGradeToFaradsConversion() {
             if (!confirm(`Sync student balances based on their grades (${GRADE_CONV_RATE} Farads per 1%)? This updates balances up or down based on current grades.`)) return;
 
             ACCOUNTS_DATA.forEach(acc => {
@@ -1129,14 +1153,14 @@
                 }
             });
 
-            saveAllData();
+            await saveAllData();
             updateUserDisplays();
             renderGradebookSheet();
             populateDirectory();
             showAlert('Successfully synced student Farads balances based on grades!', 'success');
         }
 
-        function addColumnModal() {
+        async function addColumnModal() {
             const name = prompt("Enter Name of New Column (e.g., Quizzes, Oral, Exam):");
             if (!name) return;
             const category = prompt("Enter Category ('Written', 'Performance', 'Exam', or 'Bonus'):", "Written");
@@ -1147,15 +1171,15 @@
 
             const colId = 'col_' + Date.now();
             GRADE_COLUMNS.push({ id: colId, name: name, category: category });
-            saveAllData();
+            await saveAllData();
             renderGradebookSheet();
             showAlert(`Column '${name}' added!`, 'success');
         }
 
-        function removeColumn(colId) {
+        async function removeColumn(colId) {
             if (confirm("Are you sure you want to delete this grading column?")) {
                 GRADE_COLUMNS = GRADE_COLUMNS.filter(col => col.id !== colId);
-                saveAllData();
+                await saveAllData();
                 renderGradebookSheet();
                 if (currentUser) updateUserDisplays();
                 showAlert("Column removed successfully!", "success");
@@ -1189,7 +1213,7 @@
             }).join('');
         }
 
-        function saveGradebookSheet() {
+        async function saveGradebookSheet() {
             ACCOUNTS_DATA.filter(acc => !acc.isAdmin).forEach(acc => {
                 if (!acc.scores) acc.scores = {};
                 GRADE_COLUMNS.forEach(col => {
@@ -1200,7 +1224,7 @@
                 });
             });
 
-            saveAllData();
+            await saveAllData();
             renderGradebookSheet();
             if (currentUser) updateUserDisplays();
             showAlert("Worksheet grades saved successfully!", "success");
@@ -1222,6 +1246,9 @@
         }
 
         window.onload = initApp;
+        const SUPABASE_URL = 'https://sdzpqfcwtlcjuobynlia.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_c4zwkphRH_PtPiADYvMB1g_m9Z5XOMu';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     </script>
 </body>
 </html>
