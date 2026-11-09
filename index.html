@@ -680,23 +680,20 @@
         }
 
         async function saveAllData() {
-            try {
-                await window.supabaseClient
-                    .from('app_data')
-                    .upsert({
-                        id: 1,
-                        data: {
-                            accounts: ACCOUNTS_DATA,
-                            columns: GRADE_COLUMNS,
-                            weights: GRADE_WEIGHTS,
-                            convRate: GRADE_CONV_RATE
-                        }
-                    });
-            } catch (err) {
-                console.error("Failed to save data to Supabase:", err);
-            }
-        }
-
+    try {
+        await window.supabaseClient
+            .from('app_data')
+            .update({
+                accounts: ACCOUNTS_DATA,
+                columns: GRADE_COLUMNS,
+                weights: GRADE_WEIGHTS,
+                convRate: GRADE_CONV_RATE
+            })
+            .eq('id', 1);
+    } catch (err) {
+        console.error("Failed to save data to Supabase:", err);
+    }
+}
         // Reset Data in Supabase
         async function resetAllData() {
             if (confirm("Reset all system data, passwords, grades, and receipts in Supabase?")) {
