@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="ft_logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faraday Tech</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--bg-secondary);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .balance-badge {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--bg-primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Login Screen */
+        .login-card {
+            background-color: var(--bg-secondary);
+            max-width: 400px;
+            margin: 4rem auto;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background-color: var(--bg-secondary);
+            color: var(--accent);
+        }
+
+        /* Grid Layouts */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Shop Grid */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .shop-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .item-price {
+            color: var(--accent);
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Tables & Spreadsheet styling */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .sheet-input {
+            width: 65px;
+            padding: 0.4rem;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .cart-summary {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Receipt Box */
+        .receipt-box {
+            background: var(--bg-primary);
+            border: 1px dashed var(--accent);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background-color: rgba(34, 197, 94, 0.2);
+            border: 1px solid var(--success);
+            color: #86efac;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .user-profile {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header id="mainHeader" class="hidden">
+        <div class="logo-title">
+            <img src="ft_logo.png" alt="Faraday Tech Logo" class="header-logo">
+            <h2>Faraday Tech</h2>
+        </div>
+        <div class="user-profile">
+            <span id="userNameDisplay">User</span>
+            <div class="balance-badge"><span id="userBalanceDisplay">0</span> FARADS</div>
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Notification Banner -->
+        <div id="alertBox" class="alert hidden"></div>
+
+        <!-- Login Section -->
+        <div id="loginSection" class="login-card">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <img src="ft_logo.png" alt="Logo" style="width: 55px; height: 55px; margin: 0 auto 0.5rem auto; display: block; object-fit: contain;">
+                <h2>Login</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Creative Technology Portal</p>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>10-Digit Account ID</label>
+                    <input type="text" id="loginId" class="form-control" placeholder="e.g. 0815201111" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" class="form-control" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; padding: 0.75rem;">Login to Account</button>
+            </form>
+            <div style="margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
+                <p><strong>Tester Accounts:</strong></p>
+                <p>• Student 1: <code>1111111111</code> / <code>testpass1</code></p>
+                <p>• Student 2: <code>2222222222</code> / <code>testpass2</code></p>
+                <p>• Admin: <code>8888888888</code> / <code>admintest</code></p>
+            </div>
+        </div>
+
+        <!-- Dashboard App Section -->
+        <div id="appSection" class="hidden">
+            <!-- Navigation -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('transferTab')">FARADS Transfer</button>
+                <button class="tab-btn" onclick="switchTab('shopTab')">School Store</button>
+                <button id="adminTabBtn" class="tab-btn hidden" onclick="switchTab('adminTab')">Grading & Admin</button>
+                <button class="tab-btn" onclick="switchTab('directoryTab')">Classroom List</button>
+            </div>
+
+            <!-- Tab 1: Transfers & Profile/Password -->
+            <div id="transferTab" class="tab-content">
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-title">Transfer FARADS (Select Name)</div>
+                        <form onsubmit="handleTransfer(event)">
+                            <div class="form-group">
+                                <label>Classmate</label>
+                                <select id="transferRecipientSelect" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (FARADS)</label>
+                                <input type="number" id="transferAmount" class="form-control" min="1" step="any" placeholder="0.00" required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Send FARADS</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Student Profile & Security</div>
+                        <p><strong>Account Name:</strong> <span id="infoName">-</span></p>
+                        <p style="margin-top: 0.4rem;"><strong>10-Digit ID:</strong> <span id="infoId">-</span></p>
+                        <p style="margin-top: 0.4rem;"><strong>Role:</strong> <span id="infoRole">-</span></p>
+                        <p style="margin-top: 0.4rem;"><strong>Available Balance:</strong> <span id="infoBalance" style="color: var(--accent); font-weight: bold;">0</span> FARADS</p>
+                        
+                        <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Computed Category Grades</h4>
+                            <p style="font-size: 0.9rem;">Written Works (<span id="dispWeightW">30</span>%): <strong id="gradeWritten" style="color: var(--success);">0</strong></p>
+                            <p style="font-size: 0.9rem; margin-top: 0.2rem;">Performance Tasks (<span id="dispWeightP">50</span>%): <strong id="gradePerformance" style="color: var(--success);">0</strong></p>
+                            <p style="font-size: 0.9rem; margin-top: 0.2rem;">Exam (<span id="dispWeightE">20</span>%): <strong id="gradeExam" style="color: var(--success);">0</strong></p>
+                            <p style="font-size: 0.95rem; margin-top: 0.4rem; border-top: 1px dashed var(--border); padding-top: 0.3rem;">Final Equivalent Grade: <strong id="gradeFinal" style="color: var(--accent);">0%</strong></p>
+                        </div>
+
+                        <!-- User Change Password Form -->
+                        <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Change My Password</h4>
+                            <form onsubmit="handleUserChangePassword(event)">
+                                <div class="form-group" style="margin-bottom: 0.5rem;">
+                                    <label style="font-size: 0.8rem;">Current Password</label>
+                                    <input type="password" id="userCurrentPass" class="form-control" style="padding: 0.4rem;" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0.75rem;">
+                                    <label style="font-size: 0.8rem;">New Password</label>
+                                    <input type="password" id="userNewPass" class="form-control" style="padding: 0.4rem;" required>
+                                </div>
+                                <button type="submit" class="btn" style="width: 100%; font-size: 0.85rem; padding: 0.4rem;">Update Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Store/Shoppee -->
+            <div id="shopTab" class="tab-content hidden">
+                <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+                    <div class="card">
+                        <div class="card-title">School Supplies & Snack Store</div>
+                        <div id="shopGridDisplay"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">My Cart & Checkout</div>
+                        <div id="cartItemsContainer">
+                            <p style="color: var(--text-muted);">It is EMPTY!.</p>
+                        </div>
+                        <div class="cart-summary">
+                            <span>Total:</span>
+                            <span id="cartTotalDisplay" style="font-size: 1.2rem; font-weight: bold; color: var(--accent);">0 FARADS</span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="btn" style="flex: 1;" onclick="reviewCheckout()">Review Order</button>
+                            <button class="btn btn-danger" style="padding: 0.5rem 0.8rem;" onclick="clearCartCompletely()">Decline</button>
+                        </div>
+                        <div id="receiptArea"></div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="card-title">My Purchase History & Saved Receipts</div>
+                    <div id="purchaseHistoryContainer">
+                        <p style="color: var(--text-muted);">You haven't bought anything...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Admin & Gradebook Worksheet (Ma'am Anib) -->
+            <div id="adminTab" class="tab-content hidden">
+                <div class="dashboard-grid" style="margin-bottom: 1.5rem;">
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-title">Award Points</div>
+                        <form onsubmit="handleAdminDeposit(event)">
+                            <div class="form-group">
+                                <label>Select Student</label>
+                                <select id="adminStudentSelect" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Award FARADS Points</label>
+                                <input type="number" id="adminDepositAmount" class="form-control" min="1" placeholder="Amount to add" required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Deposit Points</button>
+                        </form>
+                    </div>
+
+                    <!-- Admin Reset Student Password -->
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-title">Reset Student Password</div>
+                        <form onsubmit="handleAdminResetPassword(event)">
+                            <div class="form-group">
+                                <label>Select Student</label>
+                                <select id="adminResetStudentSelect" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>New Temporary Password</label>
+                                <input type="text" id="adminNewStudentPass" class="form-control" placeholder="Enter new password" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning" style="width: 100%;">Reset Password</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Grading Category Weights Setting -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-title">Grading Percentage (Must Total 100%)</div>
+                    <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="form-group">
+                            <label>Written (%)</label>
+                            <input type="number" id="weightW" class="form-control" value="30" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Performance Tasks (%)</label>
+                            <input type="number" id="weightP" class="form-control" value="50" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Exam (%)</label>
+                            <input type="number" id="weightE" class="form-control" value="20" min="0" max="100">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="saveWeights()">Update Weights</button>
+                </div>
+
+                <!-- Grade-to-Farads Conversion Sync Setting -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-title">Grade-to-Farads Conversion Sync</div>
+                    <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; align-items: flex-end;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Farads Awarded per 1% of Final Grade</label>
+                            <input type="number" id="gradeConvRateInput" class="form-control" value="10" min="0" step="any">
+                        </div>
+                        <div>
+                            <button class="btn" style="width: 100%;" onclick="saveConversionRate()">Save Rate</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Syncs student balances up or down based on their grades. Store purchases remain permanently deducted.</p>
+                        <button class="btn btn-warning" onclick="applyGradeToFaradsConversion()">Sync / Update Farads from Grades</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        <span>Gradebook Worksheet</span>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="addColumnModal()">+ Add Column</button>
+                            <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="saveGradebookSheet()">Save Worksheet</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr id="worksheetHeaderRow">
+                                    <th>ID</th>
+                                    <th>Student Name</th>
+                                    <!-- Dynamic columns injected here -->
+                                </tr>
+                            </thead>
+                            <tbody id="gradebookTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                        <button class="btn btn-danger" onclick="resetAllData()">Reset System Data to Default</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Directory -->
+            <div id="directoryTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-title">Classroom Directory</div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>10-Digit ID</th>
+                                    <th>Student Name</th>
+                                    <th>Balance</th>
+                                    <th>Final Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody id="directoryTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_COLUMNS = [
+            { id: "written1", name: "Quiz 1", category: "Written" },
+            { id: "written2", name: "Quiz 2", category: "Written" },
+            { id: "perf1", name: "Project 1", category: "Performance" },
+            { id: "perf2", name: "Project 2", category: "Performance" },
+            { id: "exam1", name: "Midterm Exam", category: "Exam" },
+            { id: "bonus", name: "Bonus Points", category: "Bonus" }
+        ];
+
+        const DEFAULT_WEIGHTS = { w: 30, p: 50, e: 20 };
+        const DEFAULT_CONVERSION_RATE = 10;
+
+        const DEFAULT_ACCOUNTS = [
+            // Tester Accounts
+            { id: "1111111111", name: "Tester Student 1", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[] },
+            { id: "2222222222", name: "Tester Student 2", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[] },
+            { id: "8888888888", name: "Tester Admin Teacher", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[] },
+
+            // Males
+            { id: "1208201101", name: "David Aguas", pass: "120801", balance: 1000, scores: {written1:88, written2:90, perf1:89, perf2:91, exam1:85, bonus:2}, history:[] },
+            { id: "0731201102", name: "Jovit Ate", pass: "073102", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:84, bonus:0}, history:[] },
+            { id: "0411201203", name: "Tristan Bristol", pass: "041103", balance: 1000, scores: {written1:90, written2:92, perf1:90, perf2:92, exam1:88, bonus:5}, history:[] },
+            { id: "0101201204", name: "Nino Cabasag", pass: "010104", balance: 1000, scores: {written1:84, written2:86, perf1:84, perf2:86, exam1:82, bonus:0}, history:[] },
+            { id: "0220201205", name: "John Callunsag", pass: "022005", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:87, bonus:1}, history:[] },
+            { id: "0220201206", name: "Teody Clarin", pass: "022006", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[] },
+            { id: "0803201207", name: "Immanuel Ella", pass: "080307", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[] },
+            { id: "0414201208", name: "Calix Farre", pass: "041408", balance: 1000, scores: {written1:86, written2:89, perf1:86, perf2:89, exam1:84, bonus:0}, history:[] },
+            { id: "1112201109", name: "Ethan Kollin", pass: "111209", balance: 1000, scores: {written1:88, written2:88, perf1:88, perf2:88, exam1:86, bonus:2}, history:[] },
+            { id: "0718201110", name: "Jolo Maisog", pass: "071810", balance: 1000, scores: {written1:83, written2:85, perf1:83, perf2:85, exam1:81, bonus:0}, history:[] },
+            { id: "0815201111", name: "Jared Nonoy", pass: "Jard123", balance: 1000, scores: {written1:95, written2:97, perf1:95, perf2:97, exam1:94, bonus:5}, history:[] },
+            { id: "0626201212", name: "Benz Oriño", pass: "062612", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[] },
+            { id: "0215201213", name: "Kyle Suarez", pass: "021513", balance: 1000, scores: {written1:87, written2:86, perf1:87, perf2:86, exam1:85, bonus:1}, history:[] },
+            { id: "0531201214", name: "Liam Uba", pass: "053114", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:88, bonus:2}, history:[] },
+            { id: "0115201215", name: "Rufz Casinto", pass: "011515", balance: 1000, scores: {written1:88, written2:89, perf1:88, perf2:89, exam1:86, bonus:0}, history:[] },
+
+            // Females
+            { id: "0715201116", name: "Charo Aboga-a", pass: "071516", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[] },
+            { id: "1215201117", name: "Ayesha Amer", pass: "121517", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:88, bonus:0}, history:[] },
+            { id: "0830201118", name: "Kristine Antiga", pass: "083018", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:89, bonus:2}, history:[] },
+            { id: "0913201219", name: "Mia Apao", pass: "091319", balance: 1000, scores: {written1:88, written2:87, perf1:88, perf2:87, exam1:85, bonus:0}, history:[] },
+            { id: "0824201120", name: "Embrace Bandiala", pass: "082420", balance: 1000, scores: {written1:93, written2:95, perf1:93, perf2:95, exam1:92, bonus:4}, history:[] },
+            { id: "0411201221", name: "Janessa Caga-anan", pass: "041121", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:85, bonus:0}, history:[] },
+            { id: "0413201222", name: "Veronica Ciano", pass: "041322", balance: 1000, scores: {written1:86, written2:88, perf1:86, perf2:88, exam1:84, bonus:1}, history:[] },
+            { id: "0419201223", name: "Rhea Cirunay", pass: "041923", balance: 1000, scores: {written1:91, written2:92, perf1:91, perf2:92, exam1:90, bonus:2}, history:[] },
+            { id: "0118201224", name: "Joberly Jambo", pass: "011824", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[] },
+            { id: "0420201225", name: "Shiloh Lagumbay", pass: "042025", balance: 1000, scores: {written1:90, written2:89, perf1:90, perf2:89, exam1:88, bonus:1}, history:[] },
+            { id: "0104201226", name: "Vrylle Mandao", pass: "010426", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:83, bonus:0}, history:[] },
+            { id: "0430201227", name: "Crystallize Manliguez", pass: "043027", balance: 1000, scores: {written1:94, written2:96, perf1:94, perf2:96, exam1:93, bonus:5}, history:[] },
+            { id: "1104201128", name: "Lee Manan-og", pass: "110428", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[] },
+            { id: "1130201129", name: "Marwa Matundac", pass: "113029", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[] },
+            { id: "0924201130", name: "Nica Mutia", pass: "092430", balance: 1000, scores: {written1:92, written2:93, perf1:92, perf2:93, exam1:91, bonus:2}, history:[] },
+            { id: "0813201131", name: "Ceana Oculam", pass: "081331", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:89, bonus:1}, history:[] },
+            { id: "0331201232", name: "Shena Oliveros", pass: "033132", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[] },
+            { id: "0515201233", name: "Alphyca Osuyos", pass: "051533", balance: 1000, scores: {written1:86, written2:87, perf1:86, perf2:87, exam1:84, bonus:0}, history:[] },
+            { id: "1230201134", name: "Daniela Pongcol", pass: "123034", balance: 1000, scores: {written1:89, written2:92, perf1:89, perf2:92, exam1:88, bonus:2}, history:[] },
+            { id: "0203201235", name: "Rashiel Samrano", pass: "020335", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[] },
+            { id: "1119201136", name: "Kriselsem Sinajon", pass: "111936", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:86, bonus:0}, history:[] },
+            { id: "1210201137", name: "Chedane Sultan", pass: "121037", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:88, bonus:1}, history:[] },
+            { id: "0730201138", name: "Jasmine Tomagna", pass: "073038", balance: 1000, scores: {written1:88, written2:91, perf1:88, perf2:91, exam1:86, bonus:0}, history:[] },
+            { id: "0428201239", name: "Khloe Ungab", pass: "042839", balance: 1000, scores: {written1:85, written2:86, perf1:85, perf2:86, exam1:83, bonus:0}, history:[] },
+            { id: "0831201240", name: "Ashley Vale", pass: "083140", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[] },
+            { id: "0910201141", name: "Herald Vidad", pass: "091041", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:1}, history:[] },
+
+            // Main Admin Account
+            { id: "9999999999", name: "Ma'am Anib", pass: "admin123", balance: 99999, isAdmin: true, scores: {}, history:[] }
+        ];
+
+        let ACCOUNTS_DATA = [];
+        let GRADE_COLUMNS = [];
+        let GRADE_WEIGHTS = {};
+        let GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+
+        function loadAllData() {
+            const savedAcc = localStorage.getItem('faraday_acc_v7');
+            const savedCols = localStorage.getItem('faraday_cols_v7');
+            const savedWeights = localStorage.getItem('faraday_weights_v7');
+            const savedConv = localStorage.getItem('faraday_conv_v7');
+
+            ACCOUNTS_DATA = savedAcc ? JSON.parse(savedAcc) : JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+            GRADE_COLUMNS = savedCols ? JSON.parse(savedCols) : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+            GRADE_WEIGHTS = savedWeights ? JSON.parse(savedWeights) : JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+            GRADE_CONV_RATE = savedConv ? parseFloat(savedConv) : DEFAULT_CONVERSION_RATE;
+        }
+
+        function saveAllData() {
+            localStorage.setItem('faraday_acc_v7', JSON.stringify(ACCOUNTS_DATA));
+            localStorage.setItem('faraday_cols_v7', JSON.stringify(GRADE_COLUMNS));
+            localStorage.setItem('faraday_weights_v7', JSON.stringify(GRADE_WEIGHTS));
+            localStorage.setItem('faraday_conv_v7', GRADE_CONV_RATE);
+        }
+
+        function resetAllData() {
+            if (confirm("Reset all system data, passwords, grades, and receipts?")) {
+                localStorage.clear();
+                loadAllData();
+                currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id);
+                initApp();
+                showAlert("System fully reset.", "success");
+            }
+        }
+
+        const SHOP_CATEGORIES = [
+            {
+                title: "REGULAR SHOP",
+                description: "Feeling normal today?",
+                items: [
+                    { id: 1, name: "Ballpen", price: 40, img: "ballpen" },
+                    { id: 2, name: "Eraser", price: 30, img: "eraser" },
+                    { id: 3, name: "Pencil", price: 30, img: "pencil" },
+                    { id: 4, name: "A4 bond paper (5 pieces)", price: 50, img: "bond_paper" },
+                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120, img: "pad" },
+                    { id: 6, name: "1/4 (10 pieces)", price: 20, img: "quarter_pad" },
+                    { id: 7, name: "Crosswise (10 pieces)", price: 80, img: "crosswise" },
+                    { id: 8, name: "Lengthwise (10 pieces)", price: 95, img: "lengthwise" },
+                    { id: 9, name: "Long bond paper (5 pieces)", price: 75, img: "long_bond" },
+                    { id: 10, name: "Short/Letter bond paper (5 pieces)", price: 35, img: "short_bond" }
+                ]
+            },
+            {
+                title: "SNACK SHOP",
+                description: "Feeling hungry, are we?",
+                items: [
+                    { id: 11, name: "Lollipop", price: 20, img: "lollipop" },
+                    { id: 12, name: "Biscuits", price: 60, img: "biscuits" },
+                    { id: 13, name: "Chips", price: 70, img: "chips" }
+                ]
+            },
+            {
+                title: "SPECIAL SHOP",
+                description: "Feeling rich today?",
+                items: [
+                    { id: 14, name: "One print (A4, non-colored)", price: 200, img: "printer" },
+                    { id: 15, name: "One print (A4, colored, normal)", price: 400, img: "printer" },
+                    { id: 16, name: "One print (A4, colored, best)", price: 500, img: "printer" },
+                    { id: 17, name: "Sign pen", price: 100, img: "signpen" }
+                ]
+            }
+        ];
+
+        const SHOP_ITEMS = SHOP_CATEGORIES.flatMap(cat => cat.items);
+
+        let currentUser = null;
+        let cart = {};
+
+        function initApp() {
+            loadAllData();
+            renderShopItems();
+            populateTransferDropdown();
+            populateDirectory();
+            populateAdminDropdown();
+            renderGradebookSheet();
+            document.getElementById('weightW').value = GRADE_WEIGHTS.w;
+            document.getElementById('weightP').value = GRADE_WEIGHTS.p;
+            document.getElementById('weightE').value = GRADE_WEIGHTS.e;
+            document.getElementById('gradeConvRateInput').value = GRADE_CONV_RATE;
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            loadAllData();
+            const idInput = document.getElementById('loginId').value.trim();
+            const passInput = document.getElementById('loginPass').value.trim();
+
+            const user = ACCOUNTS_DATA.find(acc => acc.id === idInput && acc.pass === passInput);
+
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('mainHeader').classList.remove('hidden');
+                document.getElementById('appSection').classList.remove('hidden');
+
+                if (currentUser.isAdmin) {
+                    document.getElementById('adminTabBtn').classList.remove('hidden');
+                } else {
+                    document.getElementById('adminTabBtn').classList.add('hidden');
+                }
+
+                updateUserDisplays();
+                showAlert(`Welcome back, ${currentUser.name}!`, 'success');
+            } else {
+                showAlert('Invalid Account ID or Password!', 'danger');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            cart = {};
+            renderCart();
+            document.getElementById('loginId').value = '';
+            document.getElementById('loginPass').value = '';
+            document.getElementById('mainHeader').classList.add('hidden');
+            document.getElementById('appSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+            switchTab('transferTab');
+            showAlert('Logged out successfully.', 'success');
+        }
+
+        function handleUserChangePassword(e) {
+            e.preventDefault();
+            const currentPass = document.getElementById('userCurrentPass').value;
+            const newPass = document.getElementById('userNewPass').value.trim();
+
+            if (currentUser.pass !== currentPass) {
+                showAlert('Current password is incorrect!', 'danger');
+                return;
+            }
+
+            if (!newPass || newPass.length < 3) {
+                showAlert('New password must be at least 3 characters long.', 'danger');
+                return;
+            }
+
+            currentUser.pass = newPass;
+            saveAllData();
+            document.getElementById('userCurrentPass').value = '';
+            document.getElementById('userNewPass').value = '';
+            showAlert('Your password has been changed successfully!', 'success');
+        }
+
+        function handleAdminResetPassword(e) {
+            e.preventDefault();
+            const targetId = document.getElementById('adminResetStudentSelect').value;
+            const newPass = document.getElementById('adminNewStudentPass').value.trim();
+
+            const student = ACCOUNTS_DATA.find(acc => acc.id === targetId);
+            if (student && newPass) {
+                student.pass = newPass;
+                saveAllData();
+                document.getElementById('adminNewStudentPass').value = '';
+                showAlert(`Password for ${student.name} reset to "${newPass}"!`, 'success');
+            }
+        }
+
+        function computeStudentGrades(student) {
+            if (student.isAdmin) return { w: 0, p: 0, e: 0, final: 0 };
+            
+            let wSum = 0, wCount = 0;
+            let pSum = 0, pCount = 0;
+            let eSum = 0, eCount = 0;
+            let bonus = student.scores['bonus'] || 0;
+
+            GRADE_COLUMNS.forEach(col => {
+                const val = student.scores[col.id] || 0;
+                if (col.category === 'Written') { wSum += val; wCount++; }
+                else if (col.category === 'Performance') { pSum += val; pCount++; }
+                else if (col.category === 'Exam') { eSum += val; eCount++; }
+            });
+
+            const avgW = wCount > 0 ? (wSum / wCount) : 0;
+            const avgP = pCount > 0 ? (pSum / pCount) : 0;
+            const avgE = eCount > 0 ? (eSum / eCount) : 0;
+
+            const final = ((avgW * (GRADE_WEIGHTS.w / 100)) + 
+                           (avgP * (GRADE_WEIGHTS.p / 100)) + 
+                           (avgE * (GRADE_WEIGHTS.e / 100))) + bonus;
+
+            return {
+                w: avgW.toFixed(1),
+                p: avgP.toFixed(1),
+                e: avgE.toFixed(1),
+                final: Math.min(100, final).toFixed(1)
+            };
+        }
+
+        function updateUserDisplays() {
+            if (!currentUser) return;
+            currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id);
+
+            document.getElementById('userNameDisplay').innerText = currentUser.name;
+            document.getElementById('userBalanceDisplay').innerText = currentUser.balance.toLocaleString();
+            document.getElementById('infoName').innerText = currentUser.name;
+            document.getElementById('infoId').innerText = currentUser.id;
+            document.getElementById('infoRole').innerText = currentUser.isAdmin ? "Teacher / Admin" : "Student";
+            document.getElementById('infoBalance').innerText = currentUser.balance.toLocaleString();
+            
+            document.getElementById('dispWeightW').innerText = GRADE_WEIGHTS.w;
+            document.getElementById('dispWeightP').innerText = GRADE_WEIGHTS.p;
+            document.getElementById('dispWeightE').innerText = GRADE_WEIGHTS.e;
+
+            const grades = computeStudentGrades(currentUser);
+            document.getElementById('gradeWritten').innerText = grades.w;
+            document.getElementById('gradePerformance').innerText = grades.p;
+            document.getElementById('gradeExam').innerText = grades.e;
+            document.getElementById('gradeFinal').innerText = `${grades.final}%`;
+
+            renderPurchaseHistory();
+            populateDirectory();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+
+        function showAlert(msg, type) {
+            const box = document.getElementById('alertBox');
+            box.className = `alert alert-${type}`;
+            box.innerText = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 4000);
+        }
+
+        function populateTransferDropdown() {
+            const select = document.getElementById('transferRecipientSelect');
+            select.innerHTML = ACCOUNTS_DATA
+                .filter(acc => acc.id !== currentUser?.id)
+                .map(acc => `<option value="${acc.id}">${acc.name}</option>`)
+                .join('');
+        }
+
+        function handleTransfer(e) {
+            e.preventDefault();
+            const targetId = document.getElementById('transferRecipientSelect').value;
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+
+            const recipient = ACCOUNTS_DATA.find(acc => acc.id === targetId);
+            if (!recipient) {
+                showAlert('Recipient not found!', 'danger');
+                return;
+            }
+
+            if (amount <= 0 || isNaN(amount)) {
+                showAlert('Please enter a valid amount.', 'danger');
+                return;
+            }
+
+            if (currentUser.balance < amount) {
+                showAlert('Insufficient FARADS balance!', 'danger');
+                return;
+            }
+
+            currentUser.balance -= amount;
+            recipient.balance += amount;
+            saveAllData();
+
+            updateUserDisplays();
+            document.getElementById('transferAmount').value = '';
+            showAlert(`Successfully transferred ${amount} FARADS to ${recipient.name}!`, 'success');
+        }
+
+        function renderShopItems() {
+            const container = document.getElementById('shopGridDisplay');
+            container.innerHTML = SHOP_CATEGORIES.map(cat => `
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--accent); margin-bottom: 0.25rem;">${cat.title}</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">"${cat.description}"</p>
+                    <div class="shop-grid">
+                        ${cat.items.map(item => `
+                            <div class="shop-item">
+                                <img src="${item.img}" alt="${item.name}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px; margin-bottom: 0.5rem; background: #0f172a;" onerror="this.style.display='none'">
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-price">${item.price} FARADS</div>
+                                <button class="btn" onclick="addToCart(${item.id})">Add to Cart</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(itemId) {
+            cart[itemId] = (cart[itemId] || 0) + 1;
+            renderCart();
+        }
+
+        function removeFromCart(itemId) {
+            if (cart[itemId]) {
+                cart[itemId]--;
+                if (cart[itemId] <= 0) delete cart[itemId];
+            }
+            renderCart();
+        }
+
+        function clearCartCompletely() {
+            cart = {};
+            renderCart();
+            document.getElementById('receiptArea').innerHTML = '';
+            showAlert('Order declined and cart cleared.', 'danger');
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItemsContainer');
+            let total = 0;
+            const items = Object.keys(cart);
+
+            if (items.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted);">Your cart is currently empty.</p>`;
+                document.getElementById('cartTotalDisplay').innerText = '0 FARADS';
+                return;
+            }
+
+            container.innerHTML = items.map(id => {
+                const item = SHOP_ITEMS.find(i => i.id == id);
+                const subtotal = item.price * cart[id];
+                total += subtotal;
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        <div>
+                            <div>${item.name}</div>
+                            <div style="color: var(--text-muted);">${item.price} x ${cart[id]} = ${subtotal} FARADS</div>
+                        </div>
+                        <div>
+                            <button class="btn" style="padding: 0.1rem 0.4rem;" onclick="addToCart(${item.id})">+</button>
+                            <button class="btn btn-danger" style="padding: 0.1rem 0.4rem;" onclick="removeFromCart(${item.id})">-</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('cartTotalDisplay').innerText = `${total} FARADS`;
+        }
+
+        function reviewCheckout() {
+            let total = 0;
+            Object.keys(cart).forEach(id => {
+                const item = SHOP_ITEMS.find(i => i.id == id);
+                total += item.price * cart[id];
+            });
+
+            if (total === 0) {
+                showAlert('Your cart is empty!', 'danger');
+                return;
+            }
+
+            if (currentUser.balance < total) {
+                showAlert('Insufficient FARADS to checkout!', 'danger');
+                return;
+            }
+
+            const dateStr = new Date().toLocaleString();
+            let receiptHtml = `
+                <div class="receipt-box">
+                    <strong>=== FARADAY STORE RECEIPT ===</strong><br>
+                    Date: ${dateStr}<br>
+                    Buyer: ${currentUser.name}<br>
+                    -----------------------------------<br>
+            `;
+            Object.keys(cart).forEach(id => {
+                const item = SHOP_ITEMS.find(i => i.id == id);
+                receiptHtml += `${item.name} x${cart[id]} : ${item.price * cart[id]} F<br>`;
+            });
+            receiptHtml += `
+                    -----------------------------------<br>
+                    <strong>TOTAL PAID: ${total} FARADS</strong><br>
+                    Status: SUCCESS<br>
+                    <button class="btn" style="margin-top:0.5rem; width:100%; font-size:0.8rem;" onclick="confirmCheckout(${total})">Confirm Purchase</button>
+                </div>
+            `;
+
+            document.getElementById('receiptArea').innerHTML = receiptHtml;
+        }
+
+        function confirmCheckout(total) {
+            currentUser.balance -= total; 
+            
+            const dateStr = new Date().toLocaleString();
+            let orderSummary = { date: dateStr, items: {...cart}, total: total };
+            if (!currentUser.history) currentUser.history = [];
+            currentUser.history.push(orderSummary);
+
+            saveAllData();
+            cart = {};
+            renderCart();
+            document.getElementById('receiptArea').innerHTML = '';
+            updateUserDisplays();
+            showAlert('Checkout confirmed successfully! Permanent deduction applied.', 'success');
+        }
+
+        function renderPurchaseHistory() {
+            const container = document.getElementById('purchaseHistoryContainer');
+            if (!currentUser || !currentUser.history || currentUser.history.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted);">No purchases made yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = currentUser.history.map((order, idx) => `
+                <div class="receipt-box" style="margin-bottom: 0.75rem;">
+                    <strong>Receipt #${idx + 1} - ${order.date}</strong><br>
+                    Total Paid: ${order.total} FARADS
+                </div>
+            `).join('');
+        }
+
+        function populateAdminDropdown() {
+            const depositSelect = document.getElementById('adminStudentSelect');
+            const resetSelect = document.getElementById('adminResetStudentSelect');
+            
+            const studentOptions = ACCOUNTS_DATA
+                .filter(acc => !acc.isAdmin)
+                .map(acc => `<option value="${acc.id}">${acc.name}</option>`)
+                .join('');
+            
+            depositSelect.innerHTML = studentOptions;
+            resetSelect.innerHTML = studentOptions;
+        }
+
+        function handleAdminDeposit(e) {
+            e.preventDefault();
+            const targetId = document.getElementById('adminStudentSelect').value;
+            const amount = parseFloat(document.getElementById('adminDepositAmount').value);
+
+            const student = ACCOUNTS_DATA.find(acc => acc.id === targetId);
+            if (student && amount > 0) {
+                student.balance += amount;
+                saveAllData();
+                updateUserDisplays();
+                document.getElementById('adminDepositAmount').value = '';
+                showAlert(`Awarded ${amount} FARADS to ${student.name}!`, 'success');
+            }
+        }
+
+        function saveWeights() {
+            const w = parseFloat(document.getElementById('weightW').value) || 0;
+            const p = parseFloat(document.getElementById('weightP').value) || 0;
+            const e = parseFloat(document.getElementById('weightE').value) || 0;
+
+            if (w + p + e !== 100) {
+                showAlert('Weights must total exactly 100%!', 'danger');
+                return;
+            }
+
+            GRADE_WEIGHTS = { w, p, e };
+            saveAllData();
+            updateUserDisplays();
+            renderGradebookSheet();
+            showAlert('Grading weights updated successfully!', 'success');
+        }
+
+        function saveConversionRate() {
+            const rate = parseFloat(document.getElementById('gradeConvRateInput').value);
+            if (isNaN(rate) || rate < 0) {
+                showAlert('Please enter a valid conversion rate!', 'danger');
+                return;
+            }
+            GRADE_CONV_RATE = rate;
+            saveAllData();
+            showAlert(`Grade-to-Farads conversion rate saved (${GRADE_CONV_RATE} F per 1%).`, 'success');
+        }
+
+        function applyGradeToFaradsConversion() {
+            if (!confirm(`Sync student balances based on their grades (${GRADE_CONV_RATE} Farads per 1%)? This updates balances up or down based on current grades.`)) return;
+
+            ACCOUNTS_DATA.forEach(acc => {
+                if (!acc.isAdmin) {
+                    const finalGrade = parseFloat(computeStudentGrades(acc).final);
+                    acc.balance = Math.round(finalGrade * GRADE_CONV_RATE);
+                }
+            });
+
+            saveAllData();
+            updateUserDisplays();
+            renderGradebookSheet();
+            populateDirectory();
+            showAlert('Successfully synced student Farads balances based on grades!', 'success');
+        }
+
+        function addColumnModal() {
+            const name = prompt("Enter Name of New Column (e.g., Quizzes, Oral, Exam):");
+            if (!name) return;
+            const category = prompt("Enter Category ('Written', 'Performance', 'Exam', or 'Bonus'):", "Written");
+            if (!['Written', 'Performance', 'Exam', 'Bonus'].includes(category)) {
+                alert("Invalid category! Must be Written, Performance, Exam, or Bonus.");
+                return;
+            }
+
+            const colId = 'col_' + Date.now();
+            GRADE_COLUMNS.push({ id: colId, name: name, category: category });
+            saveAllData();
+            renderGradebookSheet();
+            showAlert(`Column '${name}' added!`, 'success');
+        }
+
+        function removeColumn(colId) {
+            if (confirm("Are you sure you want to delete this grading column?")) {
+                GRADE_COLUMNS = GRADE_COLUMNS.filter(col => col.id !== colId);
+                saveAllData();
+                renderGradebookSheet();
+                if (currentUser) updateUserDisplays();
+                showAlert("Column removed successfully!", "success");
+            }
+        }
+
+        function renderGradebookSheet() {
+            const headerRow = document.getElementById('worksheetHeaderRow');
+            let headerHtml = `<th>ID</th><th>Student Name</th>`;
+            GRADE_COLUMNS.forEach(col => {
+                headerHtml += `
+                    <th>
+                        ${col.name}<br>
+                        <span style="font-size:0.75rem; color:var(--accent);">(${col.category})</span>
+                        <button onclick="removeColumn('${col.id}')" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.75rem; margin-left:5px;" title="Remove Column">[X]</button>
+                    </th>`;
+            });
+            headerHtml += `<th>Final Grade</th>`;
+            headerRow.innerHTML = headerHtml;
+
+            const tbody = document.getElementById('gradebookTableBody');
+            tbody.innerHTML = ACCOUNTS_DATA.filter(acc => !acc.isAdmin).map(acc => {
+                let rowHtml = `<tr><td><code>${acc.id}</code></td><td>${acc.name}</td>`;
+                GRADE_COLUMNS.forEach(col => {
+                    const val = acc.scores[col.id] || 0;
+                    rowHtml += `<td><input type="number" class="sheet-input" id="score_${acc.id}_${col.id}" value="${val}" min="0" max="100"></td>`;
+                });
+                const final = computeStudentGrades(acc).final;
+                rowHtml += `<td><strong style="color: var(--accent);">${final}%</strong></td></tr>`;
+                return rowHtml;
+            }).join('');
+        }
+
+        function saveGradebookSheet() {
+            ACCOUNTS_DATA.filter(acc => !acc.isAdmin).forEach(acc => {
+                if (!acc.scores) acc.scores = {};
+                GRADE_COLUMNS.forEach(col => {
+                    const input = document.getElementById(`score_${acc.id}_${col.id}`);
+                    if (input) {
+                        acc.scores[col.id] = parseFloat(input.value) || 0;
+                    }
+                });
+            });
+
+            saveAllData();
+            renderGradebookSheet();
+            if (currentUser) updateUserDisplays();
+            showAlert("Worksheet grades saved successfully!", "success");
+        }
+
+        function populateDirectory() {
+            const tbody = document.getElementById('directoryTableBody');
+            tbody.innerHTML = ACCOUNTS_DATA.map(acc => {
+                const final = acc.isAdmin ? 'N/A' : computeStudentGrades(acc).final + '%';
+                return `
+                    <tr>
+                        <td><code>${acc.id}</code></td>
+                        <td>${acc.name} ${acc.isAdmin ? '<span style="color: var(--accent); font-size: 0.8rem;">(Teacher)</span>' : ''}</td>
+                        <td><strong>${acc.balance.toLocaleString()}</strong> FARADS</td>
+                        <td><span style="color: var(--success);">${final}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
