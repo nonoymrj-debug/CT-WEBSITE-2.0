@@ -580,6 +580,11 @@
     </div>
 
     <script>
+        // Supabase Global Setup
+        const SUPABASE_URL = 'https://sdzpqfcwtlcjuobynlia.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_c4zwkphRH_PtPiADYvMB1g_m9Z5XOMu';
+        window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         const DEFAULT_COLUMNS = [
             { id: "written1", name: "Quiz 1", category: "Written" },
             { id: "written2", name: "Quiz 2", category: "Written" },
@@ -593,12 +598,9 @@
         const DEFAULT_CONVERSION_RATE = 10;
 
         const DEFAULT_ACCOUNTS = [
-            // Tester Accounts
             { id: "1111111111", name: "Tester Student 1", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[] },
             { id: "2222222222", name: "Tester Student 2", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[] },
             { id: "8888888888", name: "Tester Admin Teacher", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[] },
-
-            // Males
             { id: "1208201101", name: "David Aguas", pass: "120801", balance: 1000, scores: {written1:88, written2:90, perf1:89, perf2:91, exam1:85, bonus:2}, history:[] },
             { id: "0731201102", name: "Jovit Ate", pass: "073102", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:84, bonus:0}, history:[] },
             { id: "0411201203", name: "Tristan Bristol", pass: "041103", balance: 1000, scores: {written1:90, written2:92, perf1:90, perf2:92, exam1:88, bonus:5}, history:[] },
@@ -614,8 +616,6 @@
             { id: "0215201213", name: "Kyle Suarez", pass: "021513", balance: 1000, scores: {written1:87, written2:86, perf1:87, perf2:86, exam1:85, bonus:1}, history:[] },
             { id: "0531201214", name: "Liam Uba", pass: "053114", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:88, bonus:2}, history:[] },
             { id: "0115201215", name: "Rufz Casinto", pass: "011515", balance: 1000, scores: {written1:88, written2:89, perf1:88, perf2:89, exam1:86, bonus:0}, history:[] },
-
-            // Females
             { id: "0715201116", name: "Charo Aboga-a", pass: "071516", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[] },
             { id: "1215201117", name: "Ayesha Amer", pass: "121517", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:88, bonus:0}, history:[] },
             { id: "0830201118", name: "Kristine Antiga", pass: "083018", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:89, bonus:2}, history:[] },
@@ -636,14 +636,12 @@
             { id: "0515201233", name: "Alphyca Osuyos", pass: "051533", balance: 1000, scores: {written1:86, written2:87, perf1:86, perf2:87, exam1:84, bonus:0}, history:[] },
             { id: "1230201134", name: "Daniela Pongcol", pass: "123034", balance: 1000, scores: {written1:89, written2:92, perf1:89, perf2:92, exam1:88, bonus:2}, history:[] },
             { id: "0203201235", name: "Rashiel Samrano", pass: "020335", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[] },
-            { id: "1119201136", name: "Kriselsem Sinajon", pass: "111936", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:86, bonus:0}, history:[] },
+            { id: "1119201136", name: "Kriselsem Sinajon", pass: "111936", balance: 1000, scores: {written1:87, rounded:89, perf1:87, perf2:89, exam1:86, bonus:0}, history:[] },
             { id: "1210201137", name: "Chedane Sultan", pass: "121037", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:88, bonus:1}, history:[] },
             { id: "0730201138", name: "Jasmine Tomagna", pass: "073038", balance: 1000, scores: {written1:88, written2:91, perf1:88, perf2:91, exam1:86, bonus:0}, history:[] },
             { id: "0428201239", name: "Khloe Ungab", pass: "042839", balance: 1000, scores: {written1:85, written2:86, perf1:85, perf2:86, exam1:83, bonus:0}, history:[] },
             { id: "0831201240", name: "Ashley Vale", pass: "083140", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[] },
             { id: "0910201141", name: "Herald Vidad", pass: "091041", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:1}, history:[] },
-
-            // Main Admin Account
             { id: "9999999999", name: "Ma'am Anib", pass: "admin123", balance: 99999, isAdmin: true, scores: {}, history:[] }
         ];
 
@@ -652,17 +650,28 @@
         let GRADE_WEIGHTS = {};
         let GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
 
-        // Replaced localStorage with Server API (async fetch)
+        // Fetch Data from Supabase
         async function loadAllData() {
             try {
-                const response = await fetch('/api/data');
-                const data = await response.json();
-                ACCOUNTS_DATA = data.accounts && data.accounts.length > 0 ? data.accounts : JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
-                GRADE_COLUMNS = data.columns && data.columns.length > 0 ? data.columns : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
-                GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
-                GRADE_CONV_RATE = data.convRate !== undefined ? data.convRate : DEFAULT_CONVERSION_RATE;
+                const { data, error } = await window.supabaseClient
+                    .from('app_data')
+                    .select('*')
+                    .eq('id', 1)
+                    .single();
+
+                if (error || !data) {
+                    ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                    GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                    GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                    GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+                } else {
+                    ACCOUNTS_DATA = data.accounts || JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                    GRADE_COLUMNS = data.columns || JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                    GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                    GRADE_CONV_RATE = data.convRate !== undefined ? data.convRate : DEFAULT_CONVERSION_RATE;
+                }
             } catch (err) {
-                console.error("Failed to load data from server, using defaults:", err);
+                console.error("Failed to load data from Supabase, using defaults:", err);
                 ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
                 GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                 GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
@@ -670,33 +679,37 @@
             }
         }
 
+        // Save Data to Supabase
         async function saveAllData() {
             try {
-                await fetch('/api/data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                await window.supabaseClient
+                    .from('app_data')
+                    .upsert({
+                        id: 1,
                         accounts: ACCOUNTS_DATA,
                         columns: GRADE_COLUMNS,
                         weights: GRADE_WEIGHTS,
                         convRate: GRADE_CONV_RATE
-                    })
-                });
+                    });
             } catch (err) {
-                console.error("Failed to save data to server:", err);
+                console.error("Failed to save data to Supabase:", err);
             }
         }
 
+        // Reset Data in Supabase
         async function resetAllData() {
-            if (confirm("Reset all system data, passwords, grades, and receipts on the server?")) {
+            if (confirm("Reset all system data, passwords, grades, and receipts in Supabase?")) {
                 try {
-                    await fetch('/api/reset', { method: 'POST' });
-                    await loadAllData();
+                    ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                    GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                    GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                    GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+                    await saveAllData();
                     if (currentUser) {
                         currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id) || null;
                     }
                     initApp();
-                    showAlert("System fully reset from server.", "success");
+                    showAlert("System fully reset to default.", "success");
                 } catch (err) {
                     showAlert("Failed to reset system data.", "danger");
                 }
@@ -708,35 +721,35 @@
                 title: "REGULAR SHOP",
                 description: "Feeling normal today?",
                 items: [
-                    { id: 1, name: "Ballpen", price: 40},
-                    { id: 2, name: "Eraser", price: 30},
-                    { id: 3, name: "Pencil", price: 30},
-                    { id: 4, name: "A4 bond paper (5 pieces)", price: 50,
-                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120},
-                    { id: 6, name: "1/4 (10 pieces)", price: 20},
-                    { id: 7, name: "Crosswise (10 pieces)", price: 80},
-                    { id: 8, name: "Lengthwise (10 pieces)", price: 95},
-                    { id: 9, name: "Long bond paper (5 pieces)", price: 75},
-                    { id: 10, name: "Short/Letter bond paper (5 pieces)", price: 35}
+                    { id: 1, name: "Ballpen", price: 40 },
+                    { id: 2, name: "Eraser", price: 30 },
+                    { id: 3, name: "Pencil", price: 30 },
+                    { id: 4, name: "A4 bond paper (5 pieces)", price: 50 },
+                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120 },
+                    { id: 6, name: "1/4 (10 pieces)", price: 20 },
+                    { id: 7, name: "Crosswise (10 pieces)", price: 80 },
+                    { id: 8, name: "Lengthwise (10 pieces)", price: 95 },
+                    { id: 9, name: "Long bond paper (5 pieces)", price: 75 },
+                    { id: 10, name: "Short/Letter bond paper (5 pieces)", price: 35 }
                 ]
             },
             {
                 title: "SNACK SHOP",
                 description: "Feeling hungry, are we?",
                 items: [
-                    { id: 11, name: "Lollipop", price: 20},
-                    { id: 12, name: "Biscuits", price: 60},
-                    { id: 13, name: "Chips", price: 70,}
+                    { id: 11, name: "Lollipop", price: 20 },
+                    { id: 12, name: "Biscuits", price: 60 },
+                    { id: 13, name: "Chips", price: 70 }
                 ]
             },
             {
                 title: "SPECIAL SHOP",
                 description: "Feeling rich today?",
                 items: [
-                    { id: 14, name: "One print (A4, non-colored)", price: 200},
-                    { id: 15, name: "One print (A4, colored, normal)", price: 400},
-                    { id: 16, name: "One print (A4, colored, best)", price: 500},
-                    { id: 17, name: "Sign pen", price: 100}
+                    { id: 14, name: "One print (A4, non-colored)", price: 200 },
+                    { id: 15, name: "One print (A4, colored, normal)", price: 400 },
+                    { id: 16, name: "One print (A4, colored, best)", price: 500 },
+                    { id: 17, name: "Sign pen", price: 100 }
                 ]
             }
         ];
@@ -953,7 +966,6 @@
                     <div class="shop-grid">
                         ${cat.items.map(item => `
                             <div class="shop-item">
-                                <img src="${item.img}" alt="${item.name}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px; margin-bottom: 0.5rem; background: #0f172a;" onerror="this.style.display='none'">
                                 <div class="item-name">${item.name}</div>
                                 <div class="item-price">${item.price} FARADS</div>
                                 <button class="btn" onclick="addToCart(${item.id})">Add to Cart</button>
@@ -1246,9 +1258,6 @@
         }
 
         window.onload = initApp;
-       const SUPABASE_URL = 'https://sdzpqfcwtlcjuobynlia.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_c4zwkphRH_PtPiADYvMB1g_m9Z5XOMu';
-window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-</script>
+    </script>
 </body>
 </html>
