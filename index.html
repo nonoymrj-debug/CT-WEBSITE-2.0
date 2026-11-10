@@ -357,7 +357,7 @@
     </header>
 
     <div class="container">
-        <!-- Notification Banners -->
+        <!-- Notification Banner -->
         <div id="alertBox" class="alert hidden"></div>
 
         <!-- Global Auction Prompt Notification -->
@@ -1024,37 +1024,50 @@
             const activeAuctionView = document.getElementById('activeAuctionArea');
             const statusTag = document.getElementById('auctionStatusTag');
 
+            // Defensive null check
+            if (!currentUser || !noAuctionView || !activeAuctionView) return;
+
             if (!AUCTION_STATE || AUCTION_STATE.status === 'closed') {
-                inviteBox.classList.add('hidden');
+                if (inviteBox) inviteBox.classList.add('hidden');
                 noAuctionView.classList.remove('hidden');
                 activeAuctionView.classList.add('hidden');
                 
-                if (AUCTION_STATE && AUCTION_STATE.winnerName && AUCTION_STATE.status === 'closed') {
-                    statusTag.innerText = `SOLD to ${AUCTION_STATE.winnerName}!`;
-                    statusTag.style.color = "var(--success)";
-                } else {
-                    statusTag.innerText = "No Active Auction";
-                    statusTag.style.color = "var(--warning)";
+                if (statusTag) {
+                    if (AUCTION_STATE && AUCTION_STATE.winnerName && AUCTION_STATE.status === 'closed') {
+                        statusTag.innerText = `SOLD to ${AUCTION_STATE.winnerName}!`;
+                        statusTag.style.color = "var(--success)";
+                    } else {
+                        statusTag.innerText = "No Active Auction";
+                        statusTag.style.color = "var(--warning)";
+                    }
                 }
                 return;
             }
 
-            // Student Invite Banner Visibility
-            const hasJoined = AUCTION_STATE.participants?.some(p => p.id === currentUser?.id);
-            const hasDeclined = AUCTION_STATE.declined?.includes(currentUser?.id);
+            const participants = AUCTION_STATE.participants || [];
+            const declined = AUCTION_STATE.declined || [];
 
-            if (!currentUser.isAdmin && !hasJoined && !hasDeclined) {
-                document.getElementById('auctionInviteText').innerText = `Item: "${AUCTION_STATE.itemName}" | Starting Price: ${AUCTION_STATE.currentBid} FARADS`;
-                inviteBox.classList.remove('hidden');
-            } else {
-                inviteBox.classList.add('hidden');
+            const hasJoined = participants.some(p => p.id === currentUser.id);
+            const hasDeclined = declined.includes(currentUser.id);
+
+            // Student Invite Banner Visibility
+            if (inviteBox) {
+                if (!currentUser.isAdmin && !hasJoined && !hasDeclined) {
+                    document.getElementById('auctionInviteText').innerText = `Item: "${AUCTION_STATE.itemName}" | Starting Price: ${AUCTION_STATE.currentBid} FARADS`;
+                    inviteBox.classList.remove('hidden');
+                } else {
+                    inviteBox.classList.add('hidden');
+                }
             }
 
             // Auction Room Content View
             noAuctionView.classList.add('hidden');
             activeAuctionView.classList.remove('hidden');
-            statusTag.innerText = `LIVE: ${AUCTION_STATE.itemName}`;
-            statusTag.style.color = "var(--success)";
+
+            if (statusTag) {
+                statusTag.innerText = `LIVE: ${AUCTION_STATE.itemName}`;
+                statusTag.style.color = "var(--success)";
+            }
 
             document.getElementById('tabAuctionItemTitle').innerText = AUCTION_STATE.itemName;
             document.getElementById('tabAuctionItemSub').innerText = `Starting Price: ${AUCTION_STATE.currentBid} FARADS`;
@@ -1062,37 +1075,43 @@
             document.getElementById('tabAuctionHighestBidderDisplay').innerText = AUCTION_STATE.highestBidderName;
 
             const partList = document.getElementById('tabAuctionParticipantsList');
-            partList.innerText = AUCTION_STATE.participants.map(p => p.name).join(', ') || 'No participants yet';
+            if (partList) {
+                partList.innerText = participants.map(p => p.name).join(', ') || 'No participants yet';
+            }
 
             const timerDisp = document.getElementById('tabAuctionTimerDisplay');
             const studentCtrl = document.getElementById('tabAuctionStudentControls');
             const teacherCtrl = document.getElementById('tabAuctionTeacherControls');
 
             if (currentUser.isAdmin) {
-                teacherCtrl.classList.remove('hidden');
-                studentCtrl.classList.add('hidden');
+                if (teacherCtrl) teacherCtrl.classList.remove('hidden');
+                if (studentCtrl) studentCtrl.classList.add('hidden');
             } else {
-                teacherCtrl.classList.add('hidden');
-                if (AUCTION_STATE.status === 'active' && hasJoined) {
-                    studentCtrl.classList.remove('hidden');
-                } else {
-                    studentCtrl.classList.add('hidden');
+                if (teacherCtrl) teacherCtrl.classList.add('hidden');
+                if (studentCtrl) {
+                    if (AUCTION_STATE.status === 'active' && hasJoined) {
+                        studentCtrl.classList.remove('hidden');
+                    } else {
+                        studentCtrl.classList.add('hidden');
+                    }
                 }
             }
 
-            if (AUCTION_STATE.status === 'waiting') {
-                timerDisp.innerText = 'Waiting Area';
-            } else if (AUCTION_STATE.status === 'countdown') {
-                timerDisp.innerText = `Bidding Starts In: ${AUCTION_STATE.timer}s`;
-            } else if (AUCTION_STATE.status === 'active') {
-                if (AUCTION_STATE.timer > 3) {
-                    timerDisp.innerText = `Time Remaining: ${AUCTION_STATE.timer}s`;
-                } else if (AUCTION_STATE.timer === 3) {
-                    timerDisp.innerText = 'Going once...';
-                } else if (AUCTION_STATE.timer === 2) {
-                    timerDisp.innerText = 'Going twice...';
-                } else if (AUCTION_STATE.timer === 1) {
-                    timerDisp.innerText = 'Final Call!';
+            if (timerDisp) {
+                if (AUCTION_STATE.status === 'waiting') {
+                    timerDisp.innerText = 'Waiting Area';
+                } else if (AUCTION_STATE.status === 'countdown') {
+                    timerDisp.innerText = `Bidding Starts In: ${AUCTION_STATE.timer}s`;
+                } else if (AUCTION_STATE.status === 'active') {
+                    if (AUCTION_STATE.timer > 3) {
+                        timerDisp.innerText = `Time Remaining: ${AUCTION_STATE.timer}s`;
+                    } else if (AUCTION_STATE.timer === 3) {
+                        timerDisp.innerText = 'Going once...';
+                    } else if (AUCTION_STATE.timer === 2) {
+                        timerDisp.innerText = 'Going twice...';
+                    } else if (AUCTION_STATE.timer === 1) {
+                        timerDisp.innerText = 'Final Call!';
+                    }
                 }
             }
         }
@@ -1102,35 +1121,35 @@
                 title: "REGULAR SHOP",
                 description: "Feeling normal today?",
                 items: [
-                    { id: 1, name: "Ballpen", price: 40 },
-                    { id: 2, name: "Eraser", price: 30 },
-                    { id: 3, name: "Pencil", price: 30 },
-                    { id: 4, name: "A4 bond paper (5 pieces)", price: 50 },
-                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120 },
-                    { id: 6, name: "1/4 (10 pieces)", price: 20 },
-                    { id: 7, name: "Crosswise (10 pieces)", price: 80 },
-                    { id: 8, name: "Lengthwise (10 pieces)", price: 95 },
-                    { id: 9, name: "Long bond paper (5 pieces)", price: 75 },
-                    { id: 10, name: "Short/Letter bond paper (5 pieces)", price: 35 }
+                    { id: 1, name: "Ballpen", price: 40, img: "ballpen" },
+                    { id: 2, name: "Eraser", price: 30, img: "eraser" },
+                    { id: 3, name: "Pencil", price: 30, img: "pencil" },
+                    { id: 4, name: "A4 bond paper (5 pieces)", price: 50, img: "bond_paper" },
+                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120, img: "pad" },
+                    { id: 6, name: "1/4 (10 pieces)", price: 20, img: "quarter_pad" },
+                    { id: 7, name: "Crosswise (10 pieces)", price: 80, img: "crosswise" },
+                    { id: 8, name: "Lengthwise (10 pieces)", price: 95, img: "lengthwise" },
+                    { id: 9, name: "Long bond paper (5 pieces)", price: 75, img: "long_bond" },
+                    { id: 10, name: "Short/Letter bond paper (5 pieces)", price: 35, img: "short_bond" }
                 ]
             },
             {
                 title: "SNACK SHOP",
                 description: "Feeling hungry, are we?",
                 items: [
-                    { id: 11, name: "Lollipop", price: 20 },
-                    { id: 12, name: "Biscuits", price: 60 },
-                    { id: 13, name: "Chips", price: 70 }
+                    { id: 11, name: "Lollipop", price: 20, img: "lollipop" },
+                    { id: 12, name: "Biscuits", price: 60, img: "biscuits" },
+                    { id: 13, name: "Chips", price: 70, img: "chips" }
                 ]
             },
             {
                 title: "SPECIAL SHOP",
                 description: "Feeling rich today?",
                 items: [
-                    { id: 14, name: "One print (A4, non-colored)", price: 200 },
-                    { id: 15, name: "One print (A4, colored, normal)", price: 400 },
-                    { id: 16, name: "One print (A4, colored, best)", price: 500 },
-                    { id: 17, name: "Sign pen", price: 100 }
+                    { id: 14, name: "One print (A4, non-colored)", price: 200, img: "printer" },
+                    { id: 15, name: "One print (A4, colored, normal)", price: 400, img: "printer" },
+                    { id: 16, name: "One print (A4, colored, best)", price: 500, img: "printer" },
+                    { id: 17, name: "Sign pen", price: 100, img: "signpen" }
                 ]
             }
         ];
@@ -1305,7 +1324,6 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.remove('hidden');
             
-            // Highlight active button dynamically
             const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick')?.includes(tabId));
             if (activeBtn) activeBtn.classList.add('active');
         }
@@ -1365,6 +1383,7 @@
                     <div class="shop-grid">
                         ${cat.items.map(item => `
                             <div class="shop-item">
+                                <img src="${item.img}" alt="${item.name}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px; margin-bottom: 0.5rem; background: #0f172a;" onerror="this.style.display='none'">
                                 <div class="item-name">${item.name}</div>
                                 <div class="item-price">${item.price} FARADS</div>
                                 <button class="btn" onclick="addToCart(${item.id})">Add to Cart</button>
