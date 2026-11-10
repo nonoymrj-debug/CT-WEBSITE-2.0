@@ -307,6 +307,35 @@
             color: #86efac;
         }
 
+        /* Modal overlay for Auction Bidding */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent);
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .timer-badge {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--warning);
+            margin: 1rem 0;
+        }
+
         @media (max-width: 600px) {
             header {
                 flex-direction: column;
@@ -407,6 +436,12 @@
                             <p style="font-size: 0.95rem; margin-top: 0.4rem; border-top: 1px dashed var(--border); padding-top: 0.3rem;">Final Equivalent Grade: <strong id="gradeFinal" style="color: var(--accent);">0%</strong></p>
                         </div>
 
+                        <!-- User Item Collection -->
+                        <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">My Won Items Collection</h4>
+                            <div id="userCollectionList" style="font-size: 0.85rem; color: var(--text-muted);">No auction items claimed yet.</div>
+                        </div>
+
                         <!-- User Change Password Form -->
                         <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
                             <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Change My Password</h4>
@@ -461,6 +496,21 @@
             <div id="adminTab" class="tab-content hidden">
                 <div class="dashboard-grid" style="margin-bottom: 1.5rem;">
                     <div class="card" style="margin-bottom: 0;">
+                        <div class="card-title">Host Live Auction</div>
+                        <form onsubmit="handleCreateAuction(event)">
+                            <div class="form-group">
+                                <label>Auction Item Name</label>
+                                <input type="text" id="auctionItemName" class="form-control" placeholder="e.g. Mystery Tech Gadget" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Starting Price (FARADS)</label>
+                                <input type="number" id="auctionStartPrice" class="form-control" min="1" placeholder="e.g. 50" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning" style="width: 100%;">Create & Host Auction</button>
+                        </form>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 0;">
                         <div class="card-title">Award Points</div>
                         <form onsubmit="handleAdminDeposit(event)">
                             <div class="form-group">
@@ -474,22 +524,22 @@
                             <button type="submit" class="btn" style="width: 100%;">Deposit Points</button>
                         </form>
                     </div>
+                </div>
 
-                    <!-- Admin Reset Student Password -->
-                    <div class="card" style="margin-bottom: 0;">
-                        <div class="card-title">Reset Student Password</div>
-                        <form onsubmit="handleAdminResetPassword(event)">
-                            <div class="form-group">
-                                <label>Select Student</label>
-                                <select id="adminResetStudentSelect" class="form-control" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label>New Temporary Password</label>
-                                <input type="text" id="adminNewStudentPass" class="form-control" placeholder="Enter new password" required>
-                            </div>
-                            <button type="submit" class="btn btn-warning" style="width: 100%;">Reset Password</button>
-                        </form>
-                    </div>
+                <!-- Admin Reset Student Password -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-title">Reset Student Password</div>
+                    <form onsubmit="handleAdminResetPassword(event)">
+                        <div class="form-group">
+                            <label>Select Student</label>
+                            <select id="adminResetStudentSelect" class="form-control" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label>New Temporary Password</label>
+                            <input type="text" id="adminNewStudentPass" class="form-control" placeholder="Enter new password" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning" style="width: 100%;">Reset Password</button>
+                    </form>
                 </div>
 
                 <!-- Grading Category Weights Setting -->
@@ -579,9 +629,48 @@
         </div>
     </div>
 
+    <!-- Live Auction Modal Overlay -->
+    <div id="auctionModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <h3 id="auctionItemTitle" style="color: var(--accent);">Live Auction</h3>
+            <p id="auctionItemSub" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">Waiting for host...</p>
+            
+            <div class="timer-badge" id="auctionTimerDisplay">Waiting Area</div>
+
+            <div style="margin: 1rem 0; padding: 0.8rem; background: var(--bg-primary); border-radius: 6px;">
+                <p style="font-size: 0.9rem;">Current Highest Bid:</p>
+                <h2 id="auctionHighestBidDisplay" style="color: var(--success); margin: 0.2rem 0;">0 FARADS</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Bidder: <strong id="auctionHighestBidderDisplay" style="color: var(--accent);">None</strong></p>
+            </div>
+
+            <div style="margin: 1rem 0;">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Participants in Waiting Area:</p>
+                <div id="auctionParticipantsList" style="font-size: 0.85rem; font-weight: bold; color: var(--text-main); max-height: 80px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- Bidding Action Controls -->
+            <div id="auctionStudentControls" class="hidden" style="margin-top: 1rem;">
+                <div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 0.5rem;">
+                    <button class="btn" onclick="placeBid(10)">+10 FARADS</button>
+                    <button class="btn" onclick="placeBid(50)">+50 FARADS</button>
+                    <button class="btn" onclick="placeBid(100)">+100 FARADS</button>
+                </div>
+            </div>
+
+            <!-- Teacher Host Controls -->
+            <div id="auctionTeacherControls" class="hidden" style="margin-top: 1rem;">
+                <button id="startAuctionBtn" class="btn btn-warning" style="width: 100%;" onclick="startAuctionCountdown()">Start Bidding (5s Countdown)</button>
+            </div>
+
+            <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                <button class="btn btn-danger" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;" onclick="leaveAuction()">Leave Auction</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const SUPABASE_URL = 'https://sdzpqfcwtlcjuobynlia.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_c4zwkphRH_PtPiADYvMB1g_m9Z5XOMu';
+        const SUPABASE_URL = 'https://sujpdopplexaxgnizvil.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable__srdeSwL95qHFZLfO2N3WQ_WJSNcB58';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const DEFAULT_COLUMNS = [
@@ -598,63 +687,64 @@
 
         const DEFAULT_ACCOUNTS = [
             // Tester Accounts
-            { id: "1111111111", name: "Tester Student 1", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[] },
-            { id: "2222222222", name: "Tester Student 2", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[] },
-            { id: "8888888888", name: "Tester Admin Teacher", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[] },
+            { id: "1111111111", name: "Tester Student 1", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[], inventory:[] },
+            { id: "2222222222", name: "Tester Student 2", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[], inventory:[] },
+            { id: "8888888888", name: "Tester Admin Teacher", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[] },
 
             // Males
-            { id: "1208201101", name: "David Aguas", pass: "120801", balance: 1000, scores: {written1:88, written2:90, perf1:89, perf2:91, exam1:85, bonus:2}, history:[] },
-            { id: "0731201102", name: "Jovit Ate", pass: "073102", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:84, bonus:0}, history:[] },
-            { id: "0411201203", name: "Tristan Bristol", pass: "041103", balance: 1000, scores: {written1:90, written2:92, perf1:90, perf2:92, exam1:88, bonus:5}, history:[] },
-            { id: "0101201204", name: "Nino Cabasag", pass: "010104", balance: 1000, scores: {written1:84, written2:86, perf1:84, perf2:86, exam1:82, bonus:0}, history:[] },
-            { id: "0220201205", name: "John Callunsag", pass: "022005", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:87, bonus:1}, history:[] },
-            { id: "0220201206", name: "Teody Clarin", pass: "022006", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[] },
-            { id: "0803201207", name: "Immanuel Ella", pass: "080307", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[] },
-            { id: "0414201208", name: "Calix Farre", pass: "041408", balance: 1000, scores: {written1:86, written2:89, perf1:86, perf2:89, exam1:84, bonus:0}, history:[] },
-            { id: "1112201109", name: "Ethan Kollin", pass: "111209", balance: 1000, scores: {written1:88, written2:88, perf1:88, perf2:88, exam1:86, bonus:2}, history:[] },
-            { id: "0718201110", name: "Jolo Maisog", pass: "071810", balance: 1000, scores: {written1:83, written2:85, perf1:83, perf2:85, exam1:81, bonus:0}, history:[] },
-            { id: "0815201111", name: "Jared Nonoy", pass: "Jard123", balance: 1000, scores: {written1:95, written2:97, perf1:95, perf2:97, exam1:94, bonus:5}, history:[] },
-            { id: "0626201212", name: "Benz Oriño", pass: "062612", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[] },
-            { id: "0215201213", name: "Kyle Suarez", pass: "021513", balance: 1000, scores: {written1:87, written2:86, perf1:87, perf2:86, exam1:85, bonus:1}, history:[] },
-            { id: "0531201214", name: "Liam Uba", pass: "053114", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:88, bonus:2}, history:[] },
-            { id: "0115201215", name: "Rufz Casinto", pass: "011515", balance: 1000, scores: {written1:88, written2:89, perf1:88, perf2:89, exam1:86, bonus:0}, history:[] },
+            { id: "1208201101", name: "David Aguas", pass: "120801", balance: 1000, scores: {written1:88, written2:90, perf1:89, perf2:91, exam1:85, bonus:2}, history:[], inventory:[] },
+            { id: "0731201102", name: "Jovit Ate", pass: "073102", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:84, bonus:0}, history:[], inventory:[] },
+            { id: "0411201203", name: "Tristan Bristol", pass: "041103", balance: 1000, scores: {written1:90, written2:92, perf1:90, perf2:92, exam1:88, bonus:5}, history:[], inventory:[] },
+            { id: "0101201204", name: "Nino Cabasag", pass: "010104", balance: 1000, scores: {written1:84, written2:86, perf1:84, perf2:86, exam1:82, bonus:0}, history:[], inventory:[] },
+            { id: "0220201205", name: "John Callunsag", pass: "022005", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:87, bonus:1}, history:[], inventory:[] },
+            { id: "0220201206", name: "Teody Clarin", pass: "022006", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[], inventory:[] },
+            { id: "0803201207", name: "Immanuel Ella", pass: "080307", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[], inventory:[] },
+            { id: "0414201208", name: "Calix Farre", pass: "041408", balance: 1000, scores: {written1:86, written2:89, perf1:86, perf2:89, exam1:84, bonus:0}, history:[], inventory:[] },
+            { id: "1112201109", name: "Ethan Kollin", pass: "111209", balance: 1000, scores: {written1:88, written2:88, perf1:88, perf2:88, exam1:86, bonus:2}, history:[], inventory:[] },
+            { id: "0718201110", name: "Jolo Maisog", pass: "071810", balance: 1000, scores: {written1:83, written2:85, perf1:83, perf2:85, exam1:81, bonus:0}, history:[], inventory:[] },
+            { id: "0815201111", name: "Jared Nonoy", pass: "Jard123", balance: 1000, scores: {written1:95, written2:97, perf1:95, perf2:97, exam1:94, bonus:5}, history:[], inventory:[] },
+            { id: "0626201212", name: "Benz Oriño", pass: "062612", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[], inventory:[] },
+            { id: "0215201213", name: "Kyle Suarez", pass: "021513", balance: 1000, scores: {written1:87, written2:86, perf1:87, perf2:86, exam1:85, bonus:1}, history:[], inventory:[] },
+            { id: "0531201214", name: "Liam Uba", pass: "053114", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:88, bonus:2}, history:[], inventory:[] },
+            { id: "0115201215", name: "Rufz Casinto", pass: "011515", balance: 1000, scores: {written1:88, written2:89, perf1:88, perf2:89, exam1:86, bonus:0}, history:[], inventory:[] },
 
             // Females
-            { id: "0715201116", name: "Charo Aboga-a", pass: "071516", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[] },
-            { id: "1215201117", name: "Ayesha Amer", pass: "121517", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:88, bonus:0}, history:[] },
-            { id: "0830201118", name: "Kristine Antiga", pass: "083018", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:89, bonus:2}, history:[] },
-            { id: "0913201219", name: "Mia Apao", pass: "091319", balance: 1000, scores: {written1:88, written2:87, perf1:88, perf2:87, exam1:85, bonus:0}, history:[] },
-            { id: "0824201120", name: "Embrace Bandiala", pass: "082420", balance: 1000, scores: {written1:93, written2:95, perf1:93, perf2:95, exam1:92, bonus:4}, history:[] },
-            { id: "0411201221", name: "Janessa Caga-anan", pass: "041121", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:85, bonus:0}, history:[] },
-            { id: "0413201222", name: "Veronica Ciano", pass: "041322", balance: 1000, scores: {written1:86, written2:88, perf1:86, perf2:88, exam1:84, bonus:1}, history:[] },
-            { id: "0419201223", name: "Rhea Cirunay", pass: "041923", balance: 1000, scores: {written1:91, written2:92, perf1:91, perf2:92, exam1:90, bonus:2}, history:[] },
-            { id: "0118201224", name: "Joberly Jambo", pass: "011824", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[] },
-            { id: "0420201225", name: "Shiloh Lagumbay", pass: "042025", balance: 1000, scores: {written1:90, written2:89, perf1:90, perf2:89, exam1:88, bonus:1}, history:[] },
-            { id: "0104201226", name: "Vrylle Mandao", pass: "010426", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:83, bonus:0}, history:[] },
-            { id: "0430201227", name: "Crystallize Manliguez", pass: "043027", balance: 1000, scores: {written1:94, written2:96, perf1:94, perf2:96, exam1:93, bonus:5}, history:[] },
-            { id: "1104201128", name: "Lee Manan-og", pass: "110428", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[] },
-            { id: "1130201129", name: "Marwa Matundac", pass: "113029", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[] },
-            { id: "0924201130", name: "Nica Mutia", pass: "092430", balance: 1000, scores: {written1:92, written2:93, perf1:92, perf2:93, exam1:91, bonus:2}, history:[] },
-            { id: "0813201131", name: "Ceana Oculam", pass: "081331", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:89, bonus:1}, history:[] },
-            { id: "0331201232", name: "Shena Oliveros", pass: "033132", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[] },
-            { id: "0515201233", name: "Alphyca Osuyos", pass: "051533", balance: 1000, scores: {written1:86, written2:87, perf1:86, perf2:87, exam1:84, bonus:0}, history:[] },
-            { id: "1230201134", name: "Daniela Pongcol", pass: "123034", balance: 1000, scores: {written1:89, written2:92, perf1:89, perf2:92, exam1:88, bonus:2}, history:[] },
-            { id: "0203201235", name: "Rashiel Samrano", pass: "020335", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[] },
-            { id: "1119201136", name: "Kriselsem Sinajon", pass: "111936", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:86, bonus:0}, history:[] },
-            { id: "1210201137", name: "Chedane Sultan", pass: "121037", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:88, bonus:1}, history:[] },
-            { id: "0730201138", name: "Jasmine Tomagna", pass: "073038", balance: 1000, scores: {written1:88, written2:91, perf1:88, perf2:91, exam1:86, bonus:0}, history:[] },
-            { id: "0428201239", name: "Khloe Ungab", pass: "042839", balance: 1000, scores: {written1:85, written2:86, perf1:85, perf2:86, exam1:83, bonus:0}, history:[] },
-            { id: "0831201240", name: "Ashley Vale", pass: "083140", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[] },
-            { id: "0910201141", name: "Herald Vidad", pass: "091041", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:1}, history:[] },
+            { id: "0715201116", name: "Charo Aboga-a", pass: "071516", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[], inventory:[] },
+            { id: "1215201117", name: "Ayesha Amer", pass: "121517", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:88, bonus:0}, history:[], inventory:[] },
+            { id: "0830201118", name: "Kristine Antiga", pass: "083018", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:89, bonus:2}, history:[], inventory:[] },
+            { id: "0913201219", name: "Mia Apao", pass: "091319", balance: 1000, scores: {written1:88, written2:87, perf1:88, perf2:87, exam1:85, bonus:0}, history:[], inventory:[] },
+            { id: "0824201120", name: "Embrace Bandiala", pass: "082420", balance: 1000, scores: {written1:93, written2:95, perf1:93, perf2:95, exam1:92, bonus:4}, history:[], inventory:[] },
+            { id: "0411201221", name: "Janessa Caga-anan", pass: "041121", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:85, bonus:0}, history:[], inventory:[] },
+            { id: "0413201222", name: "Veronica Ciano", pass: "041322", balance: 1000, scores: {written1:86, written2:88, perf1:86, perf2:88, exam1:84, bonus:1}, history:[], inventory:[] },
+            { id: "0419201223", name: "Rhea Cirunay", pass: "041923", balance: 1000, scores: {written1:91, written2:92, perf1:91, perf2:92, exam1:90, bonus:2}, history:[], inventory:[] },
+            { id: "0118201224", name: "Joberly Jambo", pass: "011824", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[], inventory:[] },
+            { id: "0420201225", name: "Shiloh Lagumbay", pass: "042025", balance: 1000, scores: {written1:90, written2:89, perf1:90, perf2:89, exam1:88, bonus:1}, history:[], inventory:[] },
+            { id: "0104201226", name: "Vrylle Mandao", pass: "010426", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:83, bonus:0}, history:[], inventory:[] },
+            { id: "0430201227", name: "Crystallize Manliguez", pass: "043027", balance: 1000, scores: {written1:94, written2:96, perf1:94, perf2:96, exam1:93, bonus:5}, history:[], inventory:[] },
+            { id: "1104201128", name: "Lee Manan-og", pass: "110428", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[], inventory:[] },
+            { id: "1130201129", name: "Marwa Matundac", pass: "113029", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[], inventory:[] },
+            { id: "0924201130", name: "Nica Mutia", pass: "092430", balance: 1000, scores: {written1:92, written2:93, perf1:92, perf2:93, exam1:91, bonus:2}, history:[], inventory:[] },
+            { id: "0813201131", name: "Ceana Oculam", pass: "081331", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:89, bonus:1}, history:[], inventory:[] },
+            { id: "0331201232", name: "Shena Oliveros", pass: "033132", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[], inventory:[] },
+            { id: "0515201233", name: "Alphyca Osuyos", pass: "051533", balance: 1000, scores: {written1:86, written2:87, perf1:86, perf2:87, exam1:84, bonus:0}, history:[], inventory:[] },
+            { id: "1230201134", name: "Daniela Pongcol", pass: "123034", balance: 1000, scores: {written1:89, written2:92, perf1:89, perf2:92, exam1:88, bonus:2}, history:[], inventory:[] },
+            { id: "0203201235", name: "Rashiel Samrano", pass: "020335", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[], inventory:[] },
+            { id: "1119201136", name: "Kriselsem Sinajon", pass: "111936", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:86, bonus:0}, history:[], inventory:[] },
+            { id: "1210201137", name: "Chedane Sultan", pass: "121037", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:88, bonus:1}, history:[], inventory:[] },
+            { id: "0730201138", name: "Jasmine Tomagna", pass: "073038", balance: 1000, scores: {written1:88, written2:91, perf1:88, perf2:91, exam1:86, bonus:0}, history:[], inventory:[] },
+            { id: "0428201239", name: "Khloe Ungab", pass: "042839", balance: 1000, scores: {written1:85, written2:86, perf1:85, perf2:86, exam1:83, bonus:0}, history:[], inventory:[] },
+            { id: "0831201240", name: "Ashley Vale", pass: "083140", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[], inventory:[] },
+            { id: "0910201141", name: "Herald Vidad", pass: "091041", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:1}, history:[], inventory:[] },
 
             // Main Admin Account
-            { id: "9999999999", name: "Ma'am Anib", pass: "admin123", balance: 99999, isAdmin: true, scores: {}, history:[] }
+            { id: "9999999999", name: "Ma'am Anib", pass: "admin123", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[] }
         ];
 
         let ACCOUNTS_DATA = [];
         let GRADE_COLUMNS = [];
         let GRADE_WEIGHTS = {};
         let GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+        let AUCTION_STATE = null;
 
         // Supabase Data Loading
         async function loadAllData() {
@@ -670,11 +760,13 @@
                     GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+                    AUCTION_STATE = null;
                 } else {
                     ACCOUNTS_DATA = data.accounts || JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
                     GRADE_COLUMNS = data.columns || JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = data.convRate !== undefined ? data.convRate : DEFAULT_CONVERSION_RATE;
+                    AUCTION_STATE = data.auction || null;
                 }
             } catch (err) {
                 console.error("Failed to load data from Supabase, using defaults:", err);
@@ -682,6 +774,7 @@
                 GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                 GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                 GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+                AUCTION_STATE = null;
             }
         }
 
@@ -694,7 +787,8 @@
                         accounts: ACCOUNTS_DATA,
                         columns: GRADE_COLUMNS,
                         weights: GRADE_WEIGHTS,
-                        convRate: GRADE_CONV_RATE
+                        convRate: GRADE_CONV_RATE,
+                        auction: AUCTION_STATE
                     })
                     .eq('id', 1);
             } catch (err) {
@@ -709,6 +803,7 @@
                     GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+                    AUCTION_STATE = null;
 
                     await saveAllData();
                     if (currentUser) {
@@ -729,15 +824,16 @@
                 'postgres_changes',
                 { event: 'UPDATE', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
                 (payload) => {
-                    console.log("🔥 LIVE DATABASE UPDATE DETECTED! 🔥", payload.new);
                     const updated = payload.new;
                     ACCOUNTS_DATA = updated.accounts || ACCOUNTS_DATA;
                     GRADE_COLUMNS = updated.columns || GRADE_COLUMNS;
                     GRADE_WEIGHTS = updated.weights || GRADE_WEIGHTS;
                     GRADE_CONV_RATE = updated.convRate !== undefined ? updated.convRate : GRADE_CONV_RATE;
+                    AUCTION_STATE = updated.auction || null;
                     
                     if (currentUser) {
                         updateUserDisplays();
+                        handleAuctionRealtimeSync();
                     }
                     renderGradebookSheet();
                     populateDirectory();
@@ -746,6 +842,199 @@
             .subscribe((status) => {
                 console.log("Realtime Subscription Status:", status);
             });
+
+        /* --- Live Auction System Logic --- */
+        async function handleCreateAuction(e) {
+            e.preventDefault();
+            const itemName = document.getElementById('auctionItemName').value.trim();
+            const startPrice = parseFloat(document.getElementById('auctionStartPrice').value);
+
+            if (!itemName || isNaN(startPrice) || startPrice < 1) {
+                showAlert('Please provide a valid item name and starting price.', 'danger');
+                return;
+            }
+
+            AUCTION_STATE = {
+                status: 'waiting',
+                itemName: itemName,
+                currentBid: startPrice,
+                highestBidderId: null,
+                highestBidderName: 'None',
+                participants: [],
+                bidsHistory: [],
+                timer: 0
+            };
+
+            await saveAllData();
+            document.getElementById('auctionItemName').value = '';
+            document.getElementById('auctionStartPrice').value = '';
+            showAlert(`Auction for "${itemName}" created! Students notified.`, 'success');
+        }
+
+        async function joinAuctionWaitingRoom() {
+            if (!AUCTION_STATE || AUCTION_STATE.status === 'closed') return;
+            if (!currentUser) return;
+
+            if (!AUCTION_STATE.participants.some(p => p.id === currentUser.id)) {
+                AUCTION_STATE.participants.push({ id: currentUser.id, name: currentUser.name });
+                await saveAllData();
+            }
+        }
+
+        async function leaveAuction() {
+            if (AUCTION_STATE && currentUser) {
+                AUCTION_STATE.participants = AUCTION_STATE.participants.filter(p => p.id !== currentUser.id);
+                await saveAllData();
+            }
+            document.getElementById('auctionModal').classList.add('hidden');
+        }
+
+        async function placeBid(increment) {
+            if (!AUCTION_STATE || AUCTION_STATE.status !== 'active') {
+                showAlert('Auction bidding is not currently active!', 'danger');
+                return;
+            }
+
+            const newBid = AUCTION_STATE.currentBid + increment;
+            if (currentUser.balance < newBid) {
+                showAlert('You do not have enough FARADS for this bid!', 'danger');
+                return;
+            }
+
+            AUCTION_STATE.currentBid = newBid;
+            AUCTION_STATE.highestBidderId = currentUser.id;
+            AUCTION_STATE.highestBidderName = currentUser.name;
+            AUCTION_STATE.bidsHistory.push({ id: currentUser.id, name: currentUser.name, amount: newBid });
+
+            await saveAllData();
+        }
+
+        async function startAuctionCountdown() {
+            if (!AUCTION_STATE || currentUser?.id !== '9999999999') return;
+            AUCTION_STATE.status = 'countdown';
+            AUCTION_STATE.timer = 5;
+            await saveAllData();
+
+            let count = 5;
+            const cdInterval = setInterval(async () => {
+                count--;
+                if (AUCTION_STATE) {
+                    AUCTION_STATE.timer = count;
+                    await saveAllData();
+                }
+                if (count <= 0) {
+                    clearInterval(cdInterval);
+                    startActiveBidding10s();
+                }
+            }, 1000);
+        }
+
+        async function startActiveBidding10s() {
+            if (!AUCTION_STATE) return;
+            AUCTION_STATE.status = 'active';
+            AUCTION_STATE.timer = 10;
+            await saveAllData();
+
+            let count = 10;
+            const bidInterval = setInterval(async () => {
+                count--;
+                if (AUCTION_STATE) {
+                    AUCTION_STATE.timer = count;
+                    await saveAllData();
+                }
+                if (count <= 0) {
+                    clearInterval(bidInterval);
+                    finalizeAuctionWinner();
+                }
+            }, 1000);
+        }
+
+        async function finalizeAuctionWinner() {
+            if (!AUCTION_STATE || currentUser?.id !== '9999999999') return;
+
+            AUCTION_STATE.status = 'closed';
+            
+            const sortedBids = [...AUCTION_STATE.bidsHistory].reverse();
+            let winner = null;
+            let winningBid = 0;
+
+            for (const bid of sortedBids) {
+                const student = ACCOUNTS_DATA.find(a => a.id === bid.id);
+                if (student && student.balance >= bid.amount) {
+                    winner = student;
+                    winningBid = bid.amount;
+                    break;
+                }
+            }
+
+            if (winner) {
+                winner.balance -= winningBid;
+                if (!winner.inventory) winner.inventory = [];
+                winner.inventory.push({ item: AUCTION_STATE.itemName, paid: winningBid, date: new Date().toLocaleDateString() });
+                AUCTION_STATE.winnerName = winner.name;
+                AUCTION_STATE.winningBid = winningBid;
+            } else {
+                AUCTION_STATE.winnerName = 'Nobody (No valid bids)';
+            }
+
+            await saveAllData();
+        }
+
+        function handleAuctionRealtimeSync() {
+            const modal = document.getElementById('auctionModal');
+            if (!AUCTION_STATE || AUCTION_STATE.status === 'closed') {
+                if (AUCTION_STATE && AUCTION_STATE.winnerName && AUCTION_STATE.status === 'closed') {
+                    document.getElementById('auctionTimerDisplay').innerText = `SOLD to ${AUCTION_STATE.winnerName}!`;
+                    setTimeout(() => modal.classList.add('hidden'), 4000);
+                } else {
+                    modal.classList.add('hidden');
+                }
+                return;
+            }
+
+            modal.classList.remove('hidden');
+            joinAuctionWaitingRoom();
+
+            document.getElementById('auctionItemTitle').innerText = AUCTION_STATE.itemName;
+            document.getElementById('auctionItemSub').innerText = `Hosted by Teacher`;
+            document.getElementById('auctionHighestBidDisplay').innerText = `${AUCTION_STATE.currentBid} FARADS`;
+            document.getElementById('auctionHighestBidderDisplay').innerText = AUCTION_STATE.highestBidderName;
+
+            const partList = document.getElementById('auctionParticipantsList');
+            partList.innerText = AUCTION_STATE.participants.map(p => p.name).join(', ') || 'None';
+
+            const timerDisp = document.getElementById('auctionTimerDisplay');
+            const studentCtrl = document.getElementById('auctionStudentControls');
+            const teacherCtrl = document.getElementById('auctionTeacherControls');
+
+            if (currentUser.isAdmin) {
+                teacherCtrl.classList.remove('hidden');
+                studentCtrl.classList.add('hidden');
+            } else {
+                teacherCtrl.classList.add('hidden');
+                if (AUCTION_STATE.status === 'active') {
+                    studentCtrl.classList.remove('hidden');
+                } else {
+                    studentCtrl.classList.add('hidden');
+                }
+            }
+
+            if (AUCTION_STATE.status === 'waiting') {
+                timerDisp.innerText = 'Waiting Area';
+            } else if (AUCTION_STATE.status === 'countdown') {
+                timerDisp.innerText = `Bidding Starts In: ${AUCTION_STATE.timer}s`;
+            } else if (AUCTION_STATE.status === 'active') {
+                if (AUCTION_STATE.timer > 3) {
+                    timerDisp.innerText = `Time Remaining: ${AUCTION_STATE.timer}s`;
+                } else if (AUCTION_STATE.timer === 3) {
+                    timerDisp.innerText = 'Going Once...';
+                } else if (AUCTION_STATE.timer === 2) {
+                    timerDisp.innerText = 'Going Twice...';
+                } else if (AUCTION_STATE.timer === 1) {
+                    timerDisp.innerText = 'Final Call!';
+                }
+            }
+        }
 
         const SHOP_CATEGORIES = [
             {
@@ -824,6 +1113,7 @@
                 }
 
                 updateUserDisplays();
+                handleAuctionRealtimeSync();
                 showAlert(`Welcome back, ${currentUser.name}!`, 'success');
             } else {
                 showAlert('Invalid Account ID or Password!', 'danger');
@@ -931,8 +1221,22 @@
             document.getElementById('gradeExam').innerText = grades.e;
             document.getElementById('gradeFinal').innerText = `${grades.final}%`;
 
+            renderUserCollection();
             renderPurchaseHistory();
             populateDirectory();
+        }
+
+        function renderUserCollection() {
+            const list = document.getElementById('userCollectionList');
+            if (!currentUser.inventory || currentUser.inventory.length === 0) {
+                list.innerHTML = 'No auction items claimed yet.';
+                return;
+            }
+            list.innerHTML = currentUser.inventory.map(item => `
+                <div style="background: var(--bg-primary); padding: 0.4rem 0.6rem; border-radius: 4px; margin-bottom: 0.3rem;">
+                    🏆 <strong>${item.item}</strong> (${item.paid} F) - ${item.date}
+                </div>
+            `).join('');
         }
 
         function switchTab(tabId) {
