@@ -746,14 +746,14 @@
         let GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
         let AUCTION_STATE = null;
 
-        // Supabase Data Loading
+        // Supabase Data Loading with maybeSingle() to handle 406 errors cleanly
         async function loadAllData() {
             try {
                 const { data, error } = await supabaseClient
                     .from('app_data')
                     .select('*')
                     .eq('id', 1)
-                    .single();
+                    .maybeSingle();
 
                 if (error || !data) {
                     ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
@@ -761,9 +761,10 @@
                     GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
                     AUCTION_STATE = null;
+                    await saveAllData();
                 } else {
-                    ACCOUNTS_DATA = data.accounts || JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
-                    GRADE_COLUMNS = data.columns || JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                    ACCOUNTS_DATA = data.accounts && data.accounts.length > 0 ? data.accounts : JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                    GRADE_COLUMNS = data.columns && data.columns.length > 0 ? data.columns : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = data.convRate !== undefined ? data.convRate : DEFAULT_CONVERSION_RATE;
                     AUCTION_STATE = data.auction || null;
