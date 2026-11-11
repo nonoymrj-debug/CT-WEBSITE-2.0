@@ -223,6 +223,18 @@
             justify-content: space-between;
         }
 
+        .item-placeholder {
+            width: 100%;
+            height: 110px;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
         .item-name {
             font-weight: 600;
             margin-bottom: 0.25rem;
@@ -287,7 +299,7 @@
             margin-top: 1rem;
         }
 
-        /* Alert & Notification Messages */
+        /* Alert Messages */
         .alert {
             padding: 0.75rem 1rem;
             border-radius: 6px;
@@ -307,28 +319,6 @@
             color: #86efac;
         }
 
-        .auction-notify-banner {
-            background-color: rgba(245, 158, 11, 0.2);
-            border: 2px solid var(--warning);
-            color: #fef08a;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .timer-badge {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--warning);
-            margin: 1rem 0;
-            text-align: center;
-        }
-
         @media (max-width: 600px) {
             header {
                 flex-direction: column;
@@ -346,7 +336,7 @@
     <!-- Header -->
     <header id="mainHeader" class="hidden">
         <div class="logo-title">
-            <img src="ft_logo.png" alt="Faraday Tech Logo" class="header-logo">
+            <img src="ft_logo.png" alt="Faraday Tech Logo" class="header-logo" onerror="this.style.display='none'">
             <h2>Faraday Tech</h2>
         </div>
         <div class="user-profile">
@@ -360,22 +350,10 @@
         <!-- Notification Banner -->
         <div id="alertBox" class="alert hidden"></div>
 
-        <!-- Global Auction Prompt Notification -->
-        <div id="auctionInviteNotification" class="auction-notify-banner hidden">
-            <div>
-                <strong style="font-size: 1.1rem; color: var(--warning);">📢 LIVE AUCTION STARTING!</strong>
-                <p id="auctionInviteText" style="margin-top: 0.25rem;">The teacher hosted a new bidding event.</p>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-warning" onclick="acceptAuctionInvite()">Join Auction</button>
-                <button class="btn btn-danger" onclick="declineAuctionInvite()">Don't Join</button>
-            </div>
-        </div>
-
         <!-- Login Section -->
         <div id="loginSection" class="login-card">
             <div style="text-align: center; margin-bottom: 1.5rem;">
-                <img src="ft_logo.png" alt="Logo" style="width: 55px; height: 55px; margin: 0 auto 0.5rem auto; display: block; object-fit: contain;">
+                <img src="ft_logo.png" alt="Logo" style="width: 55px; height: 55px; margin: 0 auto 0.5rem auto; display: block; object-fit: contain;" onerror="this.style.display='none'">
                 <h2>Login</h2>
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Creative Technology Portal</p>
             </div>
@@ -404,7 +382,6 @@
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('transferTab')">FARADS Transfer</button>
                 <button class="tab-btn" onclick="switchTab('shopTab')">School Store</button>
-                <button id="auctionTabBtn" class="tab-btn" onclick="switchTab('auctionTab')">🔨 Auction Room</button>
                 <button id="adminTabBtn" class="tab-btn hidden" onclick="switchTab('adminTab')">Grading & Admin</button>
                 <button class="tab-btn" onclick="switchTab('directoryTab')">Classroom List</button>
             </div>
@@ -440,12 +417,6 @@
                             <p style="font-size: 0.9rem; margin-top: 0.2rem;">Performance Tasks (<span id="dispWeightP">50</span>%): <strong id="gradePerformance" style="color: var(--success);">0</strong></p>
                             <p style="font-size: 0.9rem; margin-top: 0.2rem;">Exam (<span id="dispWeightE">20</span>%): <strong id="gradeExam" style="color: var(--success);">0</strong></p>
                             <p style="font-size: 0.95rem; margin-top: 0.4rem; border-top: 1px dashed var(--border); padding-top: 0.3rem;">Final Equivalent Grade: <strong id="gradeFinal" style="color: var(--accent);">0%</strong></p>
-                        </div>
-
-                        <!-- User Item Collection -->
-                        <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
-                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">My Won Items Collection</h4>
-                            <div id="userCollectionList" style="font-size: 0.85rem; color: var(--text-muted);">No auction items claimed yet.</div>
                         </div>
 
                         <!-- User Change Password Form -->
@@ -498,77 +469,9 @@
                 </div>
             </div>
 
-            <!-- Dedicated Tab 3: Auction Room -->
-            <div id="auctionTab" class="tab-content hidden">
-                <div class="card" style="max-width: 600px; margin: 0 auto;">
-                    <div class="card-title">
-                        <span>🔨 Live Bidding Arena</span>
-                        <span id="auctionStatusTag" style="font-size: 0.85rem; color: var(--warning);">No Active Auction</span>
-                    </div>
-
-                    <div id="noAuctionArea" style="text-align: center; padding: 2rem 0; color: var(--text-muted);">
-                        <p>There is no auction event hosted right now.</p>
-                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">When your teacher starts an auction, a notification banner will pop up here.</p>
-                    </div>
-
-                    <div id="activeAuctionArea" class="hidden">
-                        <div style="text-align: center; margin-bottom: 1.5rem;">
-                            <h2 id="tabAuctionItemTitle" style="color: var(--accent); font-size: 1.8rem;">Item Name</h2>
-                            <p id="tabAuctionItemSub" style="color: var(--text-muted);">Starting Price: 0 FARADS</p>
-                        </div>
-
-                        <div class="timer-badge" id="tabAuctionTimerDisplay">Waiting Area</div>
-
-                        <div style="margin: 1.5rem 0; padding: 1rem; background: var(--bg-primary); border-radius: 8px; text-align: center;">
-                            <p style="font-size: 0.9rem; color: var(--text-muted);">Current Highest Bid:</p>
-                            <h2 id="tabAuctionHighestBidDisplay" style="color: var(--success); font-size: 2.2rem; margin: 0.2rem 0;">0 FARADS</h2>
-                            <p style="font-size: 0.9rem;">Bidder: <strong id="tabAuctionHighestBidderDisplay" style="color: var(--accent);">None</strong></p>
-                        </div>
-
-                        <div style="margin: 1.5rem 0;">
-                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Participants in Waiting Area:</p>
-                            <div id="tabAuctionParticipantsList" style="font-size: 0.9rem; font-weight: bold; color: var(--text-main); background: var(--bg-primary); padding: 0.75rem; border-radius: 6px; max-height: 100px; overflow-y: auto;">None</div>
-                        </div>
-
-                        <!-- Student Bidding Buttons -->
-                        <div id="tabAuctionStudentControls" class="hidden" style="margin-top: 1.5rem;">
-                            <div style="display: flex; gap: 0.5rem; justify-content: center;">
-                                <button class="btn" onclick="placeBid(10)">+10 FARADS</button>
-                                <button class="btn" onclick="placeBid(50)">+50 FARADS</button>
-                                <button class="btn" onclick="placeBid(100)">+100 FARADS</button>
-                            </div>
-                        </div>
-
-                        <!-- Teacher Control Button -->
-                        <div id="tabAuctionTeacherControls" class="hidden" style="margin-top: 1.5rem;">
-                            <button id="tabStartAuctionBtn" class="btn btn-warning" style="width: 100%; padding: 0.8rem; font-size: 1rem;" onclick="startAuctionCountdown()">Start Bidding (5s Countdown)</button>
-                        </div>
-
-                        <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; text-align: center;">
-                            <button class="btn btn-danger" style="font-size: 0.85rem;" onclick="leaveAuction()">Leave Auction Room</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 4: Admin & Gradebook Worksheet (Ma'am Anib) -->
+            <!-- Tab 3: Admin & Gradebook Worksheet (Ma'am Anib) -->
             <div id="adminTab" class="tab-content hidden">
                 <div class="dashboard-grid" style="margin-bottom: 1.5rem;">
-                    <div class="card" style="margin-bottom: 0;">
-                        <div class="card-title">Host Live Auction</div>
-                        <form onsubmit="handleCreateAuction(event)">
-                            <div class="form-group">
-                                <label>Auction Item Name</label>
-                                <input type="text" id="auctionItemName" class="form-control" placeholder="e.g. Mystery Tech Gadget" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Starting Price (FARADS)</label>
-                                <input type="number" id="auctionStartPrice" class="form-control" min="1" placeholder="e.g. 50" required>
-                            </div>
-                            <button type="submit" class="btn btn-warning" style="width: 100%;">Create & Host Auction</button>
-                        </form>
-                    </div>
-
                     <div class="card" style="margin-bottom: 0;">
                         <div class="card-title">Award Points</div>
                         <form onsubmit="handleAdminDeposit(event)">
@@ -583,22 +486,22 @@
                             <button type="submit" class="btn" style="width: 100%;">Deposit Points</button>
                         </form>
                     </div>
-                </div>
 
-                <!-- Admin Reset Student Password -->
-                <div class="card" style="margin-bottom: 1.5rem;">
-                    <div class="card-title">Reset Student Password</div>
-                    <form onsubmit="handleAdminResetPassword(event)">
-                        <div class="form-group">
-                            <label>Select Student</label>
-                            <select id="adminResetStudentSelect" class="form-control" required></select>
-                        </div>
-                        <div class="form-group">
-                            <label>New Temporary Password</label>
-                            <input type="text" id="adminNewStudentPass" class="form-control" placeholder="Enter new password" required>
-                        </div>
-                        <button type="submit" class="btn btn-warning" style="width: 100%;">Reset Password</button>
-                    </form>
+                    <!-- Admin Reset Student Password -->
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-title">Reset Student Password</div>
+                        <form onsubmit="handleAdminResetPassword(event)">
+                            <div class="form-group">
+                                <label>Select Student</label>
+                                <select id="adminResetStudentSelect" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>New Temporary Password</label>
+                                <input type="text" id="adminNewStudentPass" class="form-control" placeholder="Enter new password" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning" style="width: 100%;">Reset Password</button>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- Grading Category Weights Setting -->
@@ -653,7 +556,6 @@
                                 <tr id="worksheetHeaderRow">
                                     <th>ID</th>
                                     <th>Student Name</th>
-                                    <!-- Dynamic columns injected here -->
                                 </tr>
                             </thead>
                             <tbody id="gradebookTableBody"></tbody>
@@ -665,7 +567,7 @@
                 </div>
             </div>
 
-            <!-- Tab 5: Directory -->
+            <!-- Tab 4: Directory -->
             <div id="directoryTab" class="tab-content hidden">
                 <div class="card">
                     <div class="card-title">Classroom Directory</div>
@@ -707,67 +609,65 @@
 
         const DEFAULT_ACCOUNTS = [
             // Tester Accounts
-            { id: "1111111111", name: "Tester Student 1", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[], inventory:[] },
-            { id: "2222222222", name: "Tester Student 2", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[], inventory:[] },
-            { id: "8888888888", name: "Tester Admin Teacher", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[] },
+            { id: "1111111111", name: "Tester Student 1", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[] },
+            { id: "2222222222", name: "Tester Student 2", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[] },
+            { id: "8888888888", name: "Tester Admin Teacher", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[] },
 
             // Males
-            { id: "1208201101", name: "David Aguas", pass: "120801", balance: 1000, scores: {written1:88, written2:90, perf1:89, perf2:91, exam1:85, bonus:2}, history:[], inventory:[] },
-            { id: "0731201102", name: "Jovit Ate", pass: "073102", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:84, bonus:0}, history:[], inventory:[] },
-            { id: "0411201203", name: "Tristan Bristol", pass: "041103", balance: 1000, scores: {written1:90, written2:92, perf1:90, perf2:92, exam1:88, bonus:5}, history:[], inventory:[] },
-            { id: "0101201204", name: "Nino Cabasag", pass: "010104", balance: 1000, scores: {written1:84, written2:86, perf1:84, perf2:86, exam1:82, bonus:0}, history:[], inventory:[] },
-            { id: "0220201205", name: "John Callunsag", pass: "022005", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:87, bonus:1}, history:[], inventory:[] },
-            { id: "0220201206", name: "Teody Clarin", pass: "022006", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[], inventory:[] },
-            { id: "0803201207", name: "Immanuel Ella", pass: "080307", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[], inventory:[] },
-            { id: "0414201208", name: "Calix Farre", pass: "041408", balance: 1000, scores: {written1:86, written2:89, perf1:86, perf2:89, exam1:84, bonus:0}, history:[], inventory:[] },
-            { id: "1112201109", name: "Ethan Kollin", pass: "111209", balance: 1000, scores: {written1:88, written2:88, perf1:88, perf2:88, exam1:86, bonus:2}, history:[], inventory:[] },
-            { id: "0718201110", name: "Jolo Maisog", pass: "071810", balance: 1000, scores: {written1:83, written2:85, perf1:83, perf2:85, exam1:81, bonus:0}, history:[], inventory:[] },
-            { id: "0815201111", name: "Jared Nonoy", pass: "Jard123", balance: 1000, scores: {written1:95, written2:97, perf1:95, perf2:97, exam1:94, bonus:5}, history:[], inventory:[] },
-            { id: "0626201212", name: "Benz Oriño", pass: "062612", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[], inventory:[] },
-            { id: "0215201213", name: "Kyle Suarez", pass: "021513", balance: 1000, scores: {written1:87, written2:86, perf1:87, perf2:86, exam1:85, bonus:1}, history:[], inventory:[] },
-            { id: "0531201214", name: "Liam Uba", pass: "053114", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:88, bonus:2}, history:[], inventory:[] },
-            { id: "0115201215", name: "Rufz Casinto", pass: "011515", balance: 1000, scores: {written1:88, written2:89, perf1:88, perf2:89, exam1:86, bonus:0}, history:[], inventory:[] },
+            { id: "1208201101", name: "David Aguas", pass: "120801", balance: 1000, scores: {written1:88, written2:90, perf1:89, perf2:91, exam1:85, bonus:2}, history:[] },
+            { id: "0731201102", name: "Jovit Ate", pass: "073102", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:84, bonus:0}, history:[] },
+            { id: "0411201203", name: "Tristan Bristol", pass: "041103", balance: 1000, scores: {written1:90, written2:92, perf1:90, perf2:92, exam1:88, bonus:5}, history:[] },
+            { id: "0101201204", name: "Nino Cabasag", pass: "010104", balance: 1000, scores: {written1:84, written2:86, perf1:84, perf2:86, exam1:82, bonus:0}, history:[] },
+            { id: "0220201205", name: "John Callunsag", pass: "022005", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:87, bonus:1}, history:[] },
+            { id: "0220201206", name: "Teody Clarin", pass: "022006", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[] },
+            { id: "0803201207", name: "Immanuel Ella", pass: "080307", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[] },
+            { id: "0414201208", name: "Calix Farre", pass: "041408", balance: 1000, scores: {written1:86, written2:89, perf1:86, perf2:89, exam1:84, bonus:0}, history:[] },
+            { id: "1112201109", name: "Ethan Kollin", pass: "111209", balance: 1000, scores: {written1:88, written2:88, perf1:88, perf2:88, exam1:86, bonus:2}, history:[] },
+            { id: "0718201110", name: "Jolo Maisog", pass: "071810", balance: 1000, scores: {written1:83, written2:85, perf1:83, perf2:85, exam1:81, bonus:0}, history:[] },
+            { id: "0815201111", name: "Jared Nonoy", pass: "Jard123", balance: 1000, scores: {written1:95, written2:97, perf1:95, perf2:97, exam1:94, bonus:5}, history:[] },
+            { id: "0626201212", name: "Benz Oriño", pass: "062612", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[] },
+            { id: "0215201213", name: "Kyle Suarez", pass: "021513", balance: 1000, scores: {written1:87, written2:86, perf1:87, perf2:86, exam1:85, bonus:1}, history:[] },
+            { id: "0531201214", name: "Liam Uba", pass: "053114", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:88, bonus:2}, history:[] },
+            { id: "0115201215", name: "Rufz Casinto", pass: "011515", balance: 1000, scores: {written1:88, written2:89, perf1:88, perf2:89, exam1:86, bonus:0}, history:[] },
 
             // Females
-            { id: "0715201116", name: "Charo Aboga-a", pass: "071516", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[], inventory:[] },
-            { id: "1215201117", name: "Ayesha Amer", pass: "121517", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:88, bonus:0}, history:[], inventory:[] },
-            { id: "0830201118", name: "Kristine Antiga", pass: "083018", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:89, bonus:2}, history:[], inventory:[] },
-            { id: "0913201219", name: "Mia Apao", pass: "091319", balance: 1000, scores: {written1:88, written2:87, perf1:88, perf2:87, exam1:85, bonus:0}, history:[], inventory:[] },
-            { id: "0824201120", name: "Embrace Bandiala", pass: "082420", balance: 1000, scores: {written1:93, written2:95, perf1:93, perf2:95, exam1:92, bonus:4}, history:[], inventory:[] },
-            { id: "0411201221", name: "Janessa Caga-anan", pass: "041121", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:85, bonus:0}, history:[], inventory:[] },
-            { id: "0413201222", name: "Veronica Ciano", pass: "041322", balance: 1000, scores: {written1:86, written2:88, perf1:86, perf2:88, exam1:84, bonus:1}, history:[], inventory:[] },
-            { id: "0419201223", name: "Rhea Cirunay", pass: "041923", balance: 1000, scores: {written1:91, written2:92, perf1:91, perf2:92, exam1:90, bonus:2}, history:[], inventory:[] },
-            { id: "0118201224", name: "Joberly Jambo", pass: "011824", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[], inventory:[] },
-            { id: "0420201225", name: "Shiloh Lagumbay", pass: "042025", balance: 1000, scores: {written1:90, written2:89, perf1:90, perf2:89, exam1:88, bonus:1}, history:[], inventory:[] },
-            { id: "0104201226", name: "Vrylle Mandao", pass: "010426", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:83, bonus:0}, history:[], inventory:[] },
-            { id: "0430201227", name: "Crystallize Manliguez", pass: "043027", balance: 1000, scores: {written1:94, written2:96, perf1:94, perf2:96, exam1:93, bonus:5}, history:[], inventory:[] },
-            { id: "1104201128", name: "Lee Manan-og", pass: "110428", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[], inventory:[] },
-            { id: "1130201129", name: "Marwa Matundac", pass: "113029", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[], inventory:[] },
-            { id: "0924201130", name: "Nica Mutia", pass: "092430", balance: 1000, scores: {written1:92, written2:93, perf1:92, perf2:93, exam1:91, bonus:2}, history:[], inventory:[] },
-            { id: "0813201131", name: "Ceana Oculam", pass: "081331", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:89, bonus:1}, history:[], inventory:[] },
-            { id: "0331201232", name: "Shena Oliveros", pass: "033132", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[], inventory:[] },
-            { id: "0515201233", name: "Alphyca Osuyos", pass: "051533", balance: 1000, scores: {written1:86, written2:87, perf1:86, perf2:87, exam1:84, bonus:0}, history:[], inventory:[] },
-            { id: "1230201134", name: "Daniela Pongcol", pass: "123034", balance: 1000, scores: {written1:89, written2:92, perf1:89, perf2:92, exam1:88, bonus:2}, history:[], inventory:[] },
-            { id: "0203201235", name: "Rashiel Samrano", pass: "020335", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[], inventory:[] },
-            { id: "1119201136", name: "Kriselsem Sinajon", pass: "111936", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:86, bonus:0}, history:[], inventory:[] },
-            { id: "1210201137", name: "Chedane Sultan", pass: "121037", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:88, bonus:1}, history:[], inventory:[] },
-            { id: "0730201138", name: "Jasmine Tomagna", pass: "073038", balance: 1000, scores: {written1:88, written2:91, perf1:88, perf2:91, exam1:86, bonus:0}, history:[], inventory:[] },
-            { id: "0428201239", name: "Khloe Ungab", pass: "042839", balance: 1000, scores: {written1:85, written2:86, perf1:85, perf2:86, exam1:83, bonus:0}, history:[], inventory:[] },
-            { id: "0831201240", name: "Ashley Vale", pass: "083140", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[], inventory:[] },
-            { id: "0910201141", name: "Herald Vidad", pass: "091041", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:1}, history:[], inventory:[] },
+            { id: "0715201116", name: "Charo Aboga-a", pass: "071516", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[] },
+            { id: "1215201117", name: "Ayesha Amer", pass: "121517", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:88, bonus:0}, history:[] },
+            { id: "0830201118", name: "Kristine Antiga", pass: "083018", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:89, bonus:2}, history:[] },
+            { id: "0913201219", name: "Mia Apao", pass: "091319", balance: 1000, scores: {written1:88, written2:87, perf1:88, perf2:87, exam1:85, bonus:0}, history:[] },
+            { id: "0824201120", name: "Embrace Bandiala", pass: "082420", balance: 1000, scores: {written1:93, written2:95, perf1:93, perf2:95, exam1:92, bonus:4}, history:[] },
+            { id: "0411201221", name: "Janessa Caga-anan", pass: "041121", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:85, bonus:0}, history:[] },
+            { id: "0413201222", name: "Veronica Ciano", pass: "041322", balance: 1000, scores: {written1:86, written2:88, perf1:86, perf2:88, exam1:84, bonus:1}, history:[] },
+            { id: "0419201223", name: "Rhea Cirunay", pass: "041923", balance: 1000, scores: {written1:91, written2:92, perf1:91, perf2:92, exam1:90, bonus:2}, history:[] },
+            { id: "0118201224", name: "Joberly Jambo", pass: "011824", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[] },
+            { id: "0420201225", name: "Shiloh Lagumbay", pass: "042025", balance: 1000, scores: {written1:90, written2:89, perf1:90, perf2:89, exam1:88, bonus:1}, history:[] },
+            { id: "0104201226", name: "Vrylle Mandao", pass: "010426", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:83, bonus:0}, history:[] },
+            { id: "0430201227", name: "Crystallize Manliguez", pass: "043027", balance: 1000, scores: {written1:94, written2:96, perf1:94, perf2:96, exam1:93, bonus:5}, history:[] },
+            { id: "1104201128", name: "Lee Manan-og", pass: "110428", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[] },
+            { id: "1130201129", name: "Marwa Matundac", pass: "113029", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[] },
+            { id: "0924201130", name: "Nica Mutia", pass: "092430", balance: 1000, scores: {written1:92, written2:93, perf1:92, perf2:93, exam1:91, bonus:2}, history:[] },
+            { id: "0813201131", name: "Ceana Oculam", pass: "081331", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:89, bonus:1}, history:[] },
+            { id: "0331201232", name: "Shena Oliveros", pass: "033132", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[] },
+            { id: "0515201233", name: "Alphyca Osuyos", pass: "051533", balance: 1000, scores: {written1:86, written2:87, perf1:86, perf2:87, exam1:84, bonus:0}, history:[] },
+            { id: "1230201134", name: "Daniela Pongcol", pass: "123034", balance: 1000, scores: {written1:89, written2:92, perf1:89, perf2:92, exam1:88, bonus:2}, history:[] },
+            { id: "0203201235", name: "Rashiel Samrano", pass: "020335", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[] },
+            { id: "1119201136", name: "Kriselsem Sinajon", pass: "111936", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:86, bonus:0}, history:[] },
+            { id: "1210201137", name: "Chedane Sultan", pass: "121037", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:88, bonus:1}, history:[] },
+            { id: "0730201138", name: "Jasmine Tomagna", pass: "073038", balance: 1000, scores: {written1:88, written2:91, perf1:88, perf2:91, exam1:86, bonus:0}, history:[] },
+            { id: "0428201239", name: "Khloe Ungab", pass: "042839", balance: 1000, scores: {written1:85, written2:86, perf1:85, perf2:86, exam1:83, bonus:0}, history:[] },
+            { id: "0831201240", name: "Ashley Vale", pass: "083140", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[] },
+            { id: "0910201141", name: "Herald Vidad", pass: "091041", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:1}, history:[] },
 
             // Main Admin Account
-            { id: "9999999999", name: "Ma'am Anib", pass: "admin123", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[] }
+            { id: "9999999999", name: "Ma'am Anib", pass: "admin123", balance: 99999, isAdmin: true, scores: {}, history:[] }
         ];
 
         let ACCOUNTS_DATA = [];
         let GRADE_COLUMNS = [];
         let GRADE_WEIGHTS = {};
         let GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
-        let AUCTION_STATE = null;
-        let activeBiddingInterval = null; // Tracks current timer loop to allow resets
 
-        // Supabase Data Loading with maybeSingle() to handle 406 errors cleanly
+        // Load data from Supabase
         async function loadAllData() {
             try {
                 const { data, error } = await supabaseClient
@@ -781,14 +681,12 @@
                     GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
-                    AUCTION_STATE = null;
                     await saveAllData();
                 } else {
                     ACCOUNTS_DATA = data.accounts && data.accounts.length > 0 ? data.accounts : JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
                     GRADE_COLUMNS = data.columns && data.columns.length > 0 ? data.columns : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = data.convRate !== undefined ? data.convRate : DEFAULT_CONVERSION_RATE;
-                    AUCTION_STATE = data.auction || null;
                 }
             } catch (err) {
                 console.error("Failed to load data from Supabase, using defaults:", err);
@@ -796,11 +694,10 @@
                 GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                 GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                 GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
-                AUCTION_STATE = null;
             }
         }
 
-        // Supabase Data Saving using .update()
+        // Save data to Supabase
         async function saveAllData() {
             try {
                 await supabaseClient
@@ -809,14 +706,35 @@
                         accounts: ACCOUNTS_DATA,
                         columns: GRADE_COLUMNS,
                         weights: GRADE_WEIGHTS,
-                        convRate: GRADE_CONV_RATE,
-                        auction: AUCTION_STATE
+                        convRate: GRADE_CONV_RATE
                     })
                     .eq('id', 1);
             } catch (err) {
                 console.error("Failed to save data to Supabase:", err);
             }
         }
+
+        // Automatic Live Update Subscription Listener
+        supabaseClient
+            .channel('app_data_changes')
+            .on(
+                'postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
+                (payload) => {
+                    const updated = payload.new;
+                    ACCOUNTS_DATA = updated.accounts || ACCOUNTS_DATA;
+                    GRADE_COLUMNS = updated.columns || GRADE_COLUMNS;
+                    GRADE_WEIGHTS = updated.weights || GRADE_WEIGHTS;
+                    GRADE_CONV_RATE = updated.convRate !== undefined ? updated.convRate : GRADE_CONV_RATE;
+
+                    if (currentUser) {
+                        updateUserDisplays();
+                    }
+                    renderGradebookSheet();
+                    populateDirectory();
+                }
+            )
+            .subscribe();
 
         async function resetAllData() {
             if (confirm("Reset all system data, passwords, grades, and receipts in Supabase?")) {
@@ -825,7 +743,6 @@
                     GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
-                    AUCTION_STATE = null;
 
                     await saveAllData();
                     if (currentUser) {
@@ -839,332 +756,40 @@
             }
         }
 
-        // Realtime Listener to sync updates across users automatically
-        supabaseClient
-            .channel('app_data_changes')
-            .on(
-                'postgres_changes',
-                { event: 'UPDATE', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
-                (payload) => {
-                    const updated = payload.new;
-                    ACCOUNTS_DATA = updated.accounts || ACCOUNTS_DATA;
-                    GRADE_COLUMNS = updated.columns || GRADE_COLUMNS;
-                    GRADE_WEIGHTS = updated.weights || GRADE_WEIGHTS;
-                    GRADE_CONV_RATE = updated.convRate !== undefined ? updated.convRate : GRADE_CONV_RATE;
-                    AUCTION_STATE = updated.auction || null;
-                    
-                    if (currentUser) {
-                        updateUserDisplays();
-                        handleAuctionRealtimeSync();
-                    }
-                    renderGradebookSheet();
-                    populateDirectory();
-                }
-            )
-            .subscribe((status) => {
-                console.log("Realtime Subscription Status:", status);
-            });
-
-        /* --- Live Auction System Logic --- */
-        async function handleCreateAuction(e) {
-            e.preventDefault();
-            const itemName = document.getElementById('auctionItemName').value.trim();
-            const startPrice = parseFloat(document.getElementById('auctionStartPrice').value);
-
-            if (!itemName || isNaN(startPrice) || startPrice < 1) {
-                showAlert('Please provide a valid item name and starting price.', 'danger');
-                return;
-            }
-
-            AUCTION_STATE = {
-                status: 'waiting',
-                itemName: itemName,
-                currentBid: startPrice,
-                highestBidderId: null,
-                highestBidderName: 'None',
-                participants: [],
-                declined: [],
-                bidsHistory: [],
-                timer: 0
-            };
-
-            await saveAllData();
-            document.getElementById('auctionItemName').value = '';
-            document.getElementById('auctionStartPrice').value = '';
-            showAlert(`Auction for "${itemName}" created! Notification sent to all students.`, 'success');
-        }
-
-        async function acceptAuctionInvite() {
-            document.getElementById('auctionInviteNotification').classList.add('hidden');
-            if (AUCTION_STATE && currentUser) {
-                if (!AUCTION_STATE.participants.some(p => p.id === currentUser.id)) {
-                    AUCTION_STATE.participants.push({ id: currentUser.id, name: currentUser.name });
-                    await saveAllData();
-                }
-            }
-            switchTab('auctionTab');
-        }
-
-        async function declineAuctionInvite() {
-            document.getElementById('auctionInviteNotification').classList.add('hidden');
-            if (AUCTION_STATE && currentUser) {
-                if (!AUCTION_STATE.declined) AUCTION_STATE.declined = [];
-                if (!AUCTION_STATE.declined.includes(currentUser.id)) {
-                    AUCTION_STATE.declined.push(currentUser.id);
-                    await saveAllData();
-                }
-            }
-        }
-
-        async function leaveAuction() {
-            if (AUCTION_STATE && currentUser) {
-                AUCTION_STATE.participants = AUCTION_STATE.participants.filter(p => p.id !== currentUser.id);
-                if (!AUCTION_STATE.declined) AUCTION_STATE.declined = [];
-                if (!AUCTION_STATE.declined.includes(currentUser.id)) {
-                    AUCTION_STATE.declined.push(currentUser.id);
-                }
-                await saveAllData();
-            }
-            switchTab('transferTab');
-        }
-
-        async function placeBid(increment) {
-            if (!AUCTION_STATE || AUCTION_STATE.status !== 'active') {
-                showAlert('Auction bidding is not currently active!', 'danger');
-                return;
-            }
-
-            // Check fresh student balance from live ACCOUNTS_DATA
-            const freshUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id);
-            const currentBalance = freshUser ? freshUser.balance : currentUser.balance;
-
-            const newBid = AUCTION_STATE.currentBid + increment;
-            if (currentBalance < newBid) {
-                showAlert('You do not have enough FARADS for this bid!', 'danger');
-                return;
-            }
-
-            AUCTION_STATE.currentBid = newBid;
-            AUCTION_STATE.highestBidderId = currentUser.id;
-            AUCTION_STATE.highestBidderName = currentUser.name;
-            AUCTION_STATE.bidsHistory.push({ id: currentUser.id, name: currentUser.name, amount: newBid });
-
-            // Reset the 10-second timer back to 10 seconds whenever a new bid is placed
-            AUCTION_STATE.timer = 10;
-            if (activeBiddingInterval) {
-                clearInterval(activeBiddingInterval);
-                startActiveBidding10s(false); // Restart timer without re-initializing 10s base value
-            }
-
-            await saveAllData();
-            handleAuctionRealtimeSync();
-        }
-
-        async function startAuctionCountdown() {
-            if (!AUCTION_STATE || !currentUser?.isAdmin) return;
-            AUCTION_STATE.status = 'countdown';
-            AUCTION_STATE.timer = 5;
-            await saveAllData();
-
-            let count = 5;
-            const cdInterval = setInterval(async () => {
-                count--;
-                if (AUCTION_STATE) {
-                    AUCTION_STATE.timer = count;
-                    await saveAllData();
-                }
-                if (count <= 0) {
-                    clearInterval(cdInterval);
-                    startActiveBidding10s(true);
-                }
-            }, 1000);
-        }
-
-        function startActiveBidding10s(resetTimer = true) {
-            if (!AUCTION_STATE) return;
-            AUCTION_STATE.status = 'active';
-            if (resetTimer) {
-                AUCTION_STATE.timer = 10;
-            }
-            saveAllData();
-
-            if (activeBiddingInterval) clearInterval(activeBiddingInterval);
-
-            activeBiddingInterval = setInterval(async () => {
-                AUCTION_STATE.timer--;
-                if (AUCTION_STATE.timer <= 0) {
-                    clearInterval(activeBiddingInterval);
-                    activeBiddingInterval = null;
-                    if (currentUser?.isAdmin) {
-                        finalizeAuctionWinner();
-                    }
-                } else {
-                    await saveAllData();
-                }
-                handleAuctionRealtimeSync();
-            }, 1000);
-        }
-
-        async function finalizeAuctionWinner() {
-            if (!AUCTION_STATE || !currentUser?.isAdmin) return;
-
-            AUCTION_STATE.status = 'closed';
-            
-            const sortedBids = [...AUCTION_STATE.bidsHistory].reverse();
-            let winner = null;
-            let winningBid = 0;
-
-            for (const bid of sortedBids) {
-                const student = ACCOUNTS_DATA.find(a => a.id === bid.id);
-                if (student && student.balance >= bid.amount) {
-                    winner = student;
-                    winningBid = bid.amount;
-                    break;
-                }
-            }
-
-            if (winner) {
-                winner.balance -= winningBid;
-                if (!winner.inventory) winner.inventory = [];
-                winner.inventory.push({ item: AUCTION_STATE.itemName, paid: winningBid, date: new Date().toLocaleDateString() });
-                AUCTION_STATE.winnerName = winner.name;
-                AUCTION_STATE.winningBid = winningBid;
-            } else {
-                AUCTION_STATE.winnerName = 'Nobody (No valid bids)';
-            }
-
-            await saveAllData();
-        }
-
-        function handleAuctionRealtimeSync() {
-            const inviteBox = document.getElementById('auctionInviteNotification');
-            const noAuctionView = document.getElementById('noAuctionArea');
-            const activeAuctionView = document.getElementById('activeAuctionArea');
-            const statusTag = document.getElementById('auctionStatusTag');
-
-            if (!currentUser || !noAuctionView || !activeAuctionView) return;
-
-            if (!AUCTION_STATE || AUCTION_STATE.status === 'closed') {
-                if (inviteBox) inviteBox.classList.add('hidden');
-                noAuctionView.classList.remove('hidden');
-                activeAuctionView.classList.add('hidden');
-                
-                if (statusTag) {
-                    if (AUCTION_STATE && AUCTION_STATE.winnerName && AUCTION_STATE.status === 'closed') {
-                        statusTag.innerText = `SOLD to ${AUCTION_STATE.winnerName}!`;
-                        statusTag.style.color = "var(--success)";
-                    } else {
-                        statusTag.innerText = "No Active Auction";
-                        statusTag.style.color = "var(--warning)";
-                    }
-                }
-                return;
-            }
-
-            const participants = AUCTION_STATE.participants || [];
-            const declined = AUCTION_STATE.declined || [];
-
-            const hasJoined = participants.some(p => p.id === currentUser.id);
-            const hasDeclined = declined.includes(currentUser.id);
-
-            if (inviteBox) {
-                if (!currentUser.isAdmin && !hasJoined && !hasDeclined) {
-                    document.getElementById('auctionInviteText').innerText = `Item: "${AUCTION_STATE.itemName}" | Starting Price: ${AUCTION_STATE.currentBid} FARADS`;
-                    inviteBox.classList.remove('hidden');
-                } else {
-                    inviteBox.classList.add('hidden');
-                }
-            }
-
-            noAuctionView.classList.add('hidden');
-            activeAuctionView.classList.remove('hidden');
-
-            if (statusTag) {
-                statusTag.innerText = `LIVE: ${AUCTION_STATE.itemName}`;
-                statusTag.style.color = "var(--success)";
-            }
-
-            document.getElementById('tabAuctionItemTitle').innerText = AUCTION_STATE.itemName;
-            document.getElementById('tabAuctionItemSub').innerText = `Starting Price: ${AUCTION_STATE.currentBid} FARADS`;
-            document.getElementById('tabAuctionHighestBidDisplay').innerText = `${AUCTION_STATE.currentBid} FARADS`;
-            document.getElementById('tabAuctionHighestBidderDisplay').innerText = AUCTION_STATE.highestBidderName;
-
-            const partList = document.getElementById('tabAuctionParticipantsList');
-            if (partList) {
-                partList.innerText = participants.map(p => p.name).join(', ') || 'No participants yet';
-            }
-
-            const timerDisp = document.getElementById('tabAuctionTimerDisplay');
-            const studentCtrl = document.getElementById('tabAuctionStudentControls');
-            const teacherCtrl = document.getElementById('tabAuctionTeacherControls');
-
-            if (currentUser.isAdmin) {
-                if (teacherCtrl) teacherCtrl.classList.remove('hidden');
-                if (studentCtrl) studentCtrl.classList.add('hidden');
-            } else {
-                if (teacherCtrl) teacherCtrl.classList.add('hidden');
-                if (studentCtrl) {
-                    if (AUCTION_STATE.status === 'active' && hasJoined) {
-                        studentCtrl.classList.remove('hidden');
-                    } else {
-                        studentCtrl.classList.add('hidden');
-                    }
-                }
-            }
-
-            if (timerDisp) {
-                if (AUCTION_STATE.status === 'waiting') {
-                    timerDisp.innerText = 'Waiting Area';
-                } else if (AUCTION_STATE.status === 'countdown') {
-                    timerDisp.innerText = `Bidding Starts In: ${AUCTION_STATE.timer}s`;
-                } else if (AUCTION_STATE.status === 'active') {
-                    if (AUCTION_STATE.timer > 3) {
-                        timerDisp.innerText = `Time Remaining: ${AUCTION_STATE.timer}s`;
-                    } else if (AUCTION_STATE.timer === 3) {
-                        timerDisp.innerText = 'Going once...';
-                    } else if (AUCTION_STATE.timer === 2) {
-                        timerDisp.innerText = 'Going twice...';
-                    } else if (AUCTION_STATE.timer === 1) {
-                        timerDisp.innerText = 'Final Call!';
-                    }
-                }
-            }
-        }
-
         const SHOP_CATEGORIES = [
             {
                 title: "REGULAR SHOP",
                 description: "Feeling normal today?",
                 items: [
-                    { id: 1, name: "Ballpen", price: 40, img: "ballpen" },
-                    { id: 2, name: "Eraser", price: 30, img: "eraser" },
-                    { id: 3, name: "Pencil", price: 30, img: "pencil" },
-                    { id: 4, name: "A4 bond paper (5 pieces)", price: 50, img: "bond_paper" },
-                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120, img: "pad" },
-                    { id: 6, name: "1/4 (10 pieces)", price: 20, img: "quarter_pad" },
-                    { id: 7, name: "Crosswise (10 pieces)", price: 80, img: "crosswise" },
-                    { id: 8, name: "Lengthwise (10 pieces)", price: 95, img: "lengthwise" },
-                    { id: 9, name: "Long bond paper (5 pieces)", price: 75, img: "long_bond" },
-                    { id: 10, name: "Short/Letter bond paper (5 pieces)", price: 35, img: "short_bond" }
+                    { id: 1, name: "Ballpen", price: 40, icon: "🖊️" },
+                    { id: 2, name: "Eraser", price: 30, icon: "🧹" },
+                    { id: 3, name: "Pencil", price: 30, icon: "✏️" },
+                    { id: 4, name: "A4 bond paper (5 pieces)", price: 50, icon: "📄" },
+                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120, icon: "📝" },
+                    { id: 6, name: "1/4 (10 pieces)", price: 20, icon: "📋" },
+                    { id: 7, name: "Crosswise (10 pieces)", price: 80, icon: "📑" },
+                    { id: 8, name: "Lengthwise (10 pieces)", price: 95, icon: "📄" },
+                    { id: 9, name: "Long bond paper (5 pieces)", price: 75, icon: "📜" },
+                    { id: 10, name: "Short/Letter bond paper (5 pieces)", price: 35, icon: "📄" }
                 ]
             },
             {
                 title: "SNACK SHOP",
                 description: "Feeling hungry, are we?",
                 items: [
-                    { id: 11, name: "Lollipop", price: 20, img: "lollipop" },
-                    { id: 12, name: "Biscuits", price: 60, img: "biscuits" },
-                    { id: 13, name: "Chips", price: 70, img: "chips" }
+                    { id: 11, name: "Lollipop", price: 20, icon: "🍭" },
+                    { id: 12, name: "Biscuits", price: 60, icon: "🍪" },
+                    { id: 13, name: "Chips", price: 70, icon: "🍿" }
                 ]
             },
             {
                 title: "SPECIAL SHOP",
                 description: "Feeling rich today?",
                 items: [
-                    { id: 14, name: "One print (A4, non-colored)", price: 200, img: "printer" },
-                    { id: 15, name: "One print (A4, colored, normal)", price: 400, img: "printer" },
-                    { id: 16, name: "One print (A4, colored, best)", price: 500, img: "printer" },
-                    { id: 17, name: "Sign pen", price: 100, img: "signpen" }
+                    { id: 14, name: "One print (A4, non-colored)", price: 200, icon: "🖨️" },
+                    { id: 15, name: "One print (A4, colored, normal)", price: 400, icon: "🎨" },
+                    { id: 16, name: "One print (A4, colored, best)", price: 500, icon: "🖼️" },
+                    { id: 17, name: "Sign pen", price: 100, icon: "🖋️" }
                 ]
             }
         ];
@@ -1315,31 +940,15 @@
             document.getElementById('gradeExam').innerText = grades.e;
             document.getElementById('gradeFinal').innerText = `${grades.final}%`;
 
-            renderUserCollection();
             renderPurchaseHistory();
             populateDirectory();
-        }
-
-        function renderUserCollection() {
-            const list = document.getElementById('userCollectionList');
-            if (!currentUser.inventory || currentUser.inventory.length === 0) {
-                list.innerHTML = 'No auction items claimed yet.';
-                return;
-            }
-            list.innerHTML = currentUser.inventory.map(item => `
-                <div style="background: var(--bg-primary); padding: 0.4rem 0.6rem; border-radius: 4px; margin-bottom: 0.3rem;">
-                    🏆 <strong>${item.item}</strong> (${item.paid} F) - ${item.date}
-                </div>
-            `).join('');
         }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.remove('hidden');
-            
-            const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick')?.includes(tabId));
-            if (activeBtn) activeBtn.classList.add('active');
+            event.target.classList.add('active');
         }
 
         function showAlert(msg, type) {
@@ -1397,7 +1006,7 @@
                     <div class="shop-grid">
                         ${cat.items.map(item => `
                             <div class="shop-item">
-                                <img src="${item.img}" alt="${item.name}" style="width: 100%; height: 110px; object-fit: cover; border-radius: 6px; margin-bottom: 0.5rem; background: #0f172a;" onerror="this.style.display='none'">
+                                <div class="item-placeholder">${item.icon}</div>
                                 <div class="item-name">${item.name}</div>
                                 <div class="item-price">${item.price} FARADS</div>
                                 <button class="btn" onclick="addToCart(${item.id})">Add to Cart</button>
