@@ -689,8 +689,8 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://sujpdopplexaxgnizvil.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable__srdeSwL95qHFZLfO2N3WQ_WJSNcB58';
+        const SUPABASE_URL = 'https://sdzpqfcwtlcjuobynlia.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_c4zwkphRH_PtPiADYvMB1g_m9Z5XOMu';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const DEFAULT_COLUMNS = [
@@ -765,6 +765,7 @@
         let GRADE_WEIGHTS = {};
         let GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
         let AUCTION_STATE = null;
+        let activeBiddingInterval = null; // Tracks current timer loop to allow resets
 
         // Supabase Data Loading with maybeSingle() to handle 406 errors cleanly
         async function loadAllData() {
@@ -933,8 +934,12 @@
                 return;
             }
 
+            // Check fresh student balance from live ACCOUNTS_DATA
+            const freshUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id);
+            const currentBalance = freshUser ? freshUser.balance : currentUser.balance;
+
             const newBid = AUCTION_STATE.currentBid + increment;
-            if (currentUser.balance < newBid) {
+            if (currentBalance < newBid) {
                 showAlert('You do not have enough FARADS for this bid!', 'danger');
                 return;
             }
@@ -944,7 +949,15 @@
             AUCTION_STATE.highestBidderName = currentUser.name;
             AUCTION_STATE.bidsHistory.push({ id: currentUser.id, name: currentUser.name, amount: newBid });
 
+            // Reset the 10-second timer back to 10 seconds whenever a new bid is placed
+            AUCTION_STATE.timer = 10;
+            if (activeBiddingInterval) {
+                clearInterval(activeBiddingInterval);
+                startActiveBidding10s(false); // Restart timer without re-initializing 10s base value
+            }
+
             await saveAllData();
+            handleAuctionRealtimeSync();
         }
 
         async function startAuctionCountdown() {
@@ -962,28 +975,33 @@
                 }
                 if (count <= 0) {
                     clearInterval(cdInterval);
-                    startActiveBidding10s();
+                    startActiveBidding10s(true);
                 }
             }, 1000);
         }
 
-        async function startActiveBidding10s() {
+        function startActiveBidding10s(resetTimer = true) {
             if (!AUCTION_STATE) return;
             AUCTION_STATE.status = 'active';
-            AUCTION_STATE.timer = 10;
-            await saveAllData();
+            if (resetTimer) {
+                AUCTION_STATE.timer = 10;
+            }
+            saveAllData();
 
-            let count = 10;
-            const bidInterval = setInterval(async () => {
-                count--;
-                if (AUCTION_STATE) {
-                    AUCTION_STATE.timer = count;
+            if (activeBiddingInterval) clearInterval(activeBiddingInterval);
+
+            activeBiddingInterval = setInterval(async () => {
+                AUCTION_STATE.timer--;
+                if (AUCTION_STATE.timer <= 0) {
+                    clearInterval(activeBiddingInterval);
+                    activeBiddingInterval = null;
+                    if (currentUser?.isAdmin) {
+                        finalizeAuctionWinner();
+                    }
+                } else {
                     await saveAllData();
                 }
-                if (count <= 0) {
-                    clearInterval(bidInterval);
-                    finalizeAuctionWinner();
-                }
+                handleAuctionRealtimeSync();
             }, 1000);
         }
 
@@ -1024,7 +1042,6 @@
             const activeAuctionView = document.getElementById('activeAuctionArea');
             const statusTag = document.getElementById('auctionStatusTag');
 
-            // Defensive null check
             if (!currentUser || !noAuctionView || !activeAuctionView) return;
 
             if (!AUCTION_STATE || AUCTION_STATE.status === 'closed') {
@@ -1050,7 +1067,6 @@
             const hasJoined = participants.some(p => p.id === currentUser.id);
             const hasDeclined = declined.includes(currentUser.id);
 
-            // Student Invite Banner Visibility
             if (inviteBox) {
                 if (!currentUser.isAdmin && !hasJoined && !hasDeclined) {
                     document.getElementById('auctionInviteText').innerText = `Item: "${AUCTION_STATE.itemName}" | Starting Price: ${AUCTION_STATE.currentBid} FARADS`;
@@ -1060,7 +1076,6 @@
                 }
             }
 
-            // Auction Room Content View
             noAuctionView.classList.add('hidden');
             activeAuctionView.classList.remove('hidden');
 
@@ -1193,7 +1208,6 @@
                 }
 
                 updateUserDisplays();
-                handleAuctionRealtimeSync();
                 showAlert(`Welcome back, ${currentUser.name}!`, 'success');
             } else {
                 showAlert('Invalid Account ID or Password!', 'danger');
