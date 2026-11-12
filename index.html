@@ -835,6 +835,7 @@
     </div>
 
     <script>
+        // 1. Initialize Supabase Client at the very top BEFORE any functions run
         const SUPABASE_URL = 'https://sdzpqfcwtlcjuobynlia.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_c4zwkphRH_PtPiADYvMB1g_m9Z5XOMu';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -960,7 +961,6 @@
             return SHOP_CATEGORIES.flatMap(cat => cat.items);
         }
 
-        // Helper to infer group if loading older accounts from Supabase without group property
         function normalizeAccounts(accounts) {
             return accounts.map(acc => {
                 if (!acc.group) {
@@ -972,7 +972,7 @@
             });
         }
 
-        // Load data from Supabase
+        // Load data directly from Supabase
         async function loadAllData() {
             try {
                 const { data, error } = await supabaseClient
@@ -1009,33 +1009,35 @@
             }
         }
 
-        // Save data to Supabase
+        // Save data directly to Supabase (using upsert so row id=1 is guaranteed to exist)
         async function saveAllData() {
             try {
                 await supabaseClient
                     .from('app_data')
-                    .update({
+                    .upsert({
+                        id: 1,
                         accounts: ACCOUNTS_DATA,
                         columns: GRADE_COLUMNS,
                         weights: GRADE_WEIGHTS,
                         convRate: GRADE_CONV_RATE,
                         shop_categories: SHOP_CATEGORIES,
                         auction: AUCTION_STATE
-                    })
-                    .eq('id', 1);
+                    });
             } catch (err) {
                 console.error("Failed to save data to Supabase:", err);
             }
         }
 
-        // Automatic Live Update Subscription Listener
-        supabaseClient
+        // 2. Properly chained Realtime listener (.on() BEFORE .subscribe())
+        const realtimeChannel = supabaseClient
             .channel('app_data_changes')
             .on(
                 'postgres_changes',
-                { event: 'UPDATE', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
+                { event: '*', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
                 (payload) => {
                     const updated = payload.new;
+                    if (!updated) return;
+
                     if (updated.accounts) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
                     GRADE_COLUMNS = updated.columns || GRADE_COLUMNS;
                     GRADE_WEIGHTS = updated.weights || GRADE_WEIGHTS;
@@ -1052,7 +1054,9 @@
                     populateDirectory();
                 }
             )
-            .subscribe();
+            .subscribe((status, err) => {
+                console.log("Supabase Realtime status:", status, err || "");
+            });
 
         async function resetAllData() {
             if (confirm("Reset all system data, shop items, passwords, grades, and receipts in Supabase?")) {
@@ -1612,7 +1616,6 @@
             document.getElementById('gradeExam').innerText = grades.e;
             document.getElementById('gradeFinal').innerText = `${grades.final}%`;
 
-            // Load Privacy checkboxes
             if (!currentUser.isAdmin) {
                 const priv = currentUser.privacy || {};
                 document.getElementById('privBalance').checked = !!priv.hideBalance;
@@ -2004,11 +2007,7 @@
             if (!container) return;
 
             const isViewerAdmin = currentUser && currentUser.isAdmin;
-
-            // Filter out admins completely
             const nonAdmins = ACCOUNTS_DATA.filter(acc => !acc.isAdmin && acc.group !== 'Admin');
-
-            // Sort alphabetically by Name (A-Z)
             const sortAlpha = (a, b) => a.name.localeCompare(b.name);
 
             const males = nonAdmins.filter(acc => acc.group === 'Male').sort(sortAlpha);
