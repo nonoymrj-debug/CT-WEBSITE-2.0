@@ -125,8 +125,8 @@
 
         .login-card {
             background-color: var(--bg-secondary);
-            max-width: 400px;
-            margin: 4rem auto;
+            max-width: 420px;
+            margin: 3rem auto;
             padding: 2rem;
             border-radius: 12px;
             border: 1px solid var(--border);
@@ -483,6 +483,10 @@
             </div>
             <form onsubmit="handleSignUp(event)">
                 <div class="form-group">
+                    <label>Custom 10-Digit ID (Optional)</label>
+                    <input type="text" id="signupIdInput" class="form-control" placeholder="Leave blank to auto-generate" maxlength="10">
+                </div>
+                <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" id="signupName" class="form-control" placeholder="e.g. Jane Doe" required>
                 </div>
@@ -495,9 +499,11 @@
                     <input type="password" id="signupPass" class="form-control" placeholder="Create password" required>
                 </div>
                 <div class="form-group">
-                    <label>Account Role</label>
+                    <label>Account Role / Group</label>
                     <select id="signupRole" class="form-control" onchange="toggleAdminCodeInput()">
-                        <option value="Student">Student</option>
+                        <option value="Male">Student (Male)</option>
+                        <option value="Female">Student (Female)</option>
+                        <option value="Tester">Student (Tester)</option>
                         <option value="Admin">Teacher / Admin</option>
                     </select>
                 </div>
@@ -518,6 +524,7 @@
                 <button class="tab-btn" onclick="switchTab('shopTab')">School Store</button>
                 <button id="auctionTabBtn" class="tab-btn" onclick="switchTab('auctionTab')">🔨 Auction Room</button>
                 <button class="tab-btn" onclick="switchTab('classTab')">📚 Class & Quizzes</button>
+                <button id="videoPlayerTabBtn" class="tab-btn" onclick="switchTab('videoPlayerTab')">▶️ Video Player</button>
                 <button id="adminTabBtn" class="tab-btn hidden" onclick="switchTab('adminTab')">Grading & Admin</button>
                 <button class="tab-btn" onclick="switchTab('directoryTab')">Classroom List</button>
             </div>
@@ -758,7 +765,45 @@
                 </div>
             </div>
 
-            <!-- Tab 5: Admin & Gradebook -->
+            <!-- Tab 5: Video Player -->
+            <div id="videoPlayerTab" class="tab-content hidden">
+                <div class="card" style="max-width: 800px; margin: 0 auto;">
+                    <div class="card-title">
+                        <span>▶️ Video Player Hub</span>
+                        <span id="nowPlayingTitle" style="font-size: 0.9rem; color: var(--text-muted);">No video loaded</span>
+                    </div>
+                    <div style="background: #000; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 1rem;">
+                        <video id="customVideoPlayer" controls style="width: 100%; height: 100%; object-fit: contain;">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div id="videoPlaceholderMessage" style="position: absolute; color: var(--text-muted); text-align: center; padding: 1rem;">
+                            <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">📺 No Video Selected</p>
+                            <p style="font-size: 0.85rem;">Click a video link from the <strong>Lessons & Notes</strong> tab to play it here!</p>
+                        </div>
+                    </div>
+                    <!-- Custom Player Controls Bar -->
+                    <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <button class="btn btn-sm" onclick="adjustVideoVolume(-0.1)">🔊 Vol -</button>
+                            <button class="btn btn-sm" onclick="adjustVideoVolume(0.1)">🔊 Vol +</button>
+                            <span id="volumeDisplay" style="font-size: 0.85rem; color: var(--text-muted);">Vol: 100%</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <label style="font-size: 0.85rem; color: var(--text-muted);">Speed:</label>
+                            <select id="videoSpeedSelect" class="form-control" style="padding: 0.3rem; font-size: 0.85rem; width: 100px;" onchange="changeVideoSpeed(this.value)">
+                                <option value="0.5">0.5x</option>
+                                <option value="0.75">0.75x</option>
+                                <option value="1" selected>1.0x (Normal)</option>
+                                <option value="1.25">1.25x</option>
+                                <option value="1.5">1.5x</option>
+                                <option value="2">2.0x</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 6: Admin & Gradebook -->
             <div id="adminTab" class="tab-content hidden">
                 <div class="dashboard-grid" style="margin-bottom: 1.5rem;">
                     <div class="card" style="margin-bottom: 0;">
@@ -871,7 +916,7 @@
                 </div>
             </div>
 
-            <!-- Tab 6: Directory -->
+            <!-- Tab 7: Directory -->
             <div id="directoryTab" class="tab-content hidden">
                 <div class="card">
                     <div class="card-title">
@@ -923,31 +968,13 @@
             </div>
             <div id="patchNotesBody" style="font-size: 0.95rem; line-height: 1.6; max-height: 60vh; overflow-y: auto; padding-right: 0.5rem;">
                 <div style="margin-bottom: 1.25rem;">
-                    <h3 style="color: var(--accent);">Version 14</h3>
+                    <h3 style="color: var(--accent);">Version 15</h3>
                     <p style="color: var(--text-muted); font-size: 0.85rem;">Released: November 2026</p>
                     <ul style="margin-left: 1.25rem; margin-top: 0.3rem;">
-                        <li>Added Classroom Lessons & Notes publishing hub for teachers.</li>
-                        <li>Added Interactive Quizzes where students can earn Farads upon correct answers.</li>
-                        <li>Added Sign Up feature with secret Admin verification code protection.</li>
-                        <li>Added dedicated Patchnotes notification button and modal viewer.</li>
-                    </ul>
-                </div>
-                <div style="margin-bottom: 1.25rem; border-top: 1px solid var(--border); padding-top: 1rem;">
-                    <h3 style="color: var(--accent);">Version 13</h3>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">Released: November 2026</p>
-                    <ul style="margin-left: 1.25rem; margin-top: 0.3rem;">
-                        <li>Added Auction Showcase with 24-hour dynamic price fluctuations.</li>
-                        <li>Added student auction request counter and teacher re-auction launch system.</li>
-                        <li>Added teacher auction cancellation controls.</li>
-                    </ul>
-                </div>
-                <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
-                    <h3 style="color: var(--accent);">Version 12</h3>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">Released: November 2026</p>
-                    <ul style="margin-left: 1.25rem; margin-top: 0.3rem;">
-                        <li>Added custom Nicknames support for students and teachers.</li>
-                        <li>Added dedicated Teachers category in Classroom Directory list.</li>
-                        <li>Added custom image URL support for store items and profile camera capture suite.</li>
+                        <li>Added custom 10-digit ID and Gender selection on Sign Up.</li>
+                        <li>Added dynamic Teacher Quiz customizer (choose number of choices, answers, and Farads reward per question).</li>
+                        <li>Added Video Player Hub with speed and volume adjustment controls.</li>
+                        <li>Fixed Supabase Realtime drop issues with automatic background re-subscription.</li>
                     </ul>
                 </div>
             </div>
@@ -967,8 +994,8 @@
                     <input type="text" id="lessonTitleInput" class="form-control" placeholder="e.g. Introduction to Ohm's Law" required>
                 </div>
                 <div class="form-group">
-                    <label>Content / Reading Material / Video Link</label>
-                    <textarea id="lessonContentInput" class="form-control" rows="5" placeholder="Write lesson notes, instructions, or paste video/reading links here..." required></textarea>
+                    <label>Content / Notes / Video URL (.mp4 or direct video link)</label>
+                    <textarea id="lessonContentInput" class="form-control" rows="5" placeholder="Write lesson notes or paste direct video links (e.g. https://.../video.mp4)..." required></textarea>
                 </div>
                 <button type="submit" class="btn" style="width: 100%;">Publish Lesson</button>
             </form>
@@ -988,32 +1015,20 @@
                     <input type="text" id="quizQuestionInput" class="form-control" placeholder="e.g. What is the unit of electrical resistance?" required>
                 </div>
                 <div class="form-group">
-                    <label>Option A</label>
-                    <input type="text" id="quizOptA" class="form-control" placeholder="Option A" required>
-                </div>
-                <div class="form-group">
-                    <label>Option B</label>
-                    <input type="text" id="quizOptB" class="form-control" placeholder="Option B" required>
-                </div>
-                <div class="form-group">
-                    <label>Option C</label>
-                    <input type="text" id="quizOptC" class="form-control" placeholder="Option C" required>
-                </div>
-                <div class="form-group">
-                    <label>Option D</label>
-                    <input type="text" id="quizOptD" class="form-control" placeholder="Option D" required>
-                </div>
-                <div class="form-group">
-                    <label>Correct Answer</label>
-                    <select id="quizCorrectInput" class="form-control" required>
-                        <option value="0">Option A</option>
-                        <option value="1">Option B</option>
-                        <option value="2">Option C</option>
-                        <option value="3">Option D</option>
+                    <label>Number of Choices / Options</label>
+                    <select id="quizNumChoices" class="form-control" onchange="renderQuizChoiceInputs()">
+                        <option value="2">2 Choices (A, B)</option>
+                        <option value="3">3 Choices (A, B, C)</option>
+                        <option value="4" selected>4 Choices (A, B, C, D)</option>
                     </select>
                 </div>
+                <div id="quizChoicesContainer"></div>
                 <div class="form-group">
-                    <label>Farads Reward</label>
+                    <label>Correct Answer</label>
+                    <select id="quizCorrectInput" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Farads Reward per Correct Answer</label>
                     <input type="number" id="quizRewardInput" class="form-control" min="1" value="50" required>
                 </div>
                 <button type="submit" class="btn btn-warning" style="width: 100%;">Publish Quiz</button>
@@ -1098,6 +1113,8 @@
         let shopEditMode = false;
         let mediaStream = null;
         let useFrontCamera = true;
+        let currentUser = null;
+        let cart = {};
 
         function getDisplayName(acc) {
             if (!acc) return '';
@@ -1216,35 +1233,45 @@
             }
         }
 
-        supabaseClient
-            .channel('app_data_changes')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
-                (payload) => {
-                    const updated = payload.new;
-                    if (!updated) return;
+        // Robust Supabase Realtime Subscription with Reconnection
+        function initRealtimeSubscription() {
+            const channel = supabaseClient.channel('app_data_changes')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
+                    (payload) => {
+                        const updated = payload.new;
+                        if (!updated) return;
 
-                    if (updated.accounts) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
-                    GRADE_COLUMNS = updated.columns || GRADE_COLUMNS;
-                    GRADE_WEIGHTS = updated.weights || GRADE_WEIGHTS;
-                    GRADE_CONV_RATE = updated.convRate !== undefined ? updated.convRate : GRADE_CONV_RATE;
-                    if (updated.shop_categories) SHOP_CATEGORIES = updated.shop_categories;
-                    LESSONS_DATA = updated.lessons || LESSONS_DATA;
-                    QUIZZES_DATA = updated.quizzes || QUIZZES_DATA;
-                    AUCTION_STATE = updated.auction || null;
+                        if (updated.accounts) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
+                        GRADE_COLUMNS = updated.columns || GRADE_COLUMNS;
+                        GRADE_WEIGHTS = updated.weights || GRADE_WEIGHTS;
+                        GRADE_CONV_RATE = updated.convRate !== undefined ? updated.convRate : GRADE_CONV_RATE;
+                        if (updated.shop_categories) SHOP_CATEGORIES = updated.shop_categories;
+                        LESSONS_DATA = updated.lessons || LESSONS_DATA;
+                        QUIZZES_DATA = updated.quizzes || QUIZZES_DATA;
+                        AUCTION_STATE = updated.auction || null;
 
-                    if (currentUser) {
-                        updateUserDisplays();
-                        handleAuctionRealtimeSync();
+                        if (currentUser) {
+                            updateUserDisplays();
+                            handleAuctionRealtimeSync();
+                        }
+                        renderShopItems();
+                        renderGradebookSheet();
+                        populateDirectory();
+                        renderLessonsAndQuizzes();
                     }
-                    renderShopItems();
-                    renderGradebookSheet();
-                    populateDirectory();
-                    renderLessonsAndQuizzes();
-                }
-            )
-            .subscribe();
+                )
+                .subscribe((status, err) => {
+                    if (status === 'CHANNEL_ERROR' || status === 'CLOSED') {
+                        console.warn('Realtime connection lost or errored. Reconnecting...', err);
+                        setTimeout(() => {
+                            supabaseClient.removeChannel(channel);
+                            initRealtimeSubscription();
+                        }, 3000);
+                    }
+                });
+        }
 
         async function resetAllData() {
             if (confirm("Reset all system data, lessons, quizzes, shop items, and accounts in Supabase?")) {
@@ -1289,6 +1316,7 @@
             e.preventDefault();
             await loadAllData();
 
+            let customId = document.getElementById('signupIdInput').value.trim();
             const name = document.getElementById('signupName').value.trim();
             const nickname = document.getElementById('signupNickname').value.trim();
             const pass = document.getElementById('signupPass').value.trim();
@@ -1301,11 +1329,11 @@
             }
 
             let isAdmin = false;
-            let group = 'Male';
+            let group = role; // Male, Female, Tester, or Admin
 
             if (role === 'Admin') {
                 if (adminCode !== SECRET_ADMIN_CODE) {
-                    showAlert('Invalid Admin Secret Code! Account created as Student.', 'danger');
+                    showAlert('Invalid Admin Secret Code! Account created as Student (Male).', 'danger');
                     group = 'Male';
                 } else {
                     isAdmin = true;
@@ -1313,10 +1341,19 @@
                 }
             }
 
-            // Generate unique 10-digit ID
-            let newId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-            while (ACCOUNTS_DATA.some(acc => acc.id === newId)) {
+            // Handle custom ID vs auto-generation
+            let newId = "";
+            if (customId) {
+                if (ACCOUNTS_DATA.some(acc => acc.id === customId)) {
+                    showAlert('This ID is already taken! Please choose another 10-digit ID.', 'danger');
+                    return;
+                }
+                newId = customId;
+            } else {
                 newId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+                while (ACCOUNTS_DATA.some(acc => acc.id === newId)) {
+                    newId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+                }
             }
 
             const newAccount = {
@@ -1338,7 +1375,8 @@
             ACCOUNTS_DATA.push(newAccount);
             await saveAllData();
 
-            showAlert(`Account created successfully! Your 10-Digit ID is: ${newId}`, 'success');
+            showAlert(`Account created successfully! Your ID is: ${newId}`, 'success');
+            document.getElementById('signupIdInput').value = '';
             document.getElementById('signupName').value = '';
             document.getElementById('signupNickname').value = '';
             document.getElementById('signupPass').value = '';
@@ -1490,12 +1528,36 @@
 
         function openAddQuizModal() {
             document.getElementById('addQuizModal').classList.remove('hidden');
+            renderQuizChoiceInputs();
         }
 
         function closeAddQuizModal(e) {
             if (!e || e.target.id === 'addQuizModal' || e.target.classList.contains('btn-danger')) {
                 document.getElementById('addQuizModal').classList.add('hidden');
             }
+        }
+
+        function renderQuizChoiceInputs() {
+            const numChoices = parseInt(document.getElementById('quizNumChoices').value);
+            const container = document.getElementById('quizChoicesContainer');
+            const correctSelect = document.getElementById('quizCorrectInput');
+            
+            let choicesHtml = '';
+            let correctOptionsHtml = '';
+            const labels = ['A', 'B', 'C', 'D'];
+
+            for (let i = 0; i < numChoices; i++) {
+                choicesHtml += `
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label>Option ${labels[i]}</label>
+                        <input type="text" id="quizOpt_${i}" class="form-control" placeholder="Option ${labels[i]} text" required>
+                    </div>
+                `;
+                correctOptionsHtml += `<option value="${i}">Option ${labels[i]}</option>`;
+            }
+
+            container.innerHTML = choicesHtml;
+            correctSelect.innerHTML = correctOptionsHtml;
         }
 
         async function handleCreateLesson(e) {
@@ -1524,10 +1586,14 @@
         async function handleCreateQuiz(e) {
             e.preventDefault();
             const question = document.getElementById('quizQuestionInput').value.trim();
-            const optA = document.getElementById('quizOptA').value.trim();
-            const optB = document.getElementById('quizOptB').value.trim();
-            const optC = document.getElementById('quizOptC').value.trim();
-            const optD = document.getElementById('quizOptD').value.trim();
+            const numChoices = parseInt(document.getElementById('quizNumChoices').value);
+            
+            let options = [];
+            for (let i = 0; i < numChoices; i++) {
+                const optVal = document.getElementById(`quizOpt_${i}`).value.trim();
+                options.push(optVal);
+            }
+
             const correct = parseInt(document.getElementById('quizCorrectInput').value);
             const reward = parseFloat(document.getElementById('quizRewardInput').value);
 
@@ -1536,7 +1602,7 @@
             QUIZZES_DATA.push({
                 id: Date.now(),
                 question: question,
-                options: [optA, optB, optC, optD],
+                options: options,
                 correctAnswer: correct,
                 reward: reward,
                 author: getDisplayName(currentUser)
@@ -1544,10 +1610,6 @@
 
             await saveAllData();
             document.getElementById('quizQuestionInput').value = '';
-            document.getElementById('quizOptA').value = '';
-            document.getElementById('quizOptB').value = '';
-            document.getElementById('quizOptC').value = '';
-            document.getElementById('quizOptD').value = '';
             document.getElementById('quizRewardInput').value = '50';
             closeAddQuizModal();
             renderLessonsAndQuizzes();
@@ -1583,6 +1645,42 @@
             }
         }
 
+        function loadVideoInPlayer(url, title) {
+            const videoPlayer = document.getElementById('customVideoPlayer');
+            const placeholderMsg = document.getElementById('videoPlaceholderMessage');
+            const nowPlaying = document.getElementById('nowPlayingTitle');
+
+            videoPlayer.src = url;
+            videoPlayer.load();
+            placeholderMsg.style.display = 'none';
+            nowPlaying.innerText = `Now Playing: ${title}`;
+            switchTab('videoPlayerTab');
+            videoPlayer.play().catch(e => console.log("Autoplay prevented:", e));
+        }
+
+        function adjustVideoVolume(delta) {
+            const videoPlayer = document.getElementById('customVideoPlayer');
+            let newVol = Math.max(0, Math.min(1, videoPlayer.volume + delta));
+            videoPlayer.volume = newVol;
+            document.getElementById('volumeDisplay').innerText = `Vol: ${Math.round(newVol * 100)}%`;
+        }
+
+        function changeVideoSpeed(speedVal) {
+            const videoPlayer = document.getElementById('customVideoPlayer');
+            videoPlayer.playbackRate = parseFloat(speedVal);
+        }
+
+        function formatLessonContentWithLinks(content) {
+            // Convert URLs in content into clickable links or video player triggers
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            return content.replace(urlRegex, (url) => {
+                if (url.match(/\.(mp4|webm|ogg)$/i) || url.includes('video')) {
+                    return `<a href="#" onclick="loadVideoInPlayer('${url}', 'Lesson Video'); return false;" style="color: var(--accent); font-weight: bold;">▶️ Watch Video (${url})</a>`;
+                }
+                return `<a href="${url}" target="_blank" style="color: var(--accent);">${url}</a>`;
+            });
+        }
+
         function renderLessonsAndQuizzes() {
             const lessonsContainer = document.getElementById('lessonsContainer');
             const quizzesContainer = document.getElementById('quizzesContainer');
@@ -1607,7 +1705,7 @@
                     <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
                         <h4 style="color: var(--accent); margin-bottom: 0.25rem;">${lesson.title}</h4>
                         <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">By ${lesson.author} on ${lesson.date}</p>
-                        <p style="font-size: 0.95rem; white-space: pre-wrap; line-height: 1.5;">${lesson.content}</p>
+                        <p style="font-size: 0.95rem; white-space: pre-wrap; line-height: 1.5;">${formatLessonContentWithLinks(lesson.content)}</p>
                     </div>
                 `).join('');
             }
@@ -1618,6 +1716,7 @@
             } else {
                 quizzesContainer.innerHTML = QUIZZES_DATA.map(quiz => {
                     const isCompleted = currentUser && currentUser.completedQuizzes && currentUser.completedQuizzes.includes(quiz.id);
+                    const labels = ['A', 'B', 'C', 'D'];
                     return `
                         <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
@@ -1630,7 +1729,7 @@
                                 <div style="display: flex; flex-direction: column; gap: 0.4rem; margin: 0.75rem 0; font-size: 0.9rem;">
                                     ${quiz.options.map((opt, optIdx) => `
                                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                            <input type="radio" name="quiz_${quiz.id}" value="${optIdx}"> ${opt}
+                                            <input type="radio" name="quiz_${quiz.id}" value="${optIdx}"> [${labels[optIdx]}] ${opt}
                                         </label>
                                     `).join('')}
                                 </div>
@@ -1691,7 +1790,7 @@
         async function handleAddShopItem(e) {
             e.preventDefault();
             const catIdx = parseInt(document.getElementById('newItemCategorySelect').value);
-            const icon = document.getElementById('newItemIcon').value.trim() || "🛍️";
+            const icon = document.getElementById('newItemIcon').value.trim() || "🎁";
             const imageUrl = document.getElementById('newItemImgUrl').value.trim();
             const name = document.getElementById('newItemName').value.trim();
             const price = parseFloat(document.getElementById('newItemPrice').value);
@@ -2093,11 +2192,9 @@
             }
         }
 
-        let currentUser = null;
-        let cart = {};
-
         async function initApp() {
             await loadAllData();
+            initRealtimeSubscription();
             renderShopItems();
             populateTransferDropdown();
             populateDirectory();
@@ -2254,7 +2351,7 @@
             document.getElementById('userBalanceDisplay').innerText = currentUser.balance.toLocaleString();
             document.getElementById('infoName').innerText = currentUser.name;
             document.getElementById('infoId').innerText = currentUser.id;
-            document.getElementById('infoRole').innerText = currentUser.isAdmin ? "Teacher / Admin" : "Student";
+            document.getElementById('infoRole').innerText = currentUser.isAdmin ? "Teacher / Admin" : `Student (${currentUser.group})`;
             document.getElementById('infoBalance').innerText = currentUser.balance.toLocaleString();
             
             const avatarContainer = document.getElementById('profileAvatarContainer');
