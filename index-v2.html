@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="icon" type="image/png" href="ft_logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faraday Tech</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #475569;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--bg-secondary);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .balance-badge {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: var(--bg-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--bg-primary);
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .login-card {
+            background-color: var(--bg-secondary);
+            max-width: 400px;
+            margin: 4rem auto;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background-color: var(--bg-secondary);
+            color: var(--accent);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .shop-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .item-placeholder {
+            width: 100%;
+            height: 100px;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .item-price {
+            color: var(--accent);
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .clickable-row {
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .clickable-row:hover {
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        .sheet-input {
+            width: 65px;
+            padding: 0.4rem;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .cart-summary {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .receipt-box {
+            background: var(--bg-primary);
+            border: 1px dashed var(--accent);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .privacy-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.4);
+            font-size: 0.9rem;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            padding: 1.5rem;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.6);
+        }
+
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background-color: rgba(34, 197, 94, 0.2);
+            border: 1px solid var(--success);
+            color: #86efac;
+        }
+
+        .auction-notify-banner {
+            background-color: rgba(245, 158, 11, 0.2);
+            border: 2px solid var(--warning);
+            color: #fef08a;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .timer-badge {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--warning);
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .dir-section-title {
+            color: var(--accent);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.35rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 1.05rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .profile-avatar-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header id="mainHeader" class="hidden">
+        <div class="logo-title">
+            <img src="ft_logo.png" alt="Faraday Tech Logo" class="header-logo" onerror="this.style.display='none'">
+            <h2>Faraday Tech</h2>
+        </div>
+        <div class="user-profile">
+            <span id="userNameDisplay">User</span>
+            <div class="balance-badge"><span id="userBalanceDisplay">0</span> FARADS</div>
+            <button class="btn btn-danger" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="alertBox" class="alert hidden"></div>
+
+        <div id="auctionInviteNotification" class="auction-notify-banner hidden">
+            <div>
+                <strong style="font-size: 1.1rem; color: var(--warning);">📢 LIVE AUCTION STARTING!</strong>
+                <p id="auctionInviteText" style="margin-top: 0.25rem;">The teacher hosted a new bidding event.</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-warning" onclick="acceptAuctionInvite()">Join Auction</button>
+                <button class="btn btn-danger" onclick="declineAuctionInvite()">Don't Join</button>
+            </div>
+        </div>
+
+        <div id="loginSection" class="login-card">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <img src="ft_logo.png" alt="Logo" style="width: 55px; height: 55px; margin: 0 auto 0.5rem auto; display: block; object-fit: contain;" onerror="this.style.display='none'">
+                <h2>Login</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Creative Technology Portal</p>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>10-Digit Account ID</label>
+                    <input type="text" id="loginId" class="form-control" placeholder="e.g. 0815201111" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" class="form-control" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; padding: 0.75rem;">Login to Account</button>
+            </form>
+            <div style="margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
+                <p><strong>Tester Accounts:</strong></p>
+                <p>• Student 1: <code>1111111111</code> / <code>testpass1</code></p>
+                <p>• Student 2: <code>2222222222</code> / <code>testpass2</code></p>
+                <p>• Admin: <code>8888888888</code> / <code>admintest</code></p>
+            </div>
+        </div>
+
+        <div id="appSection" class="hidden">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('transferTab')">FARADS Transfer</button>
+                <button class="tab-btn" onclick="switchTab('shopTab')">School Store</button>
+                <button id="auctionTabBtn" class="tab-btn" onclick="switchTab('auctionTab')">🔨 Auction Room</button>
+                <button id="adminTabBtn" class="tab-btn hidden" onclick="switchTab('adminTab')">Grading & Admin</button>
+                <button class="tab-btn" onclick="switchTab('directoryTab')">Classroom List</button>
+            </div>
+
+            <!-- Tab 1: Transfers & Profile/Security -->
+            <div id="transferTab" class="tab-content">
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-title">Transfer FARADS (Select Name)</div>
+                        <form onsubmit="handleTransfer(event)">
+                            <div class="form-group">
+                                <label>Classmate</label>
+                                <select id="transferRecipientSelect" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (FARADS)</label>
+                                <input type="number" id="transferAmount" class="form-control" min="1" step="any" placeholder="0.00" required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Send FARADS</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">Student Profile & Security</div>
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div id="profileAvatarContainer">
+                                <div class="profile-avatar-preview" id="avatarPreviewText">👤</div>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Upload Profile Photo</label>
+                                <input type="file" id="profileImageInput" accept="image/*" class="form-control" style="font-size: 0.8rem; padding: 0.3rem;" onchange="handleProfileImageUpload(event)">
+                            </div>
+                        </div>
+
+                        <p><strong>Account Name:</strong> <span id="infoName">-</span></p>
+                        <p style="margin-top: 0.4rem;"><strong>10-Digit ID:</strong> <span id="infoId">-</span></p>
+                        <p style="margin-top: 0.4rem;"><strong>Role:</strong> <span id="infoRole">-</span></p>
+                        <p style="margin-top: 0.4rem;"><strong>Available Balance:</strong> <span id="infoBalance" style="color: var(--accent); font-weight: bold;">0</span> FARADS</p>
+                        
+                        <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Computed Category Grades</h4>
+                            <p style="font-size: 0.9rem;">Written Works (<span id="dispWeightW">30</span>%): <strong id="gradeWritten" style="color: var(--success);">0</strong></p>
+                            <p style="font-size: 0.9rem; margin-top: 0.2rem;">Performance Tasks (<span id="dispWeightP">50</span>%): <strong id="gradePerformance" style="color: var(--success);">0</strong></p>
+                            <p style="font-size: 0.9rem; margin-top: 0.2rem;">Exam (<span id="dispWeightE">20</span>%): <strong id="gradeExam" style="color: var(--success);">0</strong></p>
+                            <p style="font-size: 0.95rem; margin-top: 0.4rem; border-top: 1px dashed var(--border); padding-top: 0.3rem;">Final Equivalent Grade: <strong id="gradeFinal" style="color: var(--accent);">0%</strong></p>
+                        </div>
+
+                        <div id="userPrivacySection" style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.25rem;">Profile Privacy Settings</h4>
+                            <div class="privacy-row">
+                                <span>Hide FARADS Balance</span>
+                                <input type="checkbox" id="privBalance" onchange="savePrivacySettings()">
+                            </div>
+                            <div class="privacy-row">
+                                <span>Hide Category Grades (W/P/E)</span>
+                                <input type="checkbox" id="privCategoryGrades" onchange="savePrivacySettings()">
+                            </div>
+                            <div class="privacy-row">
+                                <span>Hide Final Equivalent Grade</span>
+                                <input type="checkbox" id="privFinalGrade" onchange="savePrivacySettings()">
+                            </div>
+                            <div class="privacy-row">
+                                <span>Hide Won Auction Items</span>
+                                <input type="checkbox" id="privInventory" onchange="savePrivacySettings()">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">My Won Items Collection</h4>
+                            <div id="userCollectionList" style="font-size: 0.85rem; color: var(--text-muted);">No auction items claimed yet.</div>
+                        </div>
+
+                        <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                            <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Change My Password</h4>
+                            <form onsubmit="handleUserChangePassword(event)">
+                                <div class="form-group" style="margin-bottom: 0.5rem;">
+                                    <label style="font-size: 0.8rem;">Current Password</label>
+                                    <input type="password" id="userCurrentPass" class="form-control" style="padding: 0.4rem;" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0.75rem;">
+                                    <label style="font-size: 0.8rem;">New Password</label>
+                                    <input type="password" id="userNewPass" class="form-control" style="padding: 0.4rem;" required>
+                                </div>
+                                <button type="submit" class="btn" style="width: 100%; font-size: 0.85rem; padding: 0.4rem;">Update Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Store -->
+            <div id="shopTab" class="tab-content hidden">
+                <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
+                    <div class="card">
+                        <div class="card-title">
+                            <span>School Supplies & Snack Store</span>
+                            <button id="adminEditShopBtn" class="btn btn-warning btn-sm hidden" onclick="toggleShopEditMode()">⚙️ Manage Shop</button>
+                        </div>
+                        <div id="adminShopEditorPanel" class="hidden" style="background: var(--bg-primary); border: 1px solid var(--warning); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: var(--warning); margin-bottom: 0.75rem;">Admin Store Editor</h4>
+                            <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <form onsubmit="handleAddShopCategory(event)">
+                                    <p style="font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem; color: var(--accent);">+ Add New Category</p>
+                                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                                        <input type="text" id="newCatTitle" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" placeholder="Category Name" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                                        <input type="text" id="newCatDesc" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" placeholder="Tagline / Description" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm" style="width: 100%;">Create Category</button>
+                                </form>
+                                <form onsubmit="handleAddShopItem(event)">
+                                    <p style="font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem; color: var(--accent);">+ Add New Item</p>
+                                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                                        <select id="newItemCategorySelect" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" required></select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0.5rem; display: flex; gap: 0.4rem;">
+                                        <input type="text" id="newItemIcon" class="form-control" style="padding: 0.4rem; font-size: 0.9rem; width: 65px; text-align: center;" placeholder="🎁" value="🎁" required>
+                                        <input type="text" id="newItemName" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" placeholder="Item Name" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0.5rem;">
+                                        <input type="number" id="newItemPrice" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" placeholder="Price (FARADS)" min="1" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-sm" style="width: 100%;">Add Item</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div id="shopGridDisplay"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">My Cart & Checkout</div>
+                        <div id="cartItemsContainer">
+                            <p style="color: var(--text-muted);">Your cart is currently empty.</p>
+                        </div>
+                        <div class="cart-summary">
+                            <span>Total:</span>
+                            <span id="cartTotalDisplay" style="font-size: 1.2rem; font-weight: bold; color: var(--accent);">0 FARADS</span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button class="btn" style="flex: 1;" onclick="reviewCheckout()">Review Order</button>
+                            <button class="btn btn-danger" style="padding: 0.5rem 0.8rem;" onclick="clearCartCompletely()">Decline</button>
+                        </div>
+                        <div id="receiptArea"></div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="card-title">My Purchase History & Saved Receipts</div>
+                    <div id="purchaseHistoryContainer">
+                        <p style="color: var(--text-muted);">You haven't bought anything...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Auction Room -->
+            <div id="auctionTab" class="tab-content hidden">
+                <div class="card" style="max-width: 600px; margin: 0 auto;">
+                    <div class="card-title">
+                        <span>🔨 Live Bidding Arena</span>
+                        <span id="auctionStatusTag" style="font-size: 0.85rem; color: var(--warning);">No Active Auction</span>
+                    </div>
+                    <div id="noAuctionArea" style="text-align: center; padding: 2rem 0; color: var(--text-muted);">
+                        <p>There is no auction event hosted right now.</p>
+                    </div>
+                    <div id="activeAuctionArea" class="hidden">
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <h2 id="tabAuctionItemTitle" style="color: var(--accent); font-size: 1.8rem;">Item Name</h2>
+                            <p id="tabAuctionItemSub" style="color: var(--text-muted);">Starting Price: 0 FARADS</p>
+                        </div>
+                        <div class="timer-badge" id="tabAuctionTimerDisplay">Waiting Area</div>
+                        <div style="margin: 1.5rem 0; padding: 1rem; background: var(--bg-primary); border-radius: 8px; text-align: center;">
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Current Highest Bid:</p>
+                            <h2 id="tabAuctionHighestBidDisplay" style="color: var(--success); font-size: 2.2rem; margin: 0.2rem 0;">0 FARADS</h2>
+                            <p style="font-size: 0.9rem;">Bidder: <strong id="tabAuctionHighestBidderDisplay" style="color: var(--accent);">None</strong></p>
+                        </div>
+                        <div style="margin: 1.5rem 0;">
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">Participants in Waiting Area:</p>
+                            <div id="tabAuctionParticipantsList" style="font-size: 0.9rem; font-weight: bold; color: var(--text-main); background: var(--bg-primary); padding: 0.75rem; border-radius: 6px; max-height: 100px; overflow-y: auto;">None</div>
+                        </div>
+                        <div id="tabAuctionStudentControls" class="hidden" style="margin-top: 1.5rem;">
+                            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                <button class="btn" onclick="placeBid(10)">+10 FARADS</button>
+                                <button class="btn" onclick="placeBid(50)">+50 FARADS</button>
+                                <button class="btn" onclick="placeBid(100)">+100 FARADS</button>
+                            </div>
+                        </div>
+                        <div id="tabAuctionTeacherControls" class="hidden" style="margin-top: 1.5rem;">
+                            <button id="tabStartAuctionBtn" class="btn btn-warning" style="width: 100%; padding: 0.8rem; font-size: 1rem;" onclick="startAuctionCountdown()">Start Bidding (5s Countdown)</button>
+                        </div>
+                        <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem; text-align: center;">
+                            <button class="btn btn-danger" style="font-size: 0.85rem;" onclick="leaveAuction()">Leave Auction Room</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Admin & Gradebook -->
+            <div id="adminTab" class="tab-content hidden">
+                <div class="dashboard-grid" style="margin-bottom: 1.5rem;">
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-title">Host Live Auction</div>
+                        <form onsubmit="handleCreateAuction(event)">
+                            <div class="form-group">
+                                <label>Auction Item Name</label>
+                                <input type="text" id="auctionItemName" class="form-control" placeholder="e.g. Mystery Tech Gadget" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Starting Price (FARADS)</label>
+                                <input type="number" id="auctionStartPrice" class="form-control" min="1" placeholder="e.g. 50" required>
+                            </div>
+                            <button type="submit" class="btn btn-warning" style="width: 100%;">Create & Host Auction</button>
+                        </form>
+                    </div>
+                    <div class="card" style="margin-bottom: 0;">
+                        <div class="card-title">Award Points</div>
+                        <form onsubmit="handleAdminDeposit(event)">
+                            <div class="form-group">
+                                <label>Select Student</label>
+                                <select id="adminStudentSelect" class="form-control" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Award FARADS Points</label>
+                                <input type="number" id="adminDepositAmount" class="form-control" min="1" placeholder="Amount to add" required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%;">Deposit Points</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-title">Reset Student Password</div>
+                    <form onsubmit="handleAdminResetPassword(event)">
+                        <div class="form-group">
+                            <label>Select Student</label>
+                            <select id="adminResetStudentSelect" class="form-control" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label>New Temporary Password</label>
+                            <input type="text" id="adminNewStudentPass" class="form-control" placeholder="Enter new password" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning" style="width: 100%;">Reset Password</button>
+                    </form>
+                </div>
+
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-title">Grading Percentage (Must Total 100%)</div>
+                    <div class="dashboard-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="form-group">
+                            <label>Written (%)</label>
+                            <input type="number" id="weightW" class="form-control" value="30" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Performance Tasks (%)</label>
+                            <input type="number" id="weightP" class="form-control" value="50" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Exam (%)</label>
+                            <input type="number" id="weightE" class="form-control" value="20" min="0" max="100">
+                        </div>
+                    </div>
+                    <button class="btn" onclick="saveWeights()">Update Weights</button>
+                </div>
+
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div class="card-title">Grade-to-Farads Conversion Sync</div>
+                    <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; align-items: flex-end;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Farads Awarded per 1% of Final Grade</label>
+                            <input type="number" id="gradeConvRateInput" class="form-control" value="10" min="0" step="any">
+                        </div>
+                        <div>
+                            <button class="btn" style="width: 100%;" onclick="saveConversionRate()">Save Rate</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Syncs student balances up or down based on their grades.</p>
+                        <button class="btn btn-warning" onclick="applyGradeToFaradsConversion()">Sync / Update Farads from Grades</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        <span>Gradebook Worksheet</span>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="addColumnModal()">+ Add Column</button>
+                            <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="saveGradebookSheet()">Save Worksheet</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr id="worksheetHeaderRow">
+                                    <th>ID</th>
+                                    <th>Student Name</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gradebookTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                        <button class="btn btn-danger" onclick="resetAllData()">Reset System Data to Default</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Directory -->
+            <div id="directoryTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-title">
+                        <span>Classroom Directory</span>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Click any student to view their profile</span>
+                    </div>
+                    <div id="directorySectionsContainer"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Student Profile Modal Viewer -->
+    <div id="studentProfileModal" class="modal-overlay hidden" onclick="closeStudentProfileModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                <span id="modalStudentName">Student Profile</span>
+                <button class="btn btn-danger btn-sm" onclick="closeStudentProfileModal()">Close</button>
+            </div>
+            <div id="modalStudentBody"></div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://sujpdopplexaxgnizvil.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable__srdeSwL95qHFZLfO2N3WQ_WJSNcB58';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const DEFAULT_COLUMNS = [
+            { id: "written1", name: "Quiz 1", category: "Written" },
+            { id: "written2", name: "Quiz 2", category: "Written" },
+            { id: "perf1", name: "Project 1", category: "Performance" },
+            { id: "perf2", name: "Project 2", category: "Performance" },
+            { id: "exam1", name: "Midterm Exam", category: "Exam" },
+            { id: "bonus", name: "Bonus Points", category: "Bonus" }
+        ];
+
+        const DEFAULT_WEIGHTS = { w: 30, p: 50, e: 20 };
+        const DEFAULT_CONVERSION_RATE = 10;
+
+        const DEFAULT_SHOP_CATEGORIES = [
+            {
+                id: "cat_regular",
+                title: "REGULAR SHOP",
+                description: "Feeling normal today?",
+                items: [
+                    { id: 1, name: "Ballpen", price: 40, icon: "🖊️" },
+                    { id: 2, name: "Eraser", price: 30, icon: "🧹" },
+                    { id: 3, name: "Pencil", price: 30, icon: "✏️" },
+                    { id: 4, name: "A4 bond paper (5 pieces)", price: 50, icon: "📄" },
+                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120, icon: "📝" },
+                    { id: 6, name: "1/4 (10 pieces)", price: 20, icon: "📋" },
+                    { id: 7, name: "Crosswise (10 pieces)", price: 80, icon: "📑" },
+                    { id: 8, name: "Lengthwise (10 pieces)", price: 95, icon: "📄" },
+                    { id: 9, name: "Long bond paper (5 pieces)", price: 75, icon: "📜" },
+                    { id: 10, name: "Short/Letter bond paper (5 pieces)", price: 35, icon: "📄" }
+                ]
+            },
+            {
+                id: "cat_snack",
+                title: "SNACK SHOP",
+                description: "Feeling hungry, are we?",
+                items: [
+                    { id: 11, name: "Lollipop", price: 20, icon: "🍭" },
+                    { id: 12, name: "Biscuits", price: 60, icon: "🍪" },
+                    { id: 13, name: "Chips", price: 70, icon: "🍿" }
+                ]
+            },
+            {
+                id: "cat_special",
+                title: "SPECIAL SHOP",
+                description: "Feeling rich today?",
+                items: [
+                    { id: 14, name: "One print (A4, non-colored)", price: 200, icon: "🖨️" },
+                    { id: 15, name: "One print (A4, colored, normal)", price: 400, icon: "🎨" },
+                    { id: 16, name: "One print (A4, colored, best)", price: 500, icon: "🖼️" },
+                    { id: 17, name: "Sign pen", price: 100, icon: "🖋️" }
+                ]
+            }
+        ];
+
+        const DEFAULT_ACCOUNTS = [
+            { id: "1111111111", name: "Tester Student 1", group: "Tester", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "2222222222", name: "Tester Student 2", group: "Tester", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "8888888888", name: "Tester Admin Teacher", group: "Admin", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[], privacy: {}, avatar: "" },
+
+            { id: "1208201101", name: "David Aguas", group: "Male", pass: "120801", balance: 1000, scores: {written1:88, written2:90, perf1:89, perf2:91, exam1:85, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0731201102", name: "Jovit Ate", group: "Male", pass: "073102", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:84, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0411201203", name: "Tristan Bristol", group: "Male", pass: "041103", balance: 1000, scores: {written1:90, written2:92, perf1:90, perf2:92, exam1:88, bonus:5}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0101201204", name: "Nino Cabasag", group: "Male", pass: "010104", balance: 1000, scores: {written1:84, written2:86, perf1:84, perf2:86, exam1:82, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0220201205", name: "John Callunsag", group: "Male", pass: "022005", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:87, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0220201206", name: "Teody Clarin", group: "Male", pass: "022006", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0803201207", name: "Immanuel Ella", group: "Male", pass: "080307", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0414201208", name: "Calix Farre", group: "Male", pass: "041408", balance: 1000, scores: {written1:86, written2:89, perf1:86, perf2:89, exam1:84, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "1112201109", name: "Ethan Kollin", group: "Male", pass: "111209", balance: 1000, scores: {written1:88, written2:88, perf1:88, perf2:88, exam1:86, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0718201110", name: "Jolo Maisog", group: "Male", pass: "071810", balance: 1000, scores: {written1:83, written2:85, perf1:83, perf2:85, exam1:81, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0815201111", name: "Jared Nonoy", group: "Male", pass: "Jard123", balance: 1000, scores: {written1:95, written2:97, perf1:95, perf2:97, exam1:94, bonus:5}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0626201212", name: "Benz Oriño", group: "Male", pass: "062612", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0215201213", name: "Kyle Suarez", group: "Male", pass: "021513", balance: 1000, scores: {written1:87, written2:86, perf1:87, perf2:86, exam1:85, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0531201214", name: "Liam Uba", group: "Male", pass: "053114", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:88, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0115201215", name: "Rufz Casinto", group: "Male", pass: "011515", balance: 1000, scores: {written1:88, written2:89, perf1:88, perf2:89, exam1:86, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+
+            { id: "0715201116", name: "Charo Aboga-a", group: "Female", pass: "071516", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "1215201117", name: "Ayesha Amer", group: "Female", pass: "121517", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:88, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0830201118", name: "Kristine Antiga", group: "Female", pass: "083018", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:89, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0913201219", name: "Mia Apao", group: "Female", pass: "091319", balance: 1000, scores: {written1:88, written2:87, perf1:88, perf2:87, exam1:85, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0824201120", name: "Embrace Bandiala", group: "Female", pass: "082420", balance: 1000, scores: {written1:93, written2:95, perf1:93, perf2:95, exam1:92, bonus:4}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0411201221", name: "Janessa Caga-anan", group: "Female", pass: "041121", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:85, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0413201222", name: "Veronica Ciano", group: "Female", pass: "041322", balance: 1000, scores: {written1:86, written2:88, perf1:86, perf2:88, exam1:84, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0419201223", name: "Rhea Cirunay", group: "Female", pass: "041923", balance: 1000, scores: {written1:91, written2:92, perf1:91, perf2:92, exam1:90, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0118201224", name: "Joberly Jambo", group: "Female", pass: "011824", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0420201225", name: "Shiloh Lagumbay", group: "Female", pass: "042025", balance: 1000, scores: {written1:90, written2:89, perf1:90, perf2:89, exam1:88, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0104201226", name: "Vrylle Mandao", group: "Female", pass: "010426", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:83, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0430201227", name: "Crystallize Manliguez", group: "Female", pass: "043027", balance: 1000, scores: {written1:94, written2:96, perf1:94, perf2:96, exam1:93, bonus:5}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "1104201128", name: "Lee Manan-og", group: "Female", pass: "110428", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "1130201129", name: "Marwa Matundac", group: "Female", pass: "113029", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0924201130", name: "Nica Mutia", group: "Female", pass: "092430", balance: 1000, scores: {written1:92, written2:93, perf1:92, perf2:93, exam1:91, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0813201131", name: "Ceana Oculam", group: "Female", pass: "081331", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:89, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0331201232", name: "Shena Oliveros", group: "Female", pass: "033132", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0515201233", name: "Alphyca Osuyos", group: "Female", pass: "051533", balance: 1000, scores: {written1:86, written2:87, perf1:86, perf2:87, exam1:84, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "1230201134", name: "Daniela Pongcol", group: "Female", pass: "123034", balance: 1000, scores: {written1:89, written2:92, perf1:89, perf2:92, exam1:88, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0203201235", name: "Rashiel Samrano", group: "Female", pass: "020335", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "1119201136", name: "Kriselsem Sinajon", group: "Female", pass: "111936", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:86, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "1210201137", name: "Chedane Sultan", group: "Female", pass: "121037", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:88, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0730201138", name: "Jasmine Tomagna", group: "Female", pass: "073038", balance: 1000, scores: {written1:88, written2:91, perf1:88, perf2:91, exam1:86, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0428201239", name: "Khloe Ungab", group: "Female", pass: "042839", balance: 1000, scores: {written1:85, written2:86, perf1:85, perf2:86, exam1:83, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0831201240", name: "Ashley Vale", group: "Female", pass: "083140", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
+            { id: "0910201141", name: "Herald Vidad", group: "Female", pass: "091041", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
+
+            { id: "9999999999", name: "Ma'am Anib", group: "Admin", pass: "admin123", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[], privacy: {}, avatar: "" }
+        ];
+
+        let ACCOUNTS_DATA = [];
+        let GRADE_COLUMNS = [];
+        let GRADE_WEIGHTS = {};
+        let GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+        let SHOP_CATEGORIES = [];
+        let AUCTION_STATE = null;
+        let activeBiddingInterval = null;
+        let shopEditMode = false;
+
+        function getAllShopItems() {
+            return SHOP_CATEGORIES.flatMap(cat => cat.items);
+        }
+
+        function normalizeAccounts(accounts) {
+            return accounts.map(acc => {
+                if (!acc.group) {
+                    const def = DEFAULT_ACCOUNTS.find(d => d.id === acc.id);
+                    acc.group = def ? def.group : (acc.isAdmin ? "Admin" : "Male");
+                }
+                if (!acc.privacy) acc.privacy = {};
+                if (!acc.avatar) acc.avatar = "";
+                return acc;
+            });
+        }
+
+        async function loadAllData() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('app_data')
+                    .select('*')
+                    .eq('id', 1)
+                    .maybeSingle();
+
+                if (error || !data) {
+                    ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                    GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                    GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                    GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+                    SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
+                    AUCTION_STATE = null;
+                    await saveAllData();
+                } else {
+                    const rawAccounts = data.accounts && data.accounts.length > 0 ? data.accounts : JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                    ACCOUNTS_DATA = normalizeAccounts(rawAccounts);
+                    GRADE_COLUMNS = data.columns && data.columns.length > 0 ? data.columns : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                    GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                    GRADE_CONV_RATE = data.convRate !== undefined ? data.convRate : DEFAULT_CONVERSION_RATE;
+                    SHOP_CATEGORIES = data.shop_categories && data.shop_categories.length > 0 ? data.shop_categories : JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
+                    AUCTION_STATE = data.auction || null;
+                }
+            } catch (err) {
+                console.error("Failed to load data from Supabase, using defaults:", err);
+                ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+                SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
+                AUCTION_STATE = null;
+            }
+        }
+
+        async function saveAllData() {
+            try {
+                await supabaseClient
+                    .from('app_data')
+                    .upsert({
+                        id: 1,
+                        accounts: ACCOUNTS_DATA,
+                        columns: GRADE_COLUMNS,
+                        weights: GRADE_WEIGHTS,
+                        convRate: GRADE_CONV_RATE,
+                        shop_categories: SHOP_CATEGORIES,
+                        auction: AUCTION_STATE
+                    });
+            } catch (err) {
+                console.error("Failed to save data to Supabase:", err);
+            }
+        }
+
+        supabaseClient
+            .channel('app_data_changes')
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
+                (payload) => {
+                    const updated = payload.new;
+                    if (!updated) return;
+
+                    if (updated.accounts) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
+                    GRADE_COLUMNS = updated.columns || GRADE_COLUMNS;
+                    GRADE_WEIGHTS = updated.weights || GRADE_WEIGHTS;
+                    GRADE_CONV_RATE = updated.convRate !== undefined ? updated.convRate : GRADE_CONV_RATE;
+                    if (updated.shop_categories) SHOP_CATEGORIES = updated.shop_categories;
+                    AUCTION_STATE = updated.auction || null;
+
+                    if (currentUser) {
+                        updateUserDisplays();
+                        handleAuctionRealtimeSync();
+                    }
+                    renderShopItems();
+                    renderGradebookSheet();
+                    populateDirectory();
+                }
+            )
+            .subscribe();
+
+        async function resetAllData() {
+            if (confirm("Reset all system data, shop items, avatars, passwords, grades, and receipts in Supabase?")) {
+                try {
+                    ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+                    GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                    GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                    GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+                    SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
+                    AUCTION_STATE = null;
+
+                    await saveAllData();
+                    if (currentUser) {
+                        currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id) || null;
+                    }
+                    initApp();
+                    showAlert("System fully reset to default.", "success");
+                } catch (err) {
+                    showAlert("Failed to reset system data.", "danger");
+                }
+            }
+        }
+
+        // Profile Picture Upload Handler (Base64)
+        async function handleProfileImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file || !currentUser) return;
+
+            if (file.size > 800000) {
+                showAlert('Image file is too large! Please choose an image under 800KB.', 'danger');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function(uploadEvent) {
+                currentUser.avatar = uploadEvent.target.result;
+                await saveAllData();
+                updateUserDisplays();
+                showAlert('Profile picture updated successfully!', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function toggleShopEditMode() {
+            shopEditMode = !shopEditMode;
+            const editorPanel = document.getElementById('adminShopEditorPanel');
+            if (shopEditMode) {
+                editorPanel.classList.remove('hidden');
+                populateShopCategoryDropdown();
+            } else {
+                editorPanel.classList.add('hidden');
+            }
+            renderShopItems();
+        }
+
+        function populateShopCategoryDropdown() {
+            const select = document.getElementById('newItemCategorySelect');
+            if (!select) return;
+            select.innerHTML = SHOP_CATEGORIES.map((cat, idx) => `<option value="${idx}">${cat.title}</option>`).join('');
+        }
+
+        async function handleAddShopCategory(e) {
+            e.preventDefault();
+            const title = document.getElementById('newCatTitle').value.trim().toUpperCase();
+            const desc = document.getElementById('newCatDesc').value.trim();
+            if (!title) return;
+            SHOP_CATEGORIES.push({ id: 'cat_' + Date.now(), title: title, description: desc || "Custom category", items: [] });
+            await saveAllData();
+            document.getElementById('newCatTitle').value = '';
+            document.getElementById('newCatDesc').value = '';
+            populateShopCategoryDropdown();
+            renderShopItems();
+            showAlert(`Category "${title}" added!`, 'success');
+        }
+
+        async function deleteShopCategory(catIdx) {
+            const cat = SHOP_CATEGORIES[catIdx];
+            if (!cat) return;
+            if (confirm(`Delete category "${cat.title}" and its items?`)) {
+                SHOP_CATEGORIES.splice(catIdx, 1);
+                await saveAllData();
+                populateShopCategoryDropdown();
+                renderShopItems();
+                showAlert(`Category "${cat.title}" removed.`, 'success');
+            }
+        }
+
+        async function handleAddShopItem(e) {
+            e.preventDefault();
+            const catIdx = parseInt(document.getElementById('newItemCategorySelect').value);
+            const icon = document.getElementById('newItemIcon').value.trim() || "🛍️";
+            const name = document.getElementById('newItemName').value.trim();
+            const price = parseFloat(document.getElementById('newItemPrice').value);
+
+            if (isNaN(catIdx) || !SHOP_CATEGORIES[catIdx] || !name || isNaN(price) || price < 1) {
+                showAlert('Please fill out valid item details.', 'danger');
+                return;
+            }
+
+            SHOP_CATEGORIES[catIdx].items.push({ id: Date.now(), name: name, price: price, icon: icon });
+            await saveAllData();
+            document.getElementById('newItemName').value = '';
+            document.getElementById('newItemPrice').value = '';
+            renderShopItems();
+            showAlert(`Added "${name}" (${price} FARADS)!`, 'success');
+        }
+
+        async function updateShopItemPrice(catIdx, itemIdx, newPriceVal) {
+            const price = parseFloat(newPriceVal);
+            if (isNaN(price) || price < 0) {
+                showAlert('Invalid price entered.', 'danger');
+                renderShopItems();
+                return;
+            }
+            SHOP_CATEGORIES[catIdx].items[itemIdx].price = price;
+            await saveAllData();
+            renderShopItems();
+            showAlert(`Price updated to ${price} FARADS!`, 'success');
+        }
+
+        async function deleteShopItem(catIdx, itemIdx) {
+            const item = SHOP_CATEGORIES[catIdx]?.items[itemIdx];
+            if (!item) return;
+            if (confirm(`Remove "${item.name}" from store?`)) {
+                SHOP_CATEGORIES[catIdx].items.splice(itemIdx, 1);
+                delete cart[item.id];
+                renderCart();
+                await saveAllData();
+                renderShopItems();
+                showAlert(`Removed "${item.name}".`, 'success');
+            }
+        }
+
+        async function handleCreateAuction(e) {
+            e.preventDefault();
+            const itemName = document.getElementById('auctionItemName').value.trim();
+            const startPrice = parseFloat(document.getElementById('auctionStartPrice').value);
+
+            if (!itemName || isNaN(startPrice) || startPrice < 1) {
+                showAlert('Please provide a valid item name and starting price.', 'danger');
+                return;
+            }
+
+            AUCTION_STATE = {
+                status: 'waiting',
+                itemName: itemName,
+                currentBid: startPrice,
+                highestBidderId: null,
+                highestBidderName: 'None',
+                participants: [],
+                declined: [],
+                bidsHistory: [],
+                timer: 0
+            };
+
+            await saveAllData();
+            document.getElementById('auctionItemName').value = '';
+            document.getElementById('auctionStartPrice').value = '';
+            showAlert(`Auction for "${itemName}" created! Notification sent to all students.`, 'success');
+        }
+
+        async function acceptAuctionInvite() {
+            document.getElementById('auctionInviteNotification').classList.add('hidden');
+            if (AUCTION_STATE && currentUser) {
+                if (!AUCTION_STATE.participants.some(p => p.id === currentUser.id)) {
+                    AUCTION_STATE.participants.push({ id: currentUser.id, name: currentUser.name });
+                    await saveAllData();
+                }
+            }
+            switchTab('auctionTab');
+        }
+
+        async function declineAuctionInvite() {
+            document.getElementById('auctionInviteNotification').classList.add('hidden');
+            if (AUCTION_STATE && currentUser) {
+                if (!AUCTION_STATE.declined) AUCTION_STATE.declined = [];
+                if (!AUCTION_STATE.declined.includes(currentUser.id)) {
+                    AUCTION_STATE.declined.push(currentUser.id);
+                    await saveAllData();
+                }
+            }
+        }
+
+        async function leaveAuction() {
+            if (AUCTION_STATE && currentUser) {
+                AUCTION_STATE.participants = AUCTION_STATE.participants.filter(p => p.id !== currentUser.id);
+                if (!AUCTION_STATE.declined) AUCTION_STATE.declined = [];
+                if (!AUCTION_STATE.declined.includes(currentUser.id)) {
+                    AUCTION_STATE.declined.push(currentUser.id);
+                }
+                await saveAllData();
+            }
+            switchTab('transferTab');
+        }
+
+        async function placeBid(increment) {
+            if (!AUCTION_STATE || AUCTION_STATE.status !== 'active') {
+                showAlert('Auction bidding is not currently active!', 'danger');
+                return;
+            }
+
+            const freshUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id);
+            const currentBalance = freshUser ? freshUser.balance : currentUser.balance;
+            const newBid = AUCTION_STATE.currentBid + increment;
+
+            if (currentBalance < newBid) {
+                showAlert('You do not have enough FARADS for this bid!', 'danger');
+                return;
+            }
+
+            AUCTION_STATE.currentBid = newBid;
+            AUCTION_STATE.highestBidderId = currentUser.id;
+            AUCTION_STATE.highestBidderName = currentUser.name;
+            AUCTION_STATE.bidsHistory.push({ id: currentUser.id, name: currentUser.name, amount: newBid });
+            AUCTION_STATE.timer = 10;
+
+            if (activeBiddingInterval) {
+                clearInterval(activeBiddingInterval);
+                startActiveBidding10s(false);
+            }
+
+            await saveAllData();
+            handleAuctionRealtimeSync();
+        }
+
+        async function startAuctionCountdown() {
+            if (!AUCTION_STATE || !currentUser?.isAdmin) return;
+            AUCTION_STATE.status = 'countdown';
+            AUCTION_STATE.timer = 5;
+            await saveAllData();
+
+            let count = 5;
+            const cdInterval = setInterval(async () => {
+                count--;
+                if (AUCTION_STATE) {
+                    AUCTION_STATE.timer = count;
+                    await saveAllData();
+                }
+                if (count <= 0) {
+                    clearInterval(cdInterval);
+                    startActiveBidding10s(true);
+                }
+            }, 1000);
+        }
+
+        function startActiveBidding10s(resetTimer = true) {
+            if (!AUCTION_STATE) return;
+            AUCTION_STATE.status = 'active';
+            if (resetTimer) AUCTION_STATE.timer = 10;
+            saveAllData();
+
+            if (activeBiddingInterval) clearInterval(activeBiddingInterval);
+
+            activeBiddingInterval = setInterval(async () => {
+                AUCTION_STATE.timer--;
+                if (AUCTION_STATE.timer <= 0) {
+                    clearInterval(activeBiddingInterval);
+                    activeBiddingInterval = null;
+                    if (currentUser?.isAdmin) finalizeAuctionWinner();
+                } else {
+                    await saveAllData();
+                }
+                handleAuctionRealtimeSync();
+            }, 1000);
+        }
+
+        async function finalizeAuctionWinner() {
+            if (!AUCTION_STATE || !currentUser?.isAdmin) return;
+            AUCTION_STATE.status = 'closed';
+            
+            const sortedBids = [...AUCTION_STATE.bidsHistory].reverse();
+            let winner = null;
+            let winningBid = 0;
+
+            for (const bid of sortedBids) {
+                const student = ACCOUNTS_DATA.find(a => a.id === bid.id);
+                if (student && student.balance >= bid.amount) {
+                    winner = student;
+                    winningBid = bid.amount;
+                    break;
+                }
+            }
+
+            if (winner) {
+                winner.balance -= winningBid;
+                if (!winner.inventory) winner.inventory = [];
+                winner.inventory.push({ item: AUCTION_STATE.itemName, paid: winningBid, date: new Date().toLocaleDateString() });
+                AUCTION_STATE.winnerName = winner.name;
+                AUCTION_STATE.winningBid = winningBid;
+            } else {
+                AUCTION_STATE.winnerName = 'Nobody (No valid bids)';
+            }
+            await saveAllData();
+        }
+
+        function handleAuctionRealtimeSync() {
+            const inviteBox = document.getElementById('auctionInviteNotification');
+            const noAuctionView = document.getElementById('noAuctionArea');
+            const activeAuctionView = document.getElementById('activeAuctionArea');
+            const statusTag = document.getElementById('auctionStatusTag');
+
+            if (!currentUser || !noAuctionView || !activeAuctionView) return;
+
+            if (!AUCTION_STATE || AUCTION_STATE.status === 'closed') {
+                if (inviteBox) inviteBox.classList.add('hidden');
+                noAuctionView.classList.remove('hidden');
+                activeAuctionView.classList.add('hidden');
+                
+                if (statusTag) {
+                    if (AUCTION_STATE && AUCTION_STATE.winnerName && AUCTION_STATE.status === 'closed') {
+                        statusTag.innerText = `SOLD to ${AUCTION_STATE.winnerName}!`;
+                        statusTag.style.color = "var(--success)";
+                    } else {
+                        statusTag.innerText = "No Active Auction";
+                        statusTag.style.color = "var(--warning)";
+                    }
+                }
+                return;
+            }
+
+            const participants = AUCTION_STATE.participants || [];
+            const declined = AUCTION_STATE.declined || [];
+            const hasJoined = participants.some(p => p.id === currentUser.id);
+            const hasDeclined = declined.includes(currentUser.id);
+
+            if (inviteBox) {
+                if (!currentUser.isAdmin && !hasJoined && !hasDeclined) {
+                    document.getElementById('auctionInviteText').innerText = `Item: "${AUCTION_STATE.itemName}" | Starting Price: ${AUCTION_STATE.currentBid} FARADS`;
+                    inviteBox.classList.remove('hidden');
+                } else {
+                    inviteBox.classList.add('hidden');
+                }
+            }
+
+            noAuctionView.classList.add('hidden');
+            activeAuctionView.classList.remove('hidden');
+
+            if (statusTag) {
+                statusTag.innerText = `LIVE: ${AUCTION_STATE.itemName}`;
+                statusTag.style.color = "var(--success)";
+            }
+
+            document.getElementById('tabAuctionItemTitle').innerText = AUCTION_STATE.itemName;
+            document.getElementById('tabAuctionItemSub').innerText = `Starting Price: ${AUCTION_STATE.currentBid} FARADS`;
+            document.getElementById('tabAuctionHighestBidDisplay').innerText = `${AUCTION_STATE.currentBid} FARADS`;
+            document.getElementById('tabAuctionHighestBidderDisplay').innerText = AUCTION_STATE.highestBidderName;
+
+            const partList = document.getElementById('tabAuctionParticipantsList');
+            if (partList) partList.innerText = participants.map(p => p.name).join(', ') || 'No participants yet';
+
+            const timerDisp = document.getElementById('tabAuctionTimerDisplay');
+            const studentCtrl = document.getElementById('tabAuctionStudentControls');
+            const teacherCtrl = document.getElementById('tabAuctionTeacherControls');
+
+            if (currentUser.isAdmin) {
+                if (teacherCtrl) teacherCtrl.classList.remove('hidden');
+                if (studentCtrl) studentCtrl.classList.add('hidden');
+            } else {
+                if (teacherCtrl) teacherCtrl.classList.add('hidden');
+                if (studentCtrl) {
+                    if (AUCTION_STATE.status === 'active' && hasJoined) studentCtrl.classList.remove('hidden');
+                    else studentCtrl.classList.add('hidden');
+                }
+            }
+
+            if (timerDisp) {
+                if (AUCTION_STATE.status === 'waiting') timerDisp.innerText = 'Waiting Area';
+                else if (AUCTION_STATE.status === 'countdown') timerDisp.innerText = `Bidding Starts In: ${AUCTION_STATE.timer}s`;
+                else if (AUCTION_STATE.status === 'active') {
+                    if (AUCTION_STATE.timer > 3) timerDisp.innerText = `Time Remaining: ${AUCTION_STATE.timer}s`;
+                    else if (AUCTION_STATE.timer === 3) timerDisp.innerText = 'Going once...';
+                    else if (AUCTION_STATE.timer === 2) timerDisp.innerText = 'Going twice...';
+                    else if (AUCTION_STATE.timer === 1) timerDisp.innerText = 'Final Call!';
+                }
+            }
+        }
+
+        let currentUser = null;
+        let cart = {};
+
+        async function initApp() {
+            await loadAllData();
+            renderShopItems();
+            populateTransferDropdown();
+            populateDirectory();
+            populateAdminDropdown();
+            renderGradebookSheet();
+            document.getElementById('weightW').value = GRADE_WEIGHTS.w;
+            document.getElementById('weightP').value = GRADE_WEIGHTS.p;
+            document.getElementById('weightE').value = GRADE_WEIGHTS.e;
+            document.getElementById('gradeConvRateInput').value = GRADE_CONV_RATE;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            await loadAllData();
+            const idInput = document.getElementById('loginId').value.trim();
+            const passInput = document.getElementById('loginPass').value.trim();
+
+            const user = ACCOUNTS_DATA.find(acc => acc.id === idInput && acc.pass === passInput);
+
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('mainHeader').classList.remove('hidden');
+                document.getElementById('appSection').classList.remove('hidden');
+
+                if (currentUser.isAdmin) {
+                    document.getElementById('adminTabBtn').classList.remove('hidden');
+                    document.getElementById('adminEditShopBtn').classList.remove('hidden');
+                    document.getElementById('userPrivacySection').classList.add('hidden');
+                } else {
+                    document.getElementById('adminTabBtn').classList.add('hidden');
+                    document.getElementById('adminEditShopBtn').classList.add('hidden');
+                    document.getElementById('userPrivacySection').classList.remove('hidden');
+                }
+
+                shopEditMode = false;
+                document.getElementById('adminShopEditorPanel').classList.add('hidden');
+
+                populateTransferDropdown();
+                renderShopItems();
+                updateUserDisplays();
+                handleAuctionRealtimeSync();
+                showAlert(`Welcome back, ${currentUser.name}!`, 'success');
+            } else {
+                showAlert('Invalid Account ID or Password!', 'danger');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            cart = {};
+            shopEditMode = false;
+            renderCart();
+            document.getElementById('loginId').value = '';
+            document.getElementById('loginPass').value = '';
+            document.getElementById('mainHeader').classList.add('hidden');
+            document.getElementById('appSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+            switchTab('transferTab');
+            showAlert('Logged out successfully.', 'success');
+        }
+
+        async function savePrivacySettings() {
+            if (!currentUser || currentUser.isAdmin) return;
+            currentUser.privacy = {
+                hideBalance: document.getElementById('privBalance').checked,
+                hideCategoryGrades: document.getElementById('privCategoryGrades').checked,
+                hideFinalGrade: document.getElementById('privFinalGrade').checked,
+                hideInventory: document.getElementById('privInventory').checked
+            };
+            await saveAllData();
+            populateDirectory();
+            showAlert('Privacy settings updated!', 'success');
+        }
+
+        async function handleUserChangePassword(e) {
+            e.preventDefault();
+            const currentPass = document.getElementById('userCurrentPass').value;
+            const newPass = document.getElementById('userNewPass').value.trim();
+
+            if (currentUser.pass !== currentPass) {
+                showAlert('Current password is incorrect!', 'danger');
+                return;
+            }
+
+            if (!newPass || newPass.length < 3) {
+                showAlert('New password must be at least 3 characters long.', 'danger');
+                return;
+            }
+
+            currentUser.pass = newPass;
+            await saveAllData();
+            document.getElementById('userCurrentPass').value = '';
+            document.getElementById('userNewPass').value = '';
+            showAlert('Your password has been changed successfully!', 'success');
+        }
+
+        async function handleAdminResetPassword(e) {
+            e.preventDefault();
+            const targetId = document.getElementById('adminResetStudentSelect').value;
+            const newPass = document.getElementById('adminNewStudentPass').value.trim();
+
+            const student = ACCOUNTS_DATA.find(acc => acc.id === targetId);
+            if (student && newPass) {
+                student.pass = newPass;
+                await saveAllData();
+                document.getElementById('adminNewStudentPass').value = '';
+                showAlert(`Password for ${student.name} reset to "${newPass}"!`, 'success');
+            }
+        }
+
+        function computeStudentGrades(student) {
+            if (student.isAdmin) return { w: 0, p: 0, e: 0, final: 0 };
+            
+            let wSum = 0, wCount = 0;
+            let pSum = 0, pCount = 0;
+            let eSum = 0, eCount = 0;
+            let bonus = student.scores['bonus'] || 0;
+
+            GRADE_COLUMNS.forEach(col => {
+                const val = student.scores[col.id] || 0;
+                if (col.category === 'Written') { wSum += val; wCount++; }
+                else if (col.category === 'Performance') { pSum += val; pCount++; }
+                else if (col.category === 'Exam') { eSum += val; eCount++; }
+            });
+
+            const avgW = wCount > 0 ? (wSum / wCount) : 0;
+            const avgP = pCount > 0 ? (pSum / pCount) : 0;
+            const avgE = eCount > 0 ? (eSum / eCount) : 0;
+
+            const final = ((avgW * (GRADE_WEIGHTS.w / 100)) + 
+                           (avgP * (GRADE_WEIGHTS.p / 100)) + 
+                           (avgE * (GRADE_WEIGHTS.e / 100))) + bonus;
+
+            return {
+                w: avgW.toFixed(1),
+                p: avgP.toFixed(1),
+                e: avgE.toFixed(1),
+                final: Math.min(100, final).toFixed(1)
+            };
+        }
+
+        function updateUserDisplays() {
+            if (!currentUser) return;
+            currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id);
+
+            document.getElementById('userNameDisplay').innerText = currentUser.name;
+            document.getElementById('userBalanceDisplay').innerText = currentUser.balance.toLocaleString();
+            document.getElementById('infoName').innerText = currentUser.name;
+            document.getElementById('infoId').innerText = currentUser.id;
+            document.getElementById('infoRole').innerText = currentUser.isAdmin ? "Teacher / Admin" : "Student";
+            document.getElementById('infoBalance').innerText = currentUser.balance.toLocaleString();
+            
+            const avatarContainer = document.getElementById('profileAvatarContainer');
+            if (currentUser.avatar) {
+                avatarContainer.innerHTML = `<img src="${currentUser.avatar}" class="profile-avatar-preview" alt="Avatar">`;
+            } else {
+                avatarContainer.innerHTML = `<div class="profile-avatar-preview" id="avatarPreviewText">👤</div>`;
+            }
+
+            document.getElementById('dispWeightW').innerText = GRADE_WEIGHTS.w;
+            document.getElementById('dispWeightP').innerText = GRADE_WEIGHTS.p;
+            document.getElementById('dispWeightE').innerText = GRADE_WEIGHTS.e;
+
+            const grades = computeStudentGrades(currentUser);
+            document.getElementById('gradeWritten').innerText = grades.w;
+            document.getElementById('gradePerformance').innerText = grades.p;
+            document.getElementById('gradeExam').innerText = grades.e;
+            document.getElementById('gradeFinal').innerText = `${grades.final}%`;
+
+            if (!currentUser.isAdmin) {
+                const priv = currentUser.privacy || {};
+                document.getElementById('privBalance').checked = !!priv.hideBalance;
+                document.getElementById('privCategoryGrades').checked = !!priv.hideCategoryGrades;
+                document.getElementById('privFinalGrade').checked = !!priv.hideFinalGrade;
+                document.getElementById('privInventory').checked = !!priv.hideInventory;
+            }
+
+            renderUserCollection();
+            renderPurchaseHistory();
+            populateDirectory();
+        }
+
+        function renderUserCollection() {
+            const list = document.getElementById('userCollectionList');
+            if (!currentUser.inventory || currentUser.inventory.length === 0) {
+                list.innerHTML = 'No auction items claimed yet.';
+                return;
+            }
+            list.innerHTML = currentUser.inventory.map(item => `
+                <div style="background: var(--bg-primary); padding: 0.4rem 0.6rem; border-radius: 4px; margin-bottom: 0.3rem;">
+                    🏆 <strong>${item.item}</strong> (${item.paid} F) - ${item.date}
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick')?.includes(tabId));
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        function showAlert(msg, type) {
+            const box = document.getElementById('alertBox');
+            box.className = `alert alert-${type}`;
+            box.innerText = msg;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 4000);
+        }
+
+        function populateTransferDropdown() {
+            const select = document.getElementById('transferRecipientSelect');
+            select.innerHTML = ACCOUNTS_DATA
+                .filter(acc => acc.id !== currentUser?.id)
+                .map(acc => `<option value="${acc.id}">${acc.name}</option>`)
+                .join('');
+        }
+
+        async function handleTransfer(e) {
+            e.preventDefault();
+            const targetId = document.getElementById('transferRecipientSelect').value;
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+
+            const recipient = ACCOUNTS_DATA.find(acc => acc.id === targetId);
+            if (!recipient) {
+                showAlert('Recipient not found!', 'danger');
+                return;
+            }
+
+            if (amount <= 0 || isNaN(amount)) {
+                showAlert('Please enter a valid amount.', 'danger');
+                return;
+            }
+
+            if (currentUser.balance < amount) {
+                showAlert('Insufficient FARADS balance!', 'danger');
+                return;
+            }
+
+            currentUser.balance -= amount;
+            recipient.balance += amount;
+            await saveAllData();
+
+            updateUserDisplays();
+            document.getElementById('transferAmount').value = '';
+            showAlert(`Successfully transferred ${amount} FARADS to ${recipient.name}!`, 'success');
+        }
+
+        function renderShopItems() {
+            const container = document.getElementById('shopGridDisplay');
+            if (!container) return;
+
+            container.innerHTML = SHOP_CATEGORIES.map((cat, catIdx) => `
+                <div style="margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="color: var(--accent); margin-bottom: 0.25rem;">${cat.title}</h3>
+                        ${shopEditMode && currentUser?.isAdmin ? `<button class="btn btn-danger btn-sm" onclick="deleteShopCategory(${catIdx})">Delete Category</button>` : ''}
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem; font-style: italic;">"${cat.description}"</p>
+                    <div class="shop-grid">
+                        ${cat.items.map((item, itemIdx) => `
+                            <div class="shop-item">
+                                ${shopEditMode && currentUser?.isAdmin ? `
+                                    <button class="btn btn-danger btn-sm" style="position: absolute; top: 8px; right: 8px; padding: 0.15rem 0.45rem;" onclick="deleteShopItem(${catIdx}, ${itemIdx})" title="Remove Item">✕</button>
+                                ` : ''}
+                                <div class="item-placeholder">${item.icon || '🛍️'}</div>
+                                <div class="item-name">${item.name}</div>
+                                ${shopEditMode && currentUser?.isAdmin ? `
+                                    <div style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+                                        <input type="number" class="form-control" style="padding: 0.3rem; font-size: 0.9rem; width: 90px;" value="${item.price}" onchange="updateShopItemPrice(${catIdx}, ${itemIdx}, this.value)">
+                                        <span style="font-size: 0.8rem; color: var(--accent);">FARADS</span>
+                                    </div>
+                                ` : `
+                                    <div class="item-price">${item.price} FARADS</div>
+                                `}
+                                <button class="btn" onclick="addToCart(${item.id})">Add to Cart</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(itemId) {
+            cart[itemId] = (cart[itemId] || 0) + 1;
+            renderCart();
+        }
+
+        function removeFromCart(itemId) {
+            if (cart[itemId]) {
+                cart[itemId]--;
+                if (cart[itemId] <= 0) delete cart[itemId];
+            }
+            renderCart();
+        }
+
+        function clearCartCompletely() {
+            cart = {};
+            renderCart();
+            document.getElementById('receiptArea').innerHTML = '';
+            showAlert('Order declined and cart cleared.', 'danger');
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItemsContainer');
+            let total = 0;
+            const items = Object.keys(cart);
+            const allShopItems = getAllShopItems();
+
+            if (items.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted);">Your cart is currently empty.</p>`;
+                document.getElementById('cartTotalDisplay').innerText = '0 FARADS';
+                return;
+            }
+
+            container.innerHTML = items.map(id => {
+                const item = allShopItems.find(i => i.id == id);
+                if (!item) return '';
+                const subtotal = item.price * cart[id];
+                total += subtotal;
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        <div>
+                            <div>${item.name}</div>
+                            <div style="color: var(--text-muted);">${item.price} x ${cart[id]} = ${subtotal} FARADS</div>
+                        </div>
+                        <div>
+                            <button class="btn" style="padding: 0.1rem 0.4rem;" onclick="addToCart(${item.id})">+</button>
+                            <button class="btn btn-danger" style="padding: 0.1rem 0.4rem;" onclick="removeFromCart(${item.id})">-</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('cartTotalDisplay').innerText = `${total} FARADS`;
+        }
+
+        function reviewCheckout() {
+            let total = 0;
+            const allShopItems = getAllShopItems();
+            Object.keys(cart).forEach(id => {
+                const item = allShopItems.find(i => i.id == id);
+                if (item) total += item.price * cart[id];
+            });
+
+            if (total === 0) {
+                showAlert('Your cart is empty!', 'danger');
+                return;
+            }
+
+            if (currentUser.balance < total) {
+                showAlert('Insufficient FARADS to checkout!', 'danger');
+                return;
+            }
+
+            const dateStr = new Date().toLocaleString();
+            let receiptHtml = `
+                <div class="receipt-box">
+                    <strong>=== FARADAY STORE RECEIPT ===</strong><br>
+                    Date: ${dateStr}<br>
+                    Buyer: ${currentUser.name}<br>
+                    -----------------------------------<br>
+            `;
+            Object.keys(cart).forEach(id => {
+                const item = allShopItems.find(i => i.id == id);
+                if (item) receiptHtml += `${item.name} x${cart[id]} : ${item.price * cart[id]} F<br>`;
+            });
+            receiptHtml += `
+                    -----------------------------------<br>
+                    <strong>TOTAL PAID: ${total} FARADS</strong><br>
+                    Status: SUCCESS<br>
+                    <button class="btn" style="margin-top:0.5rem; width:100%; font-size:0.8rem;" onclick="confirmCheckout(${total})">Confirm Purchase</button>
+                </div>
+            `;
+            document.getElementById('receiptArea').innerHTML = receiptHtml;
+        }
+
+        async function confirmCheckout(total) {
+            currentUser.balance -= total; 
+            const dateStr = new Date().toLocaleString();
+            let orderSummary = { date: dateStr, items: {...cart}, total: total };
+            if (!currentUser.history) currentUser.history = [];
+            currentUser.history.push(orderSummary);
+
+            await saveAllData();
+            cart = {};
+            renderCart();
+            document.getElementById('receiptArea').innerHTML = '';
+            updateUserDisplays();
+            showAlert('Checkout confirmed successfully!', 'success');
+        }
+
+        function renderPurchaseHistory() {
+            const container = document.getElementById('purchaseHistoryContainer');
+            if (!currentUser || !currentUser.history || currentUser.history.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-muted);">No purchases made yet.</p>`;
+                return;
+            }
+
+            container.innerHTML = currentUser.history.map((order, idx) => `
+                <div class="receipt-box" style="margin-bottom: 0.75rem;">
+                    <strong>Receipt #${idx + 1} - ${order.date}</strong><br>
+                    Total Paid: ${order.total} FARADS
+                </div>
+            `).join('');
+        }
+
+        function populateAdminDropdown() {
+            const depositSelect = document.getElementById('adminStudentSelect');
+            const resetSelect = document.getElementById('adminResetStudentSelect');
+            const studentOptions = ACCOUNTS_DATA
+                .filter(acc => !acc.isAdmin)
+                .map(acc => `<option value="${acc.id}">${acc.name}</option>`)
+                .join('');
+            depositSelect.innerHTML = studentOptions;
+            resetSelect.innerHTML = studentOptions;
+        }
+
+        async function handleAdminDeposit(e) {
+            e.preventDefault();
+            const targetId = document.getElementById('adminStudentSelect').value;
+            const amount = parseFloat(document.getElementById('adminDepositAmount').value);
+
+            const student = ACCOUNTS_DATA.find(acc => acc.id === targetId);
+            if (student && amount > 0) {
+                student.balance += amount;
+                await saveAllData();
+                updateUserDisplays();
+                document.getElementById('adminDepositAmount').value = '';
+                showAlert(`Awarded ${amount} FARADS to ${student.name}!`, 'success');
+            }
+        }
+
+        async function saveWeights() {
+            const w = parseFloat(document.getElementById('weightW').value) || 0;
+            const p = parseFloat(document.getElementById('weightP').value) || 0;
+            const e = parseFloat(document.getElementById('weightE').value) || 0;
+
+            if (w + p + e !== 100) {
+                showAlert('Weights must total exactly 100%!', 'danger');
+                return;
+            }
+
+            GRADE_WEIGHTS = { w, p, e };
+            await saveAllData();
+            updateUserDisplays();
+            renderGradebookSheet();
+            showAlert('Grading weights updated successfully!', 'success');
+        }
+
+        async function saveConversionRate() {
+            const rate = parseFloat(document.getElementById('gradeConvRateInput').value);
+            if (isNaN(rate) || rate < 0) {
+                showAlert('Please enter a valid conversion rate!', 'danger');
+                return;
+            }
+            GRADE_CONV_RATE = rate;
+            await saveAllData();
+            showAlert(`Conversion rate saved (${GRADE_CONV_RATE} F per 1%).`, 'success');
+        }
+
+        async function applyGradeToFaradsConversion() {
+            if (!confirm(`Sync student balances based on their grades (${GRADE_CONV_RATE} Farads per 1%)?`)) return;
+
+            ACCOUNTS_DATA.forEach(acc => {
+                if (!acc.isAdmin) {
+                    const finalGrade = parseFloat(computeStudentGrades(acc).final);
+                    acc.balance = Math.round(finalGrade * GRADE_CONV_RATE);
+                }
+            });
+
+            await saveAllData();
+            updateUserDisplays();
+            renderGradebookSheet();
+            populateDirectory();
+            showAlert('Successfully synced student Farads balances based on grades!', 'success');
+        }
+
+        async function addColumnModal() {
+            const name = prompt("Enter Name of New Column:");
+            if (!name) return;
+            const category = prompt("Enter Category ('Written', 'Performance', 'Exam', or 'Bonus'):", "Written");
+            if (!['Written', 'Performance', 'Exam', 'Bonus'].includes(category)) {
+                alert("Invalid category!");
+                return;
+            }
+
+            const colId = 'col_' + Date.now();
+            GRADE_COLUMNS.push({ id: colId, name: name, category: category });
+            await saveAllData();
+            renderGradebookSheet();
+            showAlert(`Column '${name}' added!`, 'success');
+        }
+
+        async function removeColumn(colId) {
+            if (confirm("Delete this grading column?")) {
+                GRADE_COLUMNS = GRADE_COLUMNS.filter(col => col.id !== colId);
+                await saveAllData();
+                renderGradebookSheet();
+                if (currentUser) updateUserDisplays();
+                showAlert("Column removed successfully!", "success");
+            }
+        }
+
+        function renderGradebookSheet() {
+            const headerRow = document.getElementById('worksheetHeaderRow');
+            let headerHtml = `<th>ID</th><th>Student Name</th>`;
+            GRADE_COLUMNS.forEach(col => {
+                headerHtml += `
+                    <th>
+                        ${col.name}<br>
+                        <span style="font-size:0.75rem; color:var(--accent);">(${col.category})</span>
+                        <button onclick="removeColumn('${col.id}')" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.75rem; margin-left:5px;">[X]</button>
+                    </th>`;
+            });
+            headerHtml += `<th>Final Grade</th>`;
+            headerRow.innerHTML = headerHtml;
+
+            const tbody = document.getElementById('gradebookTableBody');
+            tbody.innerHTML = ACCOUNTS_DATA.filter(acc => !acc.isAdmin).map(acc => {
+                let rowHtml = `<tr><td><code>${acc.id}</code></td><td>${acc.name}</td>`;
+                GRADE_COLUMNS.forEach(col => {
+                    const val = acc.scores[col.id] || 0;
+                    rowHtml += `<td><input type="number" class="sheet-input" id="score_${acc.id}_${col.id}" value="${val}" min="0" max="100"></td>`;
+                });
+                const final = computeStudentGrades(acc).final;
+                rowHtml += `<td><strong style="color: var(--accent);">${final}%</strong></td></tr>`;
+                return rowHtml;
+            }).join('');
+        }
+
+        async function saveGradebookSheet() {
+            ACCOUNTS_DATA.filter(acc => !acc.isAdmin).forEach(acc => {
+                if (!acc.scores) acc.scores = {};
+                GRADE_COLUMNS.forEach(col => {
+                    const input = document.getElementById(`score_${acc.id}_${col.id}`);
+                    if (input) acc.scores[col.id] = parseFloat(input.value) || 0;
+                });
+            });
+
+            await saveAllData();
+            renderGradebookSheet();
+            if (currentUser) updateUserDisplays();
+            showAlert("Worksheet grades saved successfully!", "success");
+        }
+
+        function populateDirectory() {
+            const container = document.getElementById('directorySectionsContainer');
+            if (!container) return;
+
+            const isViewerAdmin = currentUser && currentUser.isAdmin;
+            const nonAdmins = ACCOUNTS_DATA.filter(acc => !acc.isAdmin && acc.group !== 'Admin');
+            const sortAlpha = (a, b) => a.name.localeCompare(b.name);
+
+            const males = nonAdmins.filter(acc => acc.group === 'Male').sort(sortAlpha);
+            const females = nonAdmins.filter(acc => acc.group === 'Female').sort(sortAlpha);
+            const testers = nonAdmins.filter(acc => acc.group === 'Tester').sort(sortAlpha);
+
+            const renderGroupTable = (title, list) => {
+                if (list.length === 0) return '';
+                return `
+                    <h3 class="dir-section-title">${title} (${list.length})</h3>
+                    <div class="table-responsive" style="margin-bottom: 1.5rem;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Avatar</th>
+                                    <th>10-Digit ID</th>
+                                    <th>Student Name</th>
+                                    <th>Balance</th>
+                                    <th>Final Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${list.map(acc => {
+                                    const priv = acc.privacy || {};
+                                    const isSelf = currentUser && currentUser.id === acc.id;
+                                    const canSeeBalance = isViewerAdmin || isSelf || !priv.hideBalance;
+                                    const canSeeFinal = isViewerAdmin || isSelf || !priv.hideFinalGrade;
+
+                                    const balanceText = canSeeBalance ? `<strong>${acc.balance.toLocaleString()}</strong> FARADS` : `<span style="color: var(--text-muted); font-style: italic;">🔒 Private</span>`;
+                                    const finalText = canSeeFinal ? `<span style="color: var(--success);">${computeStudentGrades(acc).final}%</span>` : `<span style="color: var(--text-muted); font-style: italic;">🔒 Private</span>`;
+                                    const avatarThumb = acc.avatar ? `<img src="${acc.avatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">` : `👤`;
+
+                                    return `
+                                        <tr class="clickable-row" onclick="openStudentProfileModal('${acc.id}')">
+                                            <td>${avatarThumb}</td>
+                                            <td><code>${acc.id}</code></td>
+                                            <td>${acc.name} ${isSelf ? '<span style="color: var(--accent); font-size: 0.8rem;">(You)</span>' : ''}</td>
+                                            <td>${balanceText}</td>
+                                            <td>${finalText}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            };
+
+            container.innerHTML = renderGroupTable('Male', males) + renderGroupTable('Female', females) + renderGroupTable('Testers', testers);
+        }
+
+        function openStudentProfileModal(studentId) {
+            const student = ACCOUNTS_DATA.find(acc => acc.id === studentId);
+            if (!student || student.isAdmin) return;
+
+            const isViewerAdmin = currentUser && currentUser.isAdmin;
+            const isSelf = currentUser && currentUser.id === student.id;
+            const priv = student.privacy || {};
+
+            const canSeeBalance = isViewerAdmin || isSelf || !priv.hideBalance;
+            const canSeeCatGrades = isViewerAdmin || isSelf || !priv.hideCategoryGrades;
+            const canSeeFinalGrade = isViewerAdmin || isSelf || !priv.hideFinalGrade;
+            const canSeeInventory = isViewerAdmin || isSelf || !priv.hideInventory;
+
+            document.getElementById('modalStudentName').innerText = `${student.name} (${student.group})`;
+            const grades = computeStudentGrades(student);
+
+            let inventoryHtml = '';
+            if (!canSeeInventory) {
+                inventoryHtml = `<p style="color: var(--text-muted); font-style: italic;">🔒 Hidden by student privacy settings</p>`;
+            } else if (!student.inventory || student.inventory.length === 0) {
+                inventoryHtml = `<p style="color: var(--text-muted);">No auction items claimed yet.</p>`;
+            } else {
+                inventoryHtml = student.inventory.map(item => `
+                    <div style="background: var(--bg-primary); padding: 0.4rem 0.6rem; border-radius: 4px; margin-bottom: 0.3rem; font-size: 0.85rem;">
+                        🏆 <strong>${item.item}</strong> (${item.paid} F) - ${item.date}
+                    </div>
+                `).join('');
+            }
+
+            const modalAvatar = student.avatar ? `<img src="${student.avatar}" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-bottom: 0.75rem;">` : `<div style="font-size: 2.5rem; margin-bottom: 0.75rem;">👤</div>`;
+
+            document.getElementById('modalStudentBody').innerHTML = `
+                <div style="text-align: center;">${modalAvatar}</div>
+                <p><strong>10-Digit ID:</strong> <code>${student.id}</code></p>
+                <p style="margin-top: 0.4rem;"><strong>Group:</strong> ${student.group}</p>
+                <p style="margin-top: 0.4rem;"><strong>Available Balance:</strong> ${canSeeBalance ? `<span style="color: var(--accent); font-weight: bold;">${student.balance.toLocaleString()} FARADS</span>` : `<span style="color: var(--text-muted); font-style: italic;">🔒 Private</span>`}</p>
+
+                <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                    <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Academic Standing</h4>
+                    ${canSeeCatGrades ? `
+                        <p style="font-size: 0.9rem;">Written Works (${GRADE_WEIGHTS.w}%): <strong style="color: var(--success);">${grades.w}</strong></p>
+                        <p style="font-size: 0.9rem; margin-top: 0.2rem;">Performance Tasks (${GRADE_WEIGHTS.p}%): <strong style="color: var(--success);">${grades.p}</strong></p>
+                        <p style="font-size: 0.9rem; margin-top: 0.2rem;">Exam (${GRADE_WEIGHTS.e}%): <strong style="color: var(--success);">${grades.e}</strong></p>
+                    ` : `<p style="color: var(--text-muted); font-style: italic; font-size: 0.9rem;">🔒 Category breakdown hidden</p>`}
+                    <p style="font-size: 0.95rem; margin-top: 0.4rem; border-top: 1px dashed var(--border); padding-top: 0.3rem;">
+                        Final Equivalent Grade: ${canSeeFinalGrade ? `<strong style="color: var(--accent);">${grades.final}%</strong>` : `<span style="color: var(--text-muted); font-style: italic;">🔒 Private</span>`}
+                    </p>
+                </div>
+
+                <div style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+                    <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Won Auction Items</h4>
+                    ${inventoryHtml}
+                </div>
+            `;
+
+            document.getElementById('studentProfileModal').classList.remove('hidden');
+        }
+
+        function closeStudentProfileModal(e) {
+            if (!e || e.target.id === 'studentProfileModal') {
+                document.getElementById('studentProfileModal').classList.add('hidden');
+            }
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
