@@ -344,7 +344,7 @@
             background-color: var(--bg-secondary);
             border: 1px solid var(--accent);
             border-radius: 12px;
-            max-width: 500px;
+            max-width: 550px;
             width: 100%;
             padding: 1.5rem;
             max-height: 90vh;
@@ -424,6 +424,7 @@
         <div class="logo-title">
             <img src="ft_logo.png" alt="Faraday Tech Logo" class="header-logo" onerror="this.style.display='none'">
             <h2>Faraday Tech</h2>
+            <button class="btn btn-warning btn-sm" onclick="openPatchNotesModal()" style="margin-left: 0.5rem;">📜 Patchnotes</button>
         </div>
         <div class="user-profile">
             <span id="userNameDisplay">User</span>
@@ -446,6 +447,7 @@
             </div>
         </div>
 
+        <!-- Login Card -->
         <div id="loginSection" class="login-card">
             <div style="text-align: center; margin-bottom: 1.5rem;">
                 <img src="ft_logo.png" alt="Logo" style="width: 55px; height: 55px; margin: 0 auto 0.5rem auto; display: block; object-fit: contain;" onerror="this.style.display='none'">
@@ -463,11 +465,50 @@
                 </div>
                 <button type="submit" class="btn" style="width: 100%; padding: 0.75rem;">Login to Account</button>
             </form>
+            <div style="margin-top: 1rem; text-align: center; font-size: 0.9rem;">
+                <a href="#" onclick="toggleAuthMode(event)" style="color: var(--accent); text-decoration: none;">Don't have an account? Sign Up</a>
+            </div>
             <div style="margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
                 <p><strong>Tester Accounts:</strong></p>
                 <p>• Student 1: <code>1111111111</code> / <code>testpass1</code></p>
-                <p>• Student 2: <code>2222222222</code> / <code>testpass2</code></p>
                 <p>• Admin: <code>8888888888</code> / <code>admintest</code></p>
+            </div>
+        </div>
+
+        <!-- Sign Up Card -->
+        <div id="signupSection" class="login-card hidden">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <h2>Create Account</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Join Faraday Tech Portal</p>
+            </div>
+            <form onsubmit="handleSignUp(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupName" class="form-control" placeholder="e.g. Jane Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Display Nickname (Optional)</label>
+                    <input type="text" id="signupNickname" class="form-control" placeholder="e.g. Jane">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPass" class="form-control" placeholder="Create password" required>
+                </div>
+                <div class="form-group">
+                    <label>Account Role</label>
+                    <select id="signupRole" class="form-control" onchange="toggleAdminCodeInput()">
+                        <option value="Student">Student</option>
+                        <option value="Admin">Teacher / Admin</option>
+                    </select>
+                </div>
+                <div class="form-group hidden" id="adminCodeGroup">
+                    <label>Admin Secret Code</label>
+                    <input type="password" id="signupAdminCode" class="form-control" placeholder="Enter special admin code">
+                </div>
+                <button type="submit" class="btn" style="width: 100%; padding: 0.75rem; margin-bottom: 0.75rem;">Sign Up</button>
+            </form>
+            <div style="text-align: center; font-size: 0.9rem;">
+                <a href="#" onclick="toggleAuthMode(event)" style="color: var(--accent); text-decoration: none;">Already have an account? Login</a>
             </div>
         </div>
 
@@ -476,6 +517,7 @@
                 <button class="tab-btn active" onclick="switchTab('transferTab')">FARADS Transfer</button>
                 <button class="tab-btn" onclick="switchTab('shopTab')">School Store</button>
                 <button id="auctionTabBtn" class="tab-btn" onclick="switchTab('auctionTab')">🔨 Auction Room</button>
+                <button class="tab-btn" onclick="switchTab('classTab')">📚 Class & Quizzes</button>
                 <button id="adminTabBtn" class="tab-btn hidden" onclick="switchTab('adminTab')">Grading & Admin</button>
                 <button class="tab-btn" onclick="switchTab('directoryTab')">Classroom List</button>
             </div>
@@ -509,7 +551,7 @@
                                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                                     <button type="button" class="btn btn-sm" onclick="document.getElementById('profileImageInput').click()">📁 Upload File / Photo</button>
                                     <button type="button" class="btn btn-warning btn-sm" onclick="openCameraCapture()">📷 Take a Photo</button>
-                                    <button type="button" id="removeAvatarBtn" class="btn btn-danger btn-sm" onclick="removeProfileAvatar()">✕ Remove</button>
+                                    <button type="button" id="removeAvatarBtn" class="btn btn-danger btn-sm hidden" onclick="removeProfileAvatar()">✕ Remove</button>
                                 </div>
                                 <input type="file" id="profileImageInput" accept="image/*" class="hidden" onchange="handleProfileImageUpload(event)">
                             </div>
@@ -689,7 +731,34 @@
                 </div>
             </div>
 
-            <!-- Tab 4: Admin & Gradebook -->
+            <!-- Tab 4: Class & Quizzes -->
+            <div id="classTab" class="tab-content hidden">
+                <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
+                    <!-- Lessons & Notes Section -->
+                    <div class="card">
+                        <div class="card-title">
+                            <span>📚 Lessons & Notes</span>
+                            <button id="addLessonBtn" class="btn btn-warning btn-sm hidden" onclick="openAddLessonModal()">+ Add Lesson</button>
+                        </div>
+                        <div id="lessonsContainer">
+                            <p style="color: var(--text-muted);">No lessons published yet.</p>
+                        </div>
+                    </div>
+
+                    <!-- Quizzes Section -->
+                    <div class="card">
+                        <div class="card-title">
+                            <span>🧠 Classroom Quizzes</span>
+                            <button id="addQuizBtn" class="btn btn-warning btn-sm hidden" onclick="openAddQuizModal()">+ Add Quiz</button>
+                        </div>
+                        <div id="quizzesContainer">
+                            <p style="color: var(--text-muted);">No quizzes available right now.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Admin & Gradebook -->
             <div id="adminTab" class="tab-content hidden">
                 <div class="dashboard-grid" style="margin-bottom: 1.5rem;">
                     <div class="card" style="margin-bottom: 0;">
@@ -802,7 +871,7 @@
                 </div>
             </div>
 
-            <!-- Tab 5: Directory -->
+            <!-- Tab 6: Directory -->
             <div id="directoryTab" class="tab-content hidden">
                 <div class="card">
                     <div class="card-title">
@@ -845,9 +914,117 @@
         </div>
     </div>
 
+    <!-- Patch Notes Modal -->
+    <div id="patchNotesModal" class="modal-overlay hidden" onclick="closePatchNotesModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                <span>📜 System Patch Notes</span>
+                <button class="btn btn-danger btn-sm" onclick="closePatchNotesModal()">Close</button>
+            </div>
+            <div id="patchNotesBody" style="font-size: 0.95rem; line-height: 1.6; max-height: 60vh; overflow-y: auto; padding-right: 0.5rem;">
+                <div style="margin-bottom: 1.25rem;">
+                    <h3 style="color: var(--accent);">Version 14</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Released: November 2026</p>
+                    <ul style="margin-left: 1.25rem; margin-top: 0.3rem;">
+                        <li>Added Classroom Lessons & Notes publishing hub for teachers.</li>
+                        <li>Added Interactive Quizzes where students can earn Farads upon correct answers.</li>
+                        <li>Added Sign Up feature with secret Admin verification code protection.</li>
+                        <li>Added dedicated Patchnotes notification button and modal viewer.</li>
+                    </ul>
+                </div>
+                <div style="margin-bottom: 1.25rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <h3 style="color: var(--accent);">Version 13</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Released: November 2026</p>
+                    <ul style="margin-left: 1.25rem; margin-top: 0.3rem;">
+                        <li>Added Auction Showcase with 24-hour dynamic price fluctuations.</li>
+                        <li>Added student auction request counter and teacher re-auction launch system.</li>
+                        <li>Added teacher auction cancellation controls.</li>
+                    </ul>
+                </div>
+                <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <h3 style="color: var(--accent);">Version 12</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Released: November 2026</p>
+                    <ul style="margin-left: 1.25rem; margin-top: 0.3rem;">
+                        <li>Added custom Nicknames support for students and teachers.</li>
+                        <li>Added dedicated Teachers category in Classroom Directory list.</li>
+                        <li>Added custom image URL support for store items and profile camera capture suite.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Lesson Modal -->
+    <div id="addLessonModal" class="modal-overlay hidden" onclick="closeAddLessonModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                <span>Publish New Lesson / Note</span>
+                <button class="btn btn-danger btn-sm" onclick="closeAddLessonModal()">Cancel</button>
+            </div>
+            <form onsubmit="handleCreateLesson(event)" style="margin-top: 1rem;">
+                <div class="form-group">
+                    <label>Lesson Title</label>
+                    <input type="text" id="lessonTitleInput" class="form-control" placeholder="e.g. Introduction to Ohm's Law" required>
+                </div>
+                <div class="form-group">
+                    <label>Content / Reading Material / Video Link</label>
+                    <textarea id="lessonContentInput" class="form-control" rows="5" placeholder="Write lesson notes, instructions, or paste video/reading links here..." required></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Publish Lesson</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Quiz Modal -->
+    <div id="addQuizModal" class="modal-overlay hidden" onclick="closeAddQuizModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                <span>Create Classroom Quiz</span>
+                <button class="btn btn-danger btn-sm" onclick="closeAddQuizModal()">Cancel</button>
+            </div>
+            <form onsubmit="handleCreateQuiz(event)" style="margin-top: 1rem;">
+                <div class="form-group">
+                    <label>Quiz Question</label>
+                    <input type="text" id="quizQuestionInput" class="form-control" placeholder="e.g. What is the unit of electrical resistance?" required>
+                </div>
+                <div class="form-group">
+                    <label>Option A</label>
+                    <input type="text" id="quizOptA" class="form-control" placeholder="Option A" required>
+                </div>
+                <div class="form-group">
+                    <label>Option B</label>
+                    <input type="text" id="quizOptB" class="form-control" placeholder="Option B" required>
+                </div>
+                <div class="form-group">
+                    <label>Option C</label>
+                    <input type="text" id="quizOptC" class="form-control" placeholder="Option C" required>
+                </div>
+                <div class="form-group">
+                    <label>Option D</label>
+                    <input type="text" id="quizOptD" class="form-control" placeholder="Option D" required>
+                </div>
+                <div class="form-group">
+                    <label>Correct Answer</label>
+                    <select id="quizCorrectInput" class="form-control" required>
+                        <option value="0">Option A</option>
+                        <option value="1">Option B</option>
+                        <option value="2">Option C</option>
+                        <option value="3">Option D</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Farads Reward</label>
+                    <input type="number" id="quizRewardInput" class="form-control" min="1" value="50" required>
+                </div>
+                <button type="submit" class="btn btn-warning" style="width: 100%;">Publish Quiz</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://sujpdopplexaxgnizvil.supabase.co';
         const SUPABASE_KEY = 'sb_publishable__srdeSwL95qHFZLfO2N3WQ_WJSNcB58';
+        const SECRET_ADMIN_CODE = 'FARADAYADMIN';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const DEFAULT_COLUMNS = [
@@ -872,12 +1049,7 @@
                     { id: 2, name: "Eraser", price: 30, icon: "🧹", imageUrl: "" },
                     { id: 3, name: "Pencil", price: 30, icon: "✏️", imageUrl: "" },
                     { id: 4, name: "A4 bond paper (5 pieces)", price: 50, icon: "📄", imageUrl: "" },
-                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120, icon: "📝", imageUrl: "" },
-                    { id: 6, name: "1/4 (10 pieces)", price: 20, icon: "📋", imageUrl: "" },
-                    { id: 7, name: "Crosswise (10 pieces)", price: 80, icon: "📑", imageUrl: "" },
-                    { id: 8, name: "Lengthwise (10 pieces)", price: 95, icon: "📄", imageUrl: "" },
-                    { id: 9, name: "Long bond paper (5 pieces)", price: 75, icon: "📜", imageUrl: "" },
-                    { id: 10, name: "Short/Letter bond paper (5 pieces)", price: 35, icon: "📄", imageUrl: "" }
+                    { id: 5, name: "Intermediate Pad (10 pieces)", price: 120, icon: "📝", imageUrl: "" }
                 ]
             },
             {
@@ -896,9 +1068,8 @@
                 description: "Feeling rich today?",
                 items: [
                     { id: 14, name: "One print (A4, non-colored)", price: 200, icon: "🖨️", imageUrl: "" },
-                    { id: 15, name: "One print (A4, colored, normal)", price: 400, icon: "🎨", imageUrl: "" },
-                    { id: 16, name: "One print (A4, colored, best)", price: 500, icon: "🖼️", imageUrl: "" },
-                    { id: 17, name: "Sign pen", price: 100, icon: "🖋️", imageUrl: "" }
+                    { id: 15, name: "One print (A4, colored, best)", price: 500, icon: "🖼️", imageUrl: "" },
+                    { id: 16, name: "Sign pen", price: 100, icon: "🖋️", imageUrl: "" }
                 ]
             },
             {
@@ -910,54 +1081,9 @@
         ];
 
         const DEFAULT_ACCOUNTS = [
-            { id: "1111111111", name: "Tester Student 1", nickname: "", group: "Tester", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "2222222222", name: "Tester Student 2", nickname: "", group: "Tester", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "8888888888", name: "Tester Admin Teacher", nickname: "", group: "Admin", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[], privacy: {}, avatar: "" },
-
-            { id: "1208201101", name: "David Aguas", nickname: "", group: "Male", pass: "120801", balance: 1000, scores: {written1:88, written2:90, perf1:89, perf2:91, exam1:85, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0731201102", name: "Jovit Ate", nickname: "", group: "Male", pass: "073102", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:84, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0411201203", name: "Tristan Bristol", nickname: "", group: "Male", pass: "041103", balance: 1000, scores: {written1:90, written2:92, perf1:90, perf2:92, exam1:88, bonus:5}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0101201204", name: "Nino Cabasag", nickname: "", group: "Male", pass: "010104", balance: 1000, scores: {written1:84, written2:86, perf1:84, perf2:86, exam1:82, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0220201205", name: "John Callunsag", nickname: "", group: "Male", pass: "022005", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:87, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0220201206", name: "Teody Clarin", nickname: "", group: "Male", pass: "022006", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0803201207", name: "Immanuel Ella", nickname: "", group: "Male", pass: "080307", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0414201208", name: "Calix Farre", nickname: "", group: "Male", pass: "041408", balance: 1000, scores: {written1:86, written2:89, perf1:86, perf2:89, exam1:84, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "1112201109", name: "Ethan Kollin", nickname: "", group: "Male", pass: "111209", balance: 1000, scores: {written1:88, written2:88, perf1:88, perf2:88, exam1:86, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0718201110", name: "Jolo Maisog", nickname: "", group: "Male", pass: "071810", balance: 1000, scores: {written1:83, written2:85, perf1:83, perf2:85, exam1:81, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0815201111", name: "Jared Nonoy", nickname: "", group: "Male", pass: "Jard123", balance: 1000, scores: {written1:95, written2:97, perf1:95, perf2:97, exam1:94, bonus:5}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0626201212", name: "Benz Oriño", nickname: "", group: "Male", pass: "062612", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0215201213", name: "Kyle Suarez", nickname: "", group: "Male", pass: "021513", balance: 1000, scores: {written1:87, written2:86, perf1:87, perf2:86, exam1:85, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0531201214", name: "Liam Uba", nickname: "", group: "Male", pass: "053114", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:88, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0115201215", name: "Rufz Casinto", nickname: "", group: "Male", pass: "011515", balance: 1000, scores: {written1:88, written2:89, perf1:88, perf2:89, exam1:86, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-
-            { id: "0715201116", name: "Charo Aboga-a", nickname: "", group: "Female", pass: "071516", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "1215201117", name: "Ayesha Amer", nickname: "", group: "Female", pass: "121517", balance: 1000, scores: {written1:89, written2:91, perf1:89, perf2:91, exam1:88, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0830201118", name: "Kristine Antiga", nickname: "", group: "Female", pass: "083018", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:89, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0913201219", name: "Mia Apao", nickname: "", group: "Female", pass: "091319", balance: 1000, scores: {written1:88, written2:87, perf1:88, perf2:87, exam1:85, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0824201120", name: "Embrace Bandiala", nickname: "", group: "Female", pass: "082420", balance: 1000, scores: {written1:93, written2:95, perf1:93, perf2:95, exam1:92, bonus:4}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0411201221", name: "Janessa Caga-anan", nickname: "", group: "Female", pass: "041121", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:85, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0413201222", name: "Veronica Ciano", nickname: "", group: "Female", pass: "041322", balance: 1000, scores: {written1:86, written2:88, perf1:86, perf2:88, exam1:84, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0419201223", name: "Rhea Cirunay", nickname: "", group: "Female", pass: "041923", balance: 1000, scores: {written1:91, written2:92, perf1:91, perf2:92, exam1:90, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0118201224", name: "Joberly Jambo", nickname: "", group: "Female", pass: "011824", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0420201225", name: "Shiloh Lagumbay", nickname: "", group: "Female", pass: "042025", balance: 1000, scores: {written1:90, written2:89, perf1:90, perf2:89, exam1:88, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0104201226", name: "Vrylle Mandao", nickname: "", group: "Female", pass: "010426", balance: 1000, scores: {written1:85, written2:87, perf1:85, perf2:87, exam1:83, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0430201227", name: "Crystallize Manliguez", nickname: "", group: "Female", pass: "043027", balance: 1000, scores: {written1:94, written2:96, perf1:94, perf2:96, exam1:93, bonus:5}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "1104201128", name: "Lee Manan-og", nickname: "", group: "Female", pass: "110428", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "1130201129", name: "Marwa Matundac", nickname: "", group: "Female", pass: "113029", balance: 1000, scores: {written1:87, written2:88, perf1:87, perf2:88, exam1:85, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0924201130", name: "Nica Mutia", nickname: "", group: "Female", pass: "092430", balance: 1000, scores: {written1:92, written2:93, perf1:92, perf2:93, exam1:91, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0813201131", name: "Ceana Oculam", nickname: "", group: "Female", pass: "081331", balance: 1000, scores: {written1:90, written2:91, perf1:90, perf2:91, exam1:89, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0331201232", name: "Shena Oliveros", nickname: "", group: "Female", pass: "033132", balance: 1000, scores: {written1:88, written2:90, perf1:88, perf2:90, exam1:87, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0515201233", name: "Alphyca Osuyos", nickname: "", group: "Female", pass: "051533", balance: 1000, scores: {written1:86, written2:87, perf1:86, perf2:87, exam1:84, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "1230201134", name: "Daniela Pongcol", nickname: "", group: "Female", pass: "123034", balance: 1000, scores: {written1:89, written2:92, perf1:89, perf2:92, exam1:88, bonus:2}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0203201235", name: "Rashiel Samrano", nickname: "", group: "Female", pass: "020335", balance: 1000, scores: {written1:91, written2:93, perf1:91, perf2:93, exam1:90, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "1119201136", name: "Kriselsem Sinajon", nickname: "", group: "Female", pass: "111936", balance: 1000, scores: {written1:87, written2:89, perf1:87, perf2:89, exam1:86, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "1210201137", name: "Chedane Sultan", nickname: "", group: "Female", pass: "121037", balance: 1000, scores: {written1:90, written2:90, perf1:90, perf2:90, exam1:88, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0730201138", name: "Jasmine Tomagna", nickname: "", group: "Female", pass: "073038", balance: 1000, scores: {written1:88, written2:91, perf1:88, perf2:91, exam1:86, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0428201239", name: "Khloe Ungab", nickname: "", group: "Female", pass: "042839", balance: 1000, scores: {written1:85, written2:86, perf1:85, perf2:86, exam1:83, bonus:0}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0831201240", name: "Ashley Vale", nickname: "", group: "Female", pass: "083140", balance: 1000, scores: {written1:92, written2:94, perf1:92, perf2:94, exam1:91, bonus:3}, history:[], inventory:[], privacy: {}, avatar: "" },
-            { id: "0910201141", name: "Herald Vidad", nickname: "", group: "Female", pass: "091041", balance: 1000, scores: {written1:89, written2:90, perf1:89, perf2:90, exam1:87, bonus:1}, history:[], inventory:[], privacy: {}, avatar: "" },
-
-            { id: "9999999999", name: "Ma'am Anib", nickname: "", group: "Admin", pass: "admin123", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[], privacy: {}, avatar: "" }
+            { id: "1111111111", name: "Tester Student 1", nickname: "", group: "Tester", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[], inventory:[], completedQuizzes:[], privacy: {}, avatar: "" },
+            { id: "2222222222", name: "Tester Student 2", nickname: "", group: "Tester", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[], inventory:[], completedQuizzes:[], privacy: {}, avatar: "" },
+            { id: "8888888888", name: "Tester Admin Teacher", nickname: "", group: "Admin", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[], completedQuizzes:[], privacy: {}, avatar: "" }
         ];
 
         let ACCOUNTS_DATA = [];
@@ -965,6 +1091,8 @@
         let GRADE_WEIGHTS = {};
         let GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
         let SHOP_CATEGORIES = [];
+        let LESSONS_DATA = [];
+        let QUIZZES_DATA = [];
         let AUCTION_STATE = null;
         let activeBiddingInterval = null;
         let shopEditMode = false;
@@ -989,6 +1117,7 @@
                 if (!acc.privacy) acc.privacy = {};
                 if (!acc.avatar) acc.avatar = "";
                 if (acc.nickname === undefined) acc.nickname = "";
+                if (!acc.completedQuizzes) acc.completedQuizzes = [];
                 return acc;
             });
         }
@@ -1007,6 +1136,8 @@
                     GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
                     SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
+                    LESSONS_DATA = [];
+                    QUIZZES_DATA = [];
                     AUCTION_STATE = null;
                     await saveAllData();
                 } else {
@@ -1015,6 +1146,8 @@
                     GRADE_COLUMNS = data.columns && data.columns.length > 0 ? data.columns : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = data.convRate !== undefined ? data.convRate : DEFAULT_CONVERSION_RATE;
+                    LESSONS_DATA = data.lessons || [];
+                    QUIZZES_DATA = data.quizzes || [];
                     
                     let loadedCats = data.shop_categories && data.shop_categories.length > 0 ? data.shop_categories : JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
                     let showcaseCat = loadedCats.find(c => c.id === 'cat_showcase');
@@ -1034,6 +1167,8 @@
                 GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                 GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
                 SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
+                LESSONS_DATA = [];
+                QUIZZES_DATA = [];
                 AUCTION_STATE = null;
             }
         }
@@ -1051,7 +1186,6 @@
                 if (hoursPassed >= 24) {
                     const days = Math.floor(hoursPassed / 24);
                     for (let i = 0; i < days; i++) {
-                        // Random market fluctuation between -2% and +3% per 24h cycle
                         const changePercent = (Math.random() * 0.05) - 0.02;
                         item.price = Math.max(1, Math.round(item.price * (1 + changePercent) * 100) / 100);
                     }
@@ -1073,6 +1207,8 @@
                         weights: GRADE_WEIGHTS,
                         convRate: GRADE_CONV_RATE,
                         shop_categories: SHOP_CATEGORIES,
+                        lessons: LESSONS_DATA,
+                        quizzes: QUIZZES_DATA,
                         auction: AUCTION_STATE
                     });
             } catch (err) {
@@ -1094,6 +1230,8 @@
                     GRADE_WEIGHTS = updated.weights || GRADE_WEIGHTS;
                     GRADE_CONV_RATE = updated.convRate !== undefined ? updated.convRate : GRADE_CONV_RATE;
                     if (updated.shop_categories) SHOP_CATEGORIES = updated.shop_categories;
+                    LESSONS_DATA = updated.lessons || LESSONS_DATA;
+                    QUIZZES_DATA = updated.quizzes || QUIZZES_DATA;
                     AUCTION_STATE = updated.auction || null;
 
                     if (currentUser) {
@@ -1103,18 +1241,21 @@
                     renderShopItems();
                     renderGradebookSheet();
                     populateDirectory();
+                    renderLessonsAndQuizzes();
                 }
             )
             .subscribe();
 
         async function resetAllData() {
-            if (confirm("Reset all system data, shop items, avatars, passwords, grades, and receipts in Supabase?")) {
+            if (confirm("Reset all system data, lessons, quizzes, shop items, and accounts in Supabase?")) {
                 try {
                     ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
                     GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
                     GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
                     SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
+                    LESSONS_DATA = [];
+                    QUIZZES_DATA = [];
                     AUCTION_STATE = null;
 
                     await saveAllData();
@@ -1127,6 +1268,83 @@
                     showAlert("Failed to reset system data.", "danger");
                 }
             }
+        }
+
+        function toggleAuthMode(e) {
+            e.preventDefault();
+            const loginCard = document.getElementById('loginSection');
+            const signupCard = document.getElementById('signupSection');
+            loginCard.classList.toggle('hidden');
+            signupCard.classList.toggle('hidden');
+        }
+
+        function toggleAdminCodeInput() {
+            const role = document.getElementById('signupRole').value;
+            const codeGroup = document.getElementById('adminCodeGroup');
+            if (role === 'Admin') codeGroup.classList.remove('hidden');
+            else codeGroup.classList.add('hidden');
+        }
+
+        async function handleSignUp(e) {
+            e.preventDefault();
+            await loadAllData();
+
+            const name = document.getElementById('signupName').value.trim();
+            const nickname = document.getElementById('signupNickname').value.trim();
+            const pass = document.getElementById('signupPass').value.trim();
+            const role = document.getElementById('signupRole').value;
+            const adminCode = document.getElementById('signupAdminCode').value.trim();
+
+            if (!name || !pass) {
+                showAlert('Please provide your name and password.', 'danger');
+                return;
+            }
+
+            let isAdmin = false;
+            let group = 'Male';
+
+            if (role === 'Admin') {
+                if (adminCode !== SECRET_ADMIN_CODE) {
+                    showAlert('Invalid Admin Secret Code! Account created as Student.', 'danger');
+                    group = 'Male';
+                } else {
+                    isAdmin = true;
+                    group = 'Admin';
+                }
+            }
+
+            // Generate unique 10-digit ID
+            let newId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+            while (ACCOUNTS_DATA.some(acc => acc.id === newId)) {
+                newId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+            }
+
+            const newAccount = {
+                id: newId,
+                name: name,
+                nickname: nickname,
+                group: group,
+                pass: pass,
+                balance: isAdmin ? 99999 : 1000,
+                isAdmin: isAdmin,
+                scores: {},
+                history: [],
+                inventory: [],
+                completedQuizzes: [],
+                privacy: {},
+                avatar: ""
+            };
+
+            ACCOUNTS_DATA.push(newAccount);
+            await saveAllData();
+
+            showAlert(`Account created successfully! Your 10-Digit ID is: ${newId}`, 'success');
+            document.getElementById('signupName').value = '';
+            document.getElementById('signupNickname').value = '';
+            document.getElementById('signupPass').value = '';
+            document.getElementById('signupAdminCode').value = '';
+            toggleAuthMode(e);
+            document.getElementById('loginId').value = newId;
         }
 
         async function saveNickname() {
@@ -1247,6 +1465,180 @@
                     mediaStream = null;
                 }
                 document.getElementById('cameraModal').classList.add('hidden');
+            }
+        }
+
+        function openPatchNotesModal() {
+            document.getElementById('patchNotesModal').classList.remove('hidden');
+        }
+
+        function closePatchNotesModal(e) {
+            if (!e || e.target.id === 'patchNotesModal' || e.target.classList.contains('btn-danger')) {
+                document.getElementById('patchNotesModal').classList.add('hidden');
+            }
+        }
+
+        function openAddLessonModal() {
+            document.getElementById('addLessonModal').classList.remove('hidden');
+        }
+
+        function closeAddLessonModal(e) {
+            if (!e || e.target.id === 'addLessonModal' || e.target.classList.contains('btn-danger')) {
+                document.getElementById('addLessonModal').classList.add('hidden');
+            }
+        }
+
+        function openAddQuizModal() {
+            document.getElementById('addQuizModal').classList.remove('hidden');
+        }
+
+        function closeAddQuizModal(e) {
+            if (!e || e.target.id === 'addQuizModal' || e.target.classList.contains('btn-danger')) {
+                document.getElementById('addQuizModal').classList.add('hidden');
+            }
+        }
+
+        async function handleCreateLesson(e) {
+            e.preventDefault();
+            const title = document.getElementById('lessonTitleInput').value.trim();
+            const content = document.getElementById('lessonContentInput').value.trim();
+
+            if (!title || !content) return;
+
+            LESSONS_DATA.push({
+                id: Date.now(),
+                title: title,
+                content: content,
+                author: getDisplayName(currentUser),
+                date: new Date().toLocaleDateString()
+            });
+
+            await saveAllData();
+            document.getElementById('lessonTitleInput').value = '';
+            document.getElementById('lessonContentInput').value = '';
+            closeAddLessonModal();
+            renderLessonsAndQuizzes();
+            showAlert('Lesson published successfully!', 'success');
+        }
+
+        async function handleCreateQuiz(e) {
+            e.preventDefault();
+            const question = document.getElementById('quizQuestionInput').value.trim();
+            const optA = document.getElementById('quizOptA').value.trim();
+            const optB = document.getElementById('quizOptB').value.trim();
+            const optC = document.getElementById('quizOptC').value.trim();
+            const optD = document.getElementById('quizOptD').value.trim();
+            const correct = parseInt(document.getElementById('quizCorrectInput').value);
+            const reward = parseFloat(document.getElementById('quizRewardInput').value);
+
+            if (!question || isNaN(reward) || reward < 1) return;
+
+            QUIZZES_DATA.push({
+                id: Date.now(),
+                question: question,
+                options: [optA, optB, optC, optD],
+                correctAnswer: correct,
+                reward: reward,
+                author: getDisplayName(currentUser)
+            });
+
+            await saveAllData();
+            document.getElementById('quizQuestionInput').value = '';
+            document.getElementById('quizOptA').value = '';
+            document.getElementById('quizOptB').value = '';
+            document.getElementById('quizOptC').value = '';
+            document.getElementById('quizOptD').value = '';
+            document.getElementById('quizRewardInput').value = '50';
+            closeAddQuizModal();
+            renderLessonsAndQuizzes();
+            showAlert('Quiz published successfully!', 'success');
+        }
+
+        async function submitQuizAnswer(quizId) {
+            const selectedOption = document.querySelector(`input[name="quiz_${quizId}"]:checked`);
+            if (!selectedOption) {
+                showAlert('Please select an option before submitting!', 'danger');
+                return;
+            }
+
+            const quiz = QUIZZES_DATA.find(q => q.id === quizId);
+            if (!quiz) return;
+
+            if (!currentUser.completedQuizzes) currentUser.completedQuizzes = [];
+            if (currentUser.completedQuizzes.includes(quizId)) {
+                showAlert('You have already completed this quiz and claimed your Farads!', 'warning');
+                return;
+            }
+
+            const chosenIndex = parseInt(selectedOption.value);
+            if (chosenIndex === quiz.correctAnswer) {
+                currentUser.balance += quiz.reward;
+                currentUser.completedQuizzes.push(quizId);
+                await saveAllData();
+                updateUserDisplays();
+                renderLessonsAndQuizzes();
+                showAlert(`Correct! You earned +${quiz.reward} FARADS!`, 'success');
+            } else {
+                showAlert('Incorrect answer. Try reviewing the lessons and try again!', 'danger');
+            }
+        }
+
+        function renderLessonsAndQuizzes() {
+            const lessonsContainer = document.getElementById('lessonsContainer');
+            const quizzesContainer = document.getElementById('quizzesContainer');
+            const addLessonBtn = document.getElementById('addLessonBtn');
+            const addQuizBtn = document.getElementById('addQuizBtn');
+
+            if (!lessonsContainer || !quizzesContainer) return;
+
+            if (currentUser && currentUser.isAdmin) {
+                if (addLessonBtn) addLessonBtn.classList.remove('hidden');
+                if (addQuizBtn) addQuizBtn.classList.remove('hidden');
+            } else {
+                if (addLessonBtn) addLessonBtn.classList.add('hidden');
+                if (addQuizBtn) addQuizBtn.classList.add('hidden');
+            }
+
+            // Render Lessons
+            if (LESSONS_DATA.length === 0) {
+                lessonsContainer.innerHTML = `<p style="color: var(--text-muted);">No lessons published yet.</p>`;
+            } else {
+                lessonsContainer.innerHTML = LESSONS_DATA.map(lesson => `
+                    <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+                        <h4 style="color: var(--accent); margin-bottom: 0.25rem;">${lesson.title}</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">By ${lesson.author} on ${lesson.date}</p>
+                        <p style="font-size: 0.95rem; white-space: pre-wrap; line-height: 1.5;">${lesson.content}</p>
+                    </div>
+                `).join('');
+            }
+
+            // Render Quizzes
+            if (QUIZZES_DATA.length === 0) {
+                quizzesContainer.innerHTML = `<p style="color: var(--text-muted);">No quizzes available right now.</p>`;
+            } else {
+                quizzesContainer.innerHTML = QUIZZES_DATA.map(quiz => {
+                    const isCompleted = currentUser && currentUser.completedQuizzes && currentUser.completedQuizzes.includes(quiz.id);
+                    return `
+                        <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <h4 style="color: var(--accent); font-size: 1rem;">${quiz.question}</h4>
+                                <span style="background: rgba(34,197,94,0.15); color: var(--success); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">+${quiz.reward} F</span>
+                            </div>
+                            ${isCompleted ? `
+                                <p style="color: var(--success); font-size: 0.9rem; font-weight: bold; margin-top: 0.5rem;">✅ Quiz completed & reward claimed!</p>
+                            ` : `
+                                <div style="display: flex; flex-direction: column; gap: 0.4rem; margin: 0.75rem 0; font-size: 0.9rem;">
+                                    ${quiz.options.map((opt, optIdx) => `
+                                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                            <input type="radio" name="quiz_${quiz.id}" value="${optIdx}"> ${opt}
+                                        </label>
+                                    `).join('')}
+                                </div>
+                                <button class="btn btn-sm" onclick="submitQuizAnswer(${quiz.id})">Submit Answer</button>
+                            `}
+                        </div>
+                    `;
+                }).join('');
             }
         }
 
@@ -1711,6 +2103,7 @@
             populateDirectory();
             populateAdminDropdown();
             renderGradebookSheet();
+            renderLessonsAndQuizzes();
             document.getElementById('weightW').value = GRADE_WEIGHTS.w;
             document.getElementById('weightP').value = GRADE_WEIGHTS.p;
             document.getElementById('weightE').value = GRADE_WEIGHTS.e;
@@ -1728,6 +2121,7 @@
             if (user) {
                 currentUser = user;
                 document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('signupSection').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appSection').classList.remove('hidden');
 
@@ -1751,6 +2145,7 @@
                 renderShopItems();
                 updateUserDisplays();
                 handleAuctionRealtimeSync();
+                renderLessonsAndQuizzes();
                 showAlert(`Welcome back, ${getDisplayName(currentUser)}!`, 'success');
             } else {
                 showAlert('Invalid Account ID or Password!', 'danger');
