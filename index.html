@@ -502,10 +502,9 @@
                                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                                     <button type="button" class="btn btn-sm" onclick="document.getElementById('profileImageInput').click()">📁 Upload File / Photo</button>
                                     <button type="button" class="btn btn-warning btn-sm" onclick="openCameraCapture()">📷 Take a Photo</button>
-                                    <button type="button" id="removeAvatarBtn" class="btn btn-danger btn-sm hidden" onclick="removeProfileAvatar()">✕ Remove</button>
+                                    <button type="button" id="removeAvatarBtn" class="btn btn-danger btn-sm" onclick="removeProfileAvatar()">✕ Remove</button>
                                 </div>
                                 <input type="file" id="profileImageInput" accept="image/*" class="hidden" onchange="handleProfileImageUpload(event)">
-                                <input type="file" id="mobileCameraInput" accept="image/*" capture="user" class="hidden" onchange="handleProfileImageUpload(event)">
                             </div>
                         </div>
 
@@ -555,99 +554,6 @@
                                     <input type="password" id="userCurrentPass" class="form-control" style="padding: 0.4rem;" required>
                                 </div>
                                 <div class="form-group" style="margin-bottom: 0.75rem;">
-                                    <label style="font-size: 0.8rem;">New Password</label>
-                                    <input type="password" id="userNewPass" class="form-control" style="padding: 0.4rem;" required>
-                                </div>
-                                <button type="submit" class="btn" style="width: 100%; font-size: 0.85rem; padding: 0.4rem;">Update Password</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 2: Store -->
-            <div id="shopTab" class="tab-content hidden">
-                <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr;">
-                    <div class="card">
-                        <div class="card-title">
-                            <span>School Supplies & Snack Store</span>
-                            <button id="adminEditShopBtn" class="btn btn-warning btn-sm hidden" onclick="toggleShopEditMode()">⚙️ Manage Shop</button>
-                        </div>
-                        <div id="adminShopEditorPanel" class="hidden" style="background: var(--bg-primary); border: 1px solid var(--warning); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <h4 style="color: var(--warning); margin-bottom: 0.75rem;">Admin Store Editor</h4>
-                            <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                <form onsubmit="handleAddShopCategory(event)">
-                                    <p style="font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem; color: var(--accent);">+ Add New Category</p>
-                                    <div class="form-group" style="margin-bottom: 0.5rem;">
-                                        <input type="text" id="newCatTitle" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" placeholder="Category Name" required>
-                                    </div>
-                                    <div class="form-group" style="margin-bottom: 0.5rem;">
-                                        <input type="text" id="newCatDesc" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" placeholder="Tagline / Description" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-sm" style="width: 100%;">Create Category</button>
-                                </form>
-                                <form onsubmit="handleAddShopItem(event)">
-                                    <p style="font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem; color: var(--accent);">+ Add New Item</p>
-                                    <div class="form-group" style="margin-bottom: 0.5rem;">
-                                        <select id="newItemCategorySelect" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" required></select>
-                                    </div>
-                                    <div class="form-group" style="margin-bottom: 0.5rem; display: flex; gap: 0.4rem;">
-                                        <input type="text" id="newItemIcon" class="form-control" style="padding: 0.4rem; font-size: 0.9rem; width: 65px; text-align: center;" placeholder="🎁" value="🎁" required>
-                                        <input type="text" id="newItemName" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" placeholder="Item Name" required>
-                                    </div>
-                                    <div class="form-group" style="margin-bottom: 0.5rem;">
-                                        <input type="number" id="newItemPrice" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" placeholder="Price (FARADS)" min="1" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-sm" style="width: 100%;">Add Item</button>
-                                </form>
-                            </div>
-                        </div>
-                        <div id="shopGridDisplay"></div>
-                    </div>
-                    <div class="card">
-                        <div class="card-title">My Cart & Checkout</div>
-                        <div id="cartItemsContainer">
-                            <p style="color: var(--text-muted);">Your cart is currently empty.</p>
-                        </div>
-                        <div class="cart-summary">
-                            <span>Total:</span>
-                            <span id="cartTotalDisplay" style="font-size: 1.2rem; font-weight: bold; color: var(--accent);">0 FARADS</span>
-                        </div>
-                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                            <button class="btn" style="flex: 1;" onclick="reviewCheckout()">Review Order</button>
-                            <button class="btn btn-danger" style="padding: 0.5rem 0.8rem;" onclick="clearCartCompletely()">Decline</button>
-                        </div>
-                        <div id="receiptArea"></div>
-                    </div>
-                </div>
-                <div class="card" style="margin-top: 1.5rem;">
-                    <div class="card-title">My Purchase History & Saved Receipts</div>
-                    <div id="purchaseHistoryContainer">
-                        <p style="color: var(--text-muted);">You haven't bought anything...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 3: Auction Room -->
-            <div id="auctionTab" class="tab-content hidden">
-                <div class="card" style="max-width: 600px; margin: 0 auto;">
-                    <div class="card-title">
-                        <span>🔨 Live Bidding Arena</span>
-                        <span id="auctionStatusTag" style="font-size: 0.85rem; color: var(--warning);">No Active Auction</span>
-                    </div>
-                    <div id="noAuctionArea" style="text-align: center; padding: 2rem 0; color: var(--text-muted);">
-                        <p>There is no auction event hosted right now.</p>
-                    </div>
-                    <div id="activeAuctionArea" class="hidden">
-                        <div style="text-align: center; margin-bottom: 1.5rem;">
-                            <h2 id="tabAuctionItemTitle" style="color: var(--accent); font-size: 1.8rem;">Item Name</h2>
-                            <p id="tabAuctionItemSub" style="color: var(--text-muted);">Starting Price: 0 FARADS</p>
-                        </div>
-                        <div class="timer-badge" id="tabAuctionTimerDisplay">Waiting Area</div>
-                        <div style="margin: 1.5rem 0; padding: 1rem; background: var(--bg-primary); border-radius: 8px; text-align: center;">
-                            <p style="font-size: 0.9rem; color: var(--text-muted);">Current Highest Bid:</p>
-                            <h2 id="tabAuctionHighestBidDisplay" style="color: var(--success); font-size: 2.2rem; margin: 0.2rem 0;">0 FARADS</h2>
-                            <p style="f>
                                     <label style="font-size: 0.8rem;">New Password</label>
                                     <input type="password" id="userNewPass" class="form-control" style="padding: 0.4rem;" required>
                                 </div>
@@ -897,6 +803,24 @@
         </div>
     </div>
 
+    <!-- Camera Capture Modal -->
+    <div id="cameraModal" class="modal-overlay hidden" onclick="closeCameraModal(event)">
+        <div class="modal-card" style="text-align: center;" onclick="event.stopPropagation()">
+            <div class="card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; justify-content: space-between;">
+                <span>Take Profile Photo</span>
+                <button class="btn btn-danger btn-sm" onclick="closeCameraModal()">Cancel</button>
+            </div>
+            <div style="margin: 1rem 0; position: relative; background: #000; border-radius: 8px; overflow: hidden; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;">
+                <video id="cameraVideo" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                <canvas id="cameraCanvas" class="hidden"></canvas>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                <button type="button" class="btn btn-warning btn-sm" onclick="flipCamera()">🔄 Flip Camera</button>
+                <button type="button" class="btn" onclick="captureSnapshot()">📸 Snap & Save Photo</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://sujpdopplexaxgnizvil.supabase.co';
         const SUPABASE_KEY = 'sb_publishable__srdeSwL95qHFZLfO2N3WQ_WJSNcB58';
@@ -1014,6 +938,8 @@
         let AUCTION_STATE = null;
         let activeBiddingInterval = null;
         let shopEditMode = false;
+        let mediaStream = null;
+        let useFrontCamera = true;
 
         function getAllShopItems() {
             return SHOP_CATEGORIES.flatMap(cat => cat.items);
@@ -1134,24 +1060,118 @@
             }
         }
 
-        // Profile Picture Upload Handler (Base64)
+        // Profile Picture Upload Handler (Base64 with Compression)
         async function handleProfileImageUpload(e) {
             const file = e.target.files[0];
             if (!file || !currentUser) return;
+            processAndSaveImageFile(file);
+        }
 
-            if (file.size > 800000) {
-                showAlert('Image file is too large! Please choose an image under 800KB.', 'danger');
-                return;
-            }
-
+        function processAndSaveImageFile(file) {
             const reader = new FileReader();
-            reader.onload = async function(uploadEvent) {
-                currentUser.avatar = uploadEvent.target.result;
-                await saveAllData();
-                updateUserDisplays();
-                showAlert('Profile picture updated successfully!', 'success');
+            reader.onload = function(uploadEvent) {
+                const img = new Image();
+                img.onload = async function() {
+                    const canvas = document.createElement('canvas');
+                    const size = 256;
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+
+                    let sourceX = 0, sourceY = 0, sourceSize = Math.min(img.width, img.height);
+                    if (img.width > img.height) {
+                        sourceX = (img.width - img.height) / 2;
+                    } else {
+                        sourceY = (img.height - img.width) / 2;
+                    }
+
+                    ctx.drawImage(img, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size);
+                    currentUser.avatar = canvas.toDataURL('image/jpeg', 0.85);
+
+                    await saveAllData();
+                    updateUserDisplays();
+                    showAlert('Profile picture updated successfully!', 'success');
+                };
+                img.src = uploadEvent.target.result;
             };
             reader.readAsDataURL(file);
+        }
+
+        async function removeProfileAvatar() {
+            if (!currentUser) return;
+            if (confirm("Remove your profile picture?")) {
+                currentUser.avatar = "";
+                await saveAllData();
+                updateUserDisplays();
+                showAlert("Profile picture removed.", "success");
+            }
+        }
+
+        // Camera Capture Modal Functions
+        async function openCameraCapture() {
+            const modal = document.getElementById('cameraModal');
+            modal.classList.remove('hidden');
+            await startCameraStream();
+        }
+
+        async function startCameraStream() {
+            const video = document.getElementById('cameraVideo');
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: useFrontCamera ? 'user' : 'environment', width: { ideal: 640 }, height: { ideal: 640 } },
+                    audio: false
+                });
+                video.srcObject = mediaStream;
+            } catch (err) {
+                showAlert('Could not access camera. Please check browser permissions.', 'danger');
+                closeCameraModal();
+            }
+        }
+
+        async function flipCamera() {
+            useFrontCamera = !useFrontCamera;
+            await startCameraStream();
+        }
+
+        function captureSnapshot() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('cameraCanvas');
+            const size = 256;
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            let sourceX = 0, sourceY = 0, sourceSize = Math.min(video.videoWidth, video.videoHeight);
+            if (video.videoWidth > video.videoHeight) {
+                sourceX = (video.videoWidth - video.videoHeight) / 2;
+            } else {
+                sourceY = (video.videoHeight - video.videoWidth) / 2;
+            }
+
+            ctx.drawImage(video, sourceX, sourceY, sourceSize, sourceSize, 0, 0, size, size);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+            if (currentUser) {
+                currentUser.avatar = dataUrl;
+                saveAllData().then(() => {
+                    updateUserDisplays();
+                    showAlert('Photo captured and saved successfully!', 'success');
+                });
+            }
+            closeCameraModal();
+        }
+
+        function closeCameraModal(e) {
+            if (!e || e.target.id === 'cameraModal' || e.target.classList.contains('btn-danger')) {
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                    mediaStream = null;
+                }
+                document.getElementById('cameraModal').classList.add('hidden');
+            }
         }
 
         function toggleShopEditMode() {
@@ -1647,10 +1667,13 @@
             document.getElementById('infoBalance').innerText = currentUser.balance.toLocaleString();
             
             const avatarContainer = document.getElementById('profileAvatarContainer');
+            const removeBtn = document.getElementById('removeAvatarBtn');
             if (currentUser.avatar) {
                 avatarContainer.innerHTML = `<img src="${currentUser.avatar}" class="profile-avatar-preview" alt="Avatar">`;
+                if (removeBtn) removeBtn.classList.remove('hidden');
             } else {
                 avatarContainer.innerHTML = `<div class="profile-avatar-preview" id="avatarPreviewText">👤</div>`;
+                if (removeBtn) removeBtn.classList.add('hidden');
             }
 
             document.getElementById('dispWeightW').innerText = GRADE_WEIGHTS.w;
