@@ -538,7 +538,7 @@
         @media(max-width:760px){
         }
 </style>
-<!-- Faraday Tech sync patch: Realtime status diagnostics + same-browser cross-tab sync + visibility recovery -->\n</head>
+</head>
 <body>
 
     <header id="mainHeader" class="hidden">
@@ -1320,6 +1320,40 @@
 
         function onYouTubeIframeAPIReady() {
             ytReady = true;
+            if (typeof window.__faradayYouTubeReadyCallback === 'function') {
+                try { window.__faradayYouTubeReadyCallback(); } catch (err) {
+                    console.warn('[Faraday Video] YouTube ready callback failed:', err);
+                }
+            }
+        }
+
+        function waitForYouTubeAPI(timeoutMs = 10000) {
+            return new Promise((resolve) => {
+                if (window.YT && typeof window.YT.Player === 'function') {
+                    ytReady = true;
+                    resolve(true);
+                    return;
+                }
+                let finished = false;
+                const finish = (ready) => {
+                    if (finished) return;
+                    finished = true;
+                    clearInterval(checker);
+                    clearTimeout(timer);
+                    window.__faradayYouTubeReadyCallback = null;
+                    resolve(ready);
+                };
+                window.__faradayYouTubeReadyCallback = () => {
+                    if (window.YT && typeof window.YT.Player === 'function') finish(true);
+                };
+                const checker = setInterval(() => {
+                    if (window.YT && typeof window.YT.Player === 'function') {
+                        ytReady = true;
+                        finish(true);
+                    }
+                }, 100);
+                const timer = setTimeout(() => finish(false), timeoutMs);
+            });
         }
 
         function getDisplayName(acc) {
@@ -1536,112 +1570,47 @@
             }
         }
 
-        // Apply one authoritative app_data row to the current tab.
-        // This is shared by Supabase Realtime and the same-browser storage fallback.
-        function applyRemoteAppData(updated, source = 'remote') {
-            if (!updated || Number(updated.id) !== 1) return;
-
-            if (Array.isArray(updated.accounts)) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
-            if (Array.isArray(updated.columns)) GRADE_COLUMNS = updated.columns;
-            if (updated.weights && typeof updated.weights === 'object') GRADE_WEIGHTS = updated.weights;
-            if (updated.convRate !== undefined && updated.convRate !== null) GRADE_CONV_RATE = updated.convRate;
-            if (Array.isArray(updated.shop_categories)) SHOP_CATEGORIES = updated.shop_categories;
-            if (Array.isArray(updated.lessons)) LESSONS_DATA = updated.lessons;
-            if (Array.isArray(updated.quizzes)) QUIZZES_DATA = updated.quizzes;
-            if (Array.isArray(updated.chat_messages)) CHAT_MESSAGES = updated.chat_messages;
-            if (Array.isArray(updated.chat_typing)) CHAT_TYPING = updated.chat_typing;
-            if (updated.public_chat_background !== undefined) {
-                PUBLIC_CHAT_BACKGROUND = updated.public_chat_background || '';
-                if (typeof activeChatId !== 'undefined' && activeChatId === 'all' && typeof applyChatBackground === 'function') applyChatBackground();
-            }
-            if (Array.isArray(updated.market_listings)) MARKET_LISTINGS = updated.market_listings;
-            if (Array.isArray(updated.banned_accounts)) BANNED_ACCOUNTS = updated.banned_accounts;
-            if (Array.isArray(updated.removed_accounts)) REMOVED_ACCOUNT_IDS = updated.removed_accounts;
-            if (Array.isArray(updated.patch_notes)) PATCH_NOTES = updated.patch_notes;
-            AUCTION_STATE = updated.auction || null;
-
-            // Keep this tab's signed-in user pointed at the newly received account record.
-            if (currentUser) {
-                const refreshedUser = ACCOUNTS_DATA.find(acc => String(acc.id) === String(currentUser.id));
-                if (refreshedUser) currentUser = refreshedUser;
-            }
-
-            // Do not write back when this update itself came from the storage event;
-            // otherwise two tabs could repeatedly echo the same change to each other.
-            if (source !== 'same-browser tab storage') {
-                try {
-                    localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(updated));
-                } catch (storageError) {
-                    console.warn('[Faraday Realtime] Could not cache incoming update:', storageError);
-                }
-            }
-
-            if (currentUser) {
-                updateUserDisplays();
-                handleAuctionRealtimeSync();
-                populateTransferDropdown();
-                populateAdminDropdown();
-                renderMarketplace();
-            }
-            renderShopItems();
-            renderGradebookSheet();
-            populateDirectory();
-            renderLessonsAndQuizzes();
-            if (typeof renderPatchNotes === 'function') renderPatchNotes();
-            console.info(`[Faraday Sync] Applied ${source} update`, new Date().toLocaleTimeString());
-        }
-
-        // Realtime status is logged so connection failures are visible in DevTools.
-        let faradayRealtimeChannel = null;
         if (supabaseClient) {
-            faradayRealtimeChannel = supabaseClient
-                .channel('faraday_app_data_live_v2')
+            supabaseClient
+                .channel('app_data_changes')
                 .on(
                     'postgres_changes',
                     { event: '*', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
                     (payload) => {
-                        console.info('[Faraday Realtime] Database event received:', payload.eventType);
-                        if (payload.new) applyRemoteAppData(payload.new, 'Supabase Realtime');
+                        const updated = payload.new;
+                        if (!updated) return;
+
+                        if (updated.accounts) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
+                        if (updated.columns) GRADE_COLUMNS = updated.columns;
+                        if (updated.weights) GRADE_WEIGHTS = updated.weights;
+                        if (updated.convRate !== undefined && updated.convRate !== null) GRADE_CONV_RATE = updated.convRate;
+                        if (updated.shop_categories) SHOP_CATEGORIES = updated.shop_categories;
+                        if (updated.lessons) LESSONS_DATA = updated.lessons;
+                        if (updated.quizzes) QUIZZES_DATA = updated.quizzes;
+                        if (Array.isArray(updated.chat_messages)) CHAT_MESSAGES = updated.chat_messages;
+                        if (Array.isArray(updated.chat_typing)) CHAT_TYPING = updated.chat_typing;
+                        if (updated.public_chat_background !== undefined) { PUBLIC_CHAT_BACKGROUND = updated.public_chat_background || ''; if (activeChatId === 'all') applyChatBackground(); }
+                        if (Array.isArray(updated.market_listings)) MARKET_LISTINGS = updated.market_listings;
+                        if (Array.isArray(updated.banned_accounts)) BANNED_ACCOUNTS = updated.banned_accounts;
+                        if (Array.isArray(updated.removed_accounts)) REMOVED_ACCOUNT_IDS = updated.removed_accounts;
+                        if (Array.isArray(updated.patch_notes)) PATCH_NOTES = updated.patch_notes;
+                        AUCTION_STATE = updated.auction || null;
+
+                        if (currentUser) {
+                            updateUserDisplays();
+                            handleAuctionRealtimeSync();
+                            populateTransferDropdown();
+                            populateAdminDropdown();
+                                            renderMarketplace();
+                        }
+                        renderShopItems();
+                        renderGradebookSheet();
+                        populateDirectory();
+                        renderLessonsAndQuizzes();
                     }
                 )
-                .subscribe((status, err) => {
-                    console.info('[Faraday Realtime] Subscription status:', status, err || '');
-                    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-                        console.error('[Faraday Realtime] Subscription problem. Check publication membership, SELECT/RLS access, and project Realtime status.', err || '');
-                    }
-                });
-        } else {
-            console.error('[Faraday Realtime] Supabase client was not initialized. Check the CDN script and project URL/key.');
+                .subscribe();
         }
-
-        // localStorage events fire in OTHER tabs on the same browser/origin.
-        // The writing tab does not receive its own storage event.
-        window.addEventListener('storage', (event) => {
-            if (event.key !== LOCAL_DATA_KEY || !event.newValue) return;
-            try {
-                const updated = JSON.parse(event.newValue);
-                applyRemoteAppData(updated, 'same-browser tab storage');
-            } catch (err) {
-                console.warn('[Faraday Sync] Ignored invalid cross-tab storage update:', err);
-            }
-        });
-
-        // When a tab becomes visible again, pull the latest authoritative database row.
-        // This is a recovery path for sleeping tabs or a dropped WebSocket.
-        document.addEventListener('visibilitychange', async () => {
-            if (document.visibilityState !== 'visible' || !supabaseClient) return;
-            try {
-                const { data, error } = await supabaseClient
-                    .from('app_data')
-                    .select('*')
-                    .eq('id', 1)
-                    .maybeSingle();
-                if (error) throw error;
-                if (data) applyRemoteAppData(data, 'visibility recovery');
-            } catch (err) {
-                console.warn('[Faraday Sync] Could not refresh after tab became visible:', err);
-            }
-        });
 
         async function resetAllData() {
             if (confirm("Reset all system data, lessons, quizzes, shop items, background, and accounts in Supabase?")) {
@@ -2130,7 +2099,7 @@
             loadVideoInPlayer(button.dataset.videoUrl || '', button.dataset.videoTitle || 'Lesson video');
         }
 
-        function loadVideoInPlayer(videoUrl, title) {
+        async function loadVideoInPlayer(videoUrl, title) {
             const placeholder = document.getElementById('videoPlaceholderMsg');
             const titleDisplay = document.getElementById('activeVideoTitle');
             const ytWrapper = document.getElementById('ytPlayerWrapper');
@@ -2157,41 +2126,81 @@
                 ytWrapper.classList.remove('hidden');
                 ytWrapper.innerHTML = '<div id="ytPlayerFrame" style="width:100%;height:100%;min-height:300px"></div>';
                 const external = document.getElementById('videoExternalLink');
-                if (external) { external.href = `https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}`; external.classList.remove('hidden'); }
-                const makeIframeFallback = () => {
-                    const frame = document.createElement('iframe');
-                    frame.id = 'ytPlayerFrame'; frame.title = title || 'YouTube video';
-                    frame.style.cssText = 'display:block;width:100%;height:100%;min-height:300px;border:0';
-                    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-                    frame.allowFullscreen = true; frame.referrerPolicy = 'origin';
-                    const params = new URLSearchParams({autoplay:'0', controls:'1', playsinline:'1', rel:'0', enablejsapi:'1'});
-                    if (location.origin && location.origin !== 'null') params.set('origin', location.origin);
-                    if (location.href && location.protocol !== 'file:') params.set('widget_referrer', location.href);
-                    frame.src = `https://www.youtube.com/embed/${encodeURIComponent(ytId)}?${params.toString()}`;
-                    ytWrapper.replaceChildren(frame);
-                };
-                if (location.protocol === 'file:') {
-                    showVideoHelp('This page is opened directly as a file. YouTube Error 153 can occur because file:// pages do not send a normal website referrer. Run Faraday Tech on localhost or host it on HTTPS. The external YouTube link is available below the player.', 'warning');
-                    makeIframeFallback();
-                } else if (ytReady && window.YT && typeof YT.Player === 'function') {
+                if (external) {
+                    external.href = `https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}`;
+                    external.classList.remove('hidden');
+                }
+
+                showVideoHelp('Connecting to YouTube player controls…', 'info');
+                const apiAvailable = location.protocol !== 'file:' && await waitForYouTubeAPI(12000);
+
+                if (apiAvailable && window.YT && typeof YT.Player === 'function') {
                     try {
                         ytPlayer = new YT.Player('ytPlayerFrame', {
-                            width:'100%', height:'100%', videoId:ytId,
-                            playerVars:{autoplay:0,controls:1,playsinline:1,rel:0,origin:location.origin,widget_referrer:location.href},
-                            events:{
-                                onReady:(event)=>{event.target.setVolume(Number(document.getElementById('videoVolumeSlider').value)||100);event.target.setPlaybackRate(Number(document.getElementById('videoSpeedSelect').value)||1);showVideoHelp('Video player ready. Press Play to start.', 'info');},
-                                onError:(event)=>{
-                                    const codes={2:'The video ID or URL is invalid.',5:'The video cannot be played in the HTML5 player.',100:'The video was removed or is private.',101:'The video owner does not allow embedded playback.',150:'The video owner does not allow embedded playback.',153:'YouTube did not receive a valid referrer/client identity. Open Faraday Tech through localhost or an HTTPS website, not directly as a file.'};
-                                    const detail=codes[event.data]||'YouTube could not play this video.';
-                                    showVideoHelp(detail+' You can also use the Open this video on YouTube link below.', 'error');
-                                    showAlert('YouTube playback error '+event.data+': '+detail, 'danger');
+                            width: '100%',
+                            height: '100%',
+                            videoId: ytId,
+                            playerVars: {
+                                autoplay: 0,
+                                controls: 1,
+                                playsinline: 1,
+                                rel: 0,
+                                enablejsapi: 1,
+                                origin: location.origin,
+                                widget_referrer: location.href
+                            },
+                            events: {
+                                onReady: (event) => {
+                                    const volumeControl = document.getElementById('videoVolumeSlider');
+                                    const speedControl = document.getElementById('videoSpeedSelect');
+                                    const vol = volumeControl ? Number(volumeControl.value) : 100;
+                                    const speed = speedControl ? Number(speedControl.value) : 1;
+                                    event.target.setVolume(Math.max(0, Math.min(100, vol)));
+                                    try { event.target.setPlaybackRate(speed); } catch (_) {}
+                                    showVideoHelp('Video player ready. Volume and playback speed controls are enabled.', 'success');
+                                },
+                                onStateChange: () => {},
+                                onError: (event) => {
+                                    const codes = {
+                                        2: 'The video ID or URL is invalid.',
+                                        5: 'The video cannot be played in the HTML5 player.',
+                                        100: 'The video was removed or is private.',
+                                        101: 'The video owner does not allow embedded playback.',
+                                        150: 'The video owner does not allow embedded playback.',
+                                        153: 'YouTube did not receive a valid referrer/client identity. Open Faraday Tech from its HTTPS website.'
+                                    };
+                                    const detail = codes[event.data] || 'YouTube could not play this video.';
+                                    showVideoHelp(detail + ' You can also open the video directly on YouTube.', 'error');
+                                    showAlert('YouTube playback error ' + event.data + ': ' + detail, 'danger');
                                 }
                             }
                         });
-                    } catch (err) { console.warn('YouTube API initialization failed; using iframe fallback.',err); makeIframeFallback(); }
+                    } catch (err) {
+                        console.error('[Faraday Video] Could not initialize controllable YouTube player:', err);
+                        ytPlayer = null;
+                        showVideoHelp('The YouTube control API could not initialize. Reload Faraday Tech and try again, or open the video on YouTube.', 'error');
+                    }
                 } else {
-                    showVideoHelp('Loading YouTube player… If it does not start, check your internet connection or open the video directly on YouTube.', 'info');
-                    makeIframeFallback();
+                    // Keep playback available, but clearly explain that custom controls require the IFrame API.
+                    const frame = document.createElement('iframe');
+                    frame.id = 'ytPlayerFrame';
+                    frame.title = title || 'YouTube video';
+                    frame.style.cssText = 'display:block;width:100%;height:100%;min-height:300px;border:0';
+                    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                    frame.allowFullscreen = true;
+                    frame.referrerPolicy = 'strict-origin-when-cross-origin';
+                    const params = new URLSearchParams({
+                        autoplay: '0',
+                        controls: '1',
+                        playsinline: '1',
+                        rel: '0',
+                        enablejsapi: '1'
+                    });
+                    if (location.origin && location.origin !== 'null') params.set('origin', location.origin);
+                    params.set('widget_referrer', location.href);
+                    frame.src = `https://www.youtube.com/embed/${encodeURIComponent(ytId)}?${params.toString()}`;
+                    ytWrapper.replaceChildren(frame);
+                    showVideoHelp('YouTube is playing in compatibility mode. Custom volume and speed controls are unavailable because the YouTube control API did not load. Check that youtube.com/iframe_api is not blocked, then reload.', 'warning');
                 }
             } else {
                 const external = document.getElementById('videoExternalLink');
@@ -2222,27 +2231,58 @@
 
         function changeVideoVolume(delta) {
             const slider = document.getElementById('videoVolumeSlider');
-            let newVal = Math.max(0, Math.min(100, parseInt(slider.value) + delta));
-            slider.value = newVal;
+            if (!slider) return;
+            const current = Number(slider.value) || 0;
+            const newVal = Math.max(0, Math.min(100, current + Number(delta || 0)));
+            slider.value = String(newVal);
             setVideoVolume(newVal);
         }
 
         function setVideoVolume(val) {
-            const vol = parseInt(val);
-            document.getElementById('volumeLabel').innerText = `${vol}%`;
-            if (activeVideoMode === 'youtube' && ytPlayer && typeof ytPlayer.setVolume === 'function') {
-                ytPlayer.setVolume(vol);
+            const slider = document.getElementById('videoVolumeSlider');
+            const label = document.getElementById('volumeLabel');
+            const vol = Math.max(0, Math.min(100, Number(val)));
+            if (!Number.isFinite(vol)) return;
+            if (slider) slider.value = String(vol);
+            if (label) label.innerText = `${Math.round(vol)}%`;
+
+            if (activeVideoMode === 'youtube') {
+                if (ytPlayer && typeof ytPlayer.setVolume === 'function' && typeof ytPlayer.getPlayerState === 'function') {
+                    try { ytPlayer.setVolume(vol); } catch (err) { console.warn('[Faraday Video] YouTube volume change failed:', err); }
+                } else {
+                    console.warn('[Faraday Video] YouTube player API is not ready; volume control cannot be applied yet.');
+                }
             } else if (activeVideoMode === 'html5') {
-                document.getElementById('html5VideoPlayer').volume = vol / 100;
+                const video = document.getElementById('html5VideoPlayer');
+                if (video) video.volume = vol / 100;
             }
         }
 
         function setVideoSpeed(speedVal) {
-            const speed = parseFloat(speedVal);
-            if (activeVideoMode === 'youtube' && ytPlayer && typeof ytPlayer.setPlaybackRate === 'function') {
-                ytPlayer.setPlaybackRate(speed);
+            const speed = Number(speedVal);
+            if (!Number.isFinite(speed) || speed <= 0) return;
+
+            if (activeVideoMode === 'youtube') {
+                if (ytPlayer && typeof ytPlayer.setPlaybackRate === 'function' && typeof ytPlayer.getPlayerState === 'function') {
+                    try {
+                        ytPlayer.setPlaybackRate(speed);
+                        // YouTube may only support a subset of requested rates for a particular video.
+                        const supported = typeof ytPlayer.getAvailablePlaybackRates === 'function'
+                            ? ytPlayer.getAvailablePlaybackRates()
+                            : [];
+                        if (supported.length && !supported.some(rate => Math.abs(rate - speed) < 0.001)) {
+                            showVideoHelp(`This YouTube video does not support ${speed}x playback speed. Choose one of the supported rates.`, 'warning');
+                        }
+                    } catch (err) {
+                        console.warn('[Faraday Video] YouTube playback speed change failed:', err);
+                        showVideoHelp('Could not change YouTube playback speed. Try another speed supported by this video.', 'warning');
+                    }
+                } else {
+                    console.warn('[Faraday Video] YouTube player API is not ready; speed control cannot be applied yet.');
+                }
             } else if (activeVideoMode === 'html5') {
-                document.getElementById('html5VideoPlayer').playbackRate = speed;
+                const video = document.getElementById('html5VideoPlayer');
+                if (video) video.playbackRate = speed;
             }
         }
 
