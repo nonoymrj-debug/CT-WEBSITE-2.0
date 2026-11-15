@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="icon" type="image/png" href="ft_logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faraday Tech</title>
+    <title>Faraday Classroom Economy & Gradebook</title>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <style>
         :root {
             --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-card: #334155;
+            --bg-card: #1e293b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --accent: #38bdf8;
@@ -19,7 +19,7 @@
             --success: #22c55e;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --border: #475569;
+            --border: #334155;
         }
 
         * {
@@ -38,8 +38,8 @@
         }
 
         header {
-            background-color: var(--bg-secondary);
-            padding: 1rem 1.5rem;
+            background-color: var(--bg-card);
+            padding: 1rem 2rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -48,48 +48,62 @@
             gap: 1rem;
         }
 
-        .logo-title {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .header-logo {
-            width: 45px;
-            height: 45px;
-            border-radius: 8px;
-            object-fit: contain;
-            display: block;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .balance-badge {
-            background: rgba(56, 189, 248, 0.15);
-            border: 1px solid var(--accent);
+        .brand {
+            font-size: 1.5rem;
+            font-weight: bold;
             color: var(--accent);
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            flex: 1;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
             font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .btn {
             background-color: var(--accent);
-            color: var(--bg-primary);
+            color: #0f172a;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background-color 0.2s;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
         }
 
         .btn:hover {
             background-color: var(--accent-hover);
+            color: white;
         }
 
         .btn-danger {
@@ -103,55 +117,33 @@
 
         .btn-warning {
             background-color: var(--warning);
-            color: var(--bg-primary);
+            color: #0f172a;
         }
 
         .btn-sm {
-            padding: 0.25rem 0.5rem;
+            padding: 0.3rem 0.6rem;
             font-size: 0.8rem;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem;
-            width: 100%;
-            flex: 1;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .login-card {
-            background-color: var(--bg-secondary);
-            max-width: 420px;
-            margin: 3rem auto;
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             color: var(--text-muted);
             font-size: 0.9rem;
         }
 
         .form-control {
             width: 100%;
-            padding: 0.75rem;
-            background-color: var(--bg-primary);
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
             border: 1px solid var(--border);
-            border-radius: 6px;
-            color: white;
-            font-size: 1rem;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-size: 0.95rem;
         }
 
         .form-control:focus {
@@ -159,30 +151,38 @@
             border-color: var(--accent);
         }
 
+        .hidden {
+            display: none !important;
+        }
+
+        .auth-wrapper {
+            max-width: 440px;
+            margin: 3rem auto;
+        }
+
         .tabs {
             display: flex;
             gap: 0.5rem;
             margin-bottom: 1.5rem;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 0.5rem;
-            overflow-x: auto;
+            padding-bottom: 0.75rem;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
-            background: none;
-            border: none;
+            background: transparent;
             color: var(--text-muted);
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
+            border: 1px solid transparent;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            white-space: nowrap;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .tab-btn.active {
-            background-color: var(--bg-secondary);
-            color: var(--accent);
+            background-color: var(--accent);
+            color: #0f172a;
         }
 
         .dashboard-grid {
@@ -191,35 +191,25 @@
             gap: 1.5rem;
         }
 
-        .card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
+        .balance-badge {
+            background-color: rgba(56, 189, 248, 0.15);
             color: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-weight: bold;
+            border: 1px solid var(--accent);
         }
 
         .shop-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
             gap: 1rem;
         }
 
         .shop-item {
-            background-color: var(--bg-card);
+            background-color: var(--bg-primary);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 1rem;
             display: flex;
             flex-direction: column;
@@ -229,14 +219,15 @@
 
         .item-placeholder {
             width: 100%;
-            height: 100px;
+            height: 110px;
+            background-color: var(--bg-card);
+            border: 1px dashed var(--border);
             border-radius: 6px;
-            margin-bottom: 0.5rem;
-            background: var(--bg-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
+            margin-bottom: 0.75rem;
             overflow: hidden;
         }
 
@@ -248,8 +239,7 @@
 
         .item-name {
             font-weight: 600;
-            margin-bottom: 0.25rem;
-            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
         }
 
         .item-price {
@@ -265,104 +255,48 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
+            margin-top: 0.5rem;
         }
 
         th, td {
-            padding: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-align: left;
             border-bottom: 1px solid var(--border);
+            white-space: nowrap;
         }
 
         th {
+            background-color: var(--bg-primary);
             color: var(--text-muted);
             font-weight: 600;
+            font-size: 0.85rem;
         }
 
-        .clickable-row {
+        tr.clickable-row {
             cursor: pointer;
-            transition: background 0.15s;
+            transition: background-color 0.15s;
         }
 
-        .clickable-row:hover {
-            background-color: rgba(56, 189, 248, 0.1);
+        tr.clickable-row:hover {
+            background-color: rgba(56, 189, 248, 0.08);
         }
 
         .sheet-input {
-            width: 65px;
-            padding: 0.4rem;
+            width: 68px;
+            padding: 0.35rem;
             background-color: var(--bg-primary);
             border: 1px solid var(--border);
-            color: var(--accent);
+            color: var(--text-main);
             border-radius: 4px;
             text-align: center;
-            font-weight: bold;
-        }
-
-        .cart-summary {
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .receipt-box {
-            background: var(--bg-primary);
-            border: 1px dashed var(--accent);
-            padding: 1rem;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            margin-top: 1rem;
-        }
-
-        .privacy-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.4rem 0;
-            border-bottom: 1px solid rgba(71, 85, 105, 0.4);
-            font-size: 0.9rem;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 1rem;
-        }
-
-        .modal-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--accent);
-            border-radius: 12px;
-            max-width: 550px;
-            width: 100%;
-            padding: 1.5rem;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.6);
         }
 
         .alert {
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
+            padding: 0.85rem 1rem;
+            border-radius: 8px;
             margin-bottom: 1rem;
             font-size: 0.9rem;
-        }
-
-        .alert-danger {
-            background-color: rgba(239, 68, 68, 0.2);
-            border: 1px solid var(--danger);
-            color: #fca5a5;
+            font-weight: 500;
         }
 
         .alert-success {
@@ -371,201 +305,260 @@
             color: #86efac;
         }
 
-        .auction-notify-banner {
+        .alert-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+        }
+
+        .alert-warning {
             background-color: rgba(245, 158, 11, 0.2);
-            border: 2px solid var(--warning);
-            color: #fef08a;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
+            border: 1px solid var(--warning);
+            color: #fde68a;
+        }
+
+        .cart-summary {
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            margin-top: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+        }
+
+        .receipt-box {
+            background-color: #0b1120;
+            border: 1px dashed var(--accent);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
         }
 
         .timer-badge {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: var(--warning);
-            margin: 1rem 0;
             text-align: center;
+            padding: 0.5rem;
+            background: rgba(245, 158, 11, 0.15);
+            border-radius: 8px;
+            margin-top: 0.5rem;
         }
 
-        .dir-section-title {
-            color: var(--accent);
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.35rem;
-            border-bottom: 1px solid var(--border);
-            font-size: 1.05rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 550px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .privacy-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.45rem 0;
+            font-size: 0.9rem;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .privacy-row:last-child {
+            border-bottom: none;
         }
 
         .profile-avatar-preview {
-            width: 80px;
-            height: 80px;
+            width: 84px;
+            height: 84px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--accent);
-            background: var(--bg-card);
+            background-color: var(--bg-primary);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2rem;
+            margin: 0 auto 0.75rem auto;
+            overflow: hidden;
+        }
+
+        .dir-section-title {
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.6rem;
         }
     </style>
 </head>
 <body>
 
     <header id="mainHeader" class="hidden">
-        <div class="logo-title">
-            <img src="ft_logo.png" alt="Faraday Tech Logo" class="header-logo" onerror="this.style.display='none'">
-            <h2>Faraday Tech</h2>
-            <button class="btn btn-warning btn-sm" onclick="openPatchNotesModal()" style="margin-left: 0.5rem;">📜 Patchnotes</button>
-        </div>
-        <div class="user-profile">
-            <span id="userNameDisplay">User</span>
-            <div class="balance-badge"><span id="userBalanceDisplay">0</span> FARADS</div>
-            <button class="btn btn-danger" onclick="logout()">Logout</button>
+        <div class="brand">⚡ FARADAY ECONOMY</div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <span id="userNameDisplay" style="font-weight: 600;">User</span>
+            <span class="balance-badge"><span id="userBalanceDisplay">0</span> FARADS</span>
+            <button class="btn btn-warning btn-sm" onclick="openPatchNotesModal()">📜 Patched Notes</button>
+            <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
         </div>
     </header>
 
     <div class="container">
         <div id="alertBox" class="alert hidden"></div>
 
-        <div id="auctionInviteNotification" class="auction-notify-banner hidden">
+        <!-- Global Live Auction Invitation Banner -->
+        <div id="auctionInviteNotification" class="alert alert-warning hidden" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <div>
-                <strong style="font-size: 1.1rem; color: var(--warning);">📢 LIVE AUCTION STARTING!</strong>
-                <p id="auctionInviteText" style="margin-top: 0.25rem;">The teacher hosted a new bidding event.</p>
+                <strong>🔨 LIVE AUCTION STARTED!</strong><br>
+                <span id="auctionInviteText">A new item is up for auction! Join the waiting room now?</span>
             </div>
             <div style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-warning" onclick="acceptAuctionInvite()">Join Auction</button>
-                <button class="btn btn-danger" onclick="declineAuctionInvite()">Don't Join</button>
+                <button class="btn" onclick="acceptAuctionInvite()">Yes, Join Auction</button>
+                <button class="btn btn-danger" onclick="declineAuctionInvite()">No, Decline</button>
             </div>
         </div>
 
-        <!-- Login Card -->
-        <div id="loginSection" class="login-card">
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-                <img src="ft_logo.png" alt="Logo" style="width: 55px; height: 55px; margin: 0 auto 0.5rem auto; display: block; object-fit: contain;" onerror="this.style.display='none'">
-                <h2>Login</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Creative Technology Portal</p>
-            </div>
-            <form onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label>10-Digit Account ID</label>
-                    <input type="text" id="loginId" class="form-control" placeholder="e.g. 0815201111" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPass" class="form-control" placeholder="Password" required>
-                </div>
-                <button type="submit" class="btn" style="width: 100%; padding: 0.75rem;">Login to Account</button>
-            </form>
-            <div style="margin-top: 1rem; text-align: center; font-size: 0.9rem;">
-                <a href="#" onclick="toggleAuthMode(event)" style="color: var(--accent); text-decoration: none;">Don't have an account? Sign Up</a>
-            </div>
-            <div style="margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
-                <p><strong>Tester Accounts:</strong></p>
-                <p>• Student 1: <code>1111111111</code> / <code>testpass1</code></p>
-                <p>• Admin: <code>8888888888</code> / <code>admintest</code></p>
+        <!-- Auth View: Sign In -->
+        <div id="loginSection" class="auth-wrapper">
+            <div class="card">
+                <div class="card-title">Sign In to Faraday</div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>10-Digit Account ID</label>
+                        <input type="text" id="loginId" class="form-control" maxlength="10" placeholder="Enter your 10-digit ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPass" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Sign In</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    Don't have an account? <a href="#" onclick="toggleAuthMode(event)" style="color: var(--accent);">Sign Up</a>
+                </p>
             </div>
         </div>
 
-        <!-- Sign Up Card -->
-        <div id="signupSection" class="login-card hidden">
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-                <h2>Create Account</h2>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">Join Faraday Tech Portal</p>
-            </div>
-            <form onsubmit="handleSignUp(event)">
-                <div class="form-group">
-                    <label>Custom 10-Digit ID (Optional)</label>
-                    <input type="text" id="signupIdInput" class="form-control" placeholder="Leave blank to auto-generate" maxlength="10">
-                </div>
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="signupName" class="form-control" placeholder="e.g. Jane Doe" required>
-                </div>
-                <div class="form-group">
-                    <label>Display Nickname (Optional)</label>
-                    <input type="text" id="signupNickname" class="form-control" placeholder="e.g. Jane">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="signupPass" class="form-control" placeholder="Create password" required>
-                </div>
-                <div class="form-group">
-                    <label>Account Role / Group</label>
-                    <select id="signupRole" class="form-control" onchange="toggleAdminCodeInput()">
-                        <option value="Male">Student (Male)</option>
-                        <option value="Female">Student (Female)</option>
-                        <option value="Tester">Student (Tester)</option>
-                        <option value="Admin">Teacher / Admin</option>
-                    </select>
-                </div>
-                <div class="form-group hidden" id="adminCodeGroup">
-                    <label>Admin Secret Code</label>
-                    <input type="password" id="signupAdminCode" class="form-control" placeholder="Enter special admin code">
-                </div>
-                <button type="submit" class="btn" style="width: 100%; padding: 0.75rem; margin-bottom: 0.75rem;">Sign Up</button>
-            </form>
-            <div style="text-align: center; font-size: 0.9rem;">
-                <a href="#" onclick="toggleAuthMode(event)" style="color: var(--accent); text-decoration: none;">Already have an account? Login</a>
+        <!-- Auth View: Sign Up -->
+        <div id="signupSection" class="auth-wrapper hidden">
+            <div class="card">
+                <div class="card-title">Create Faraday Account</div>
+                <form onsubmit="handleSignUp(event)">
+                    <div class="form-group">
+                        <label>Custom 10-Digit Account ID (Optional - leave blank to auto-generate)</label>
+                        <input type="text" id="signupCustomId" class="form-control" maxlength="10" pattern="\d{10}" title="Must be exactly 10 digits" placeholder="e.g. 1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label>Full Name (Real Name)</label>
+                        <input type="text" id="signupName" class="form-control" placeholder="e.g. Juan Dela Cruz" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nickname / Display Name (Optional)</label>
+                        <input type="text" id="signupNickname" class="form-control" placeholder="e.g. Juanny">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPass" class="form-control" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Role</label>
+                        <select id="signupRole" class="form-control" onchange="toggleAdminCodeInput()">
+                            <option value="Student">Student</option>
+                            <option value="Admin">Teacher / Admin</option>
+                        </select>
+                    </div>
+                    <div id="genderGroup" class="form-group">
+                        <label>Gender</label>
+                        <select id="signupGender" class="form-control" onchange="checkGenderSelection()">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Custom / Type my gender</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div id="customGenderGroup" class="form-group hidden">
+                        <label>Type Your Gender</label>
+                        <input type="text" id="signupCustomGender" class="form-control" placeholder="Enter your gender identity">
+                    </div>
+                    <div id="adminCodeGroup" class="form-group hidden">
+                        <label>Admin Secret Code</label>
+                        <input type="password" id="signupAdminCode" class="form-control" placeholder="Enter Teacher Admin Code">
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Create Account</button>
+                </form>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    Already have an account? <a href="#" onclick="toggleAuthMode(event)" style="color: var(--accent);">Sign In</a>
+                </p>
             </div>
         </div>
 
+        <!-- Main App Interface -->
         <div id="appSection" class="hidden">
             <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('transferTab')">FARADS Transfer</button>
+                <button class="tab-btn active" onclick="switchTab('transferTab')">Transfer & Profile</button>
                 <button class="tab-btn" onclick="switchTab('shopTab')">School Store</button>
-                <button id="auctionTabBtn" class="tab-btn" onclick="switchTab('auctionTab')">🔨 Auction Room</button>
+                <button class="tab-btn" onclick="switchTab('auctionTab')">🔨 Live Auction</button>
                 <button class="tab-btn" onclick="switchTab('classTab')">📚 Class & Quizzes</button>
-                <button id="videoPlayerTabBtn" class="tab-btn" onclick="switchTab('videoPlayerTab')">▶️ Video Player</button>
-                <button id="adminTabBtn" class="tab-btn hidden" onclick="switchTab('adminTab')">Grading & Admin</button>
+                <button class="tab-btn" onclick="switchTab('videoTab')">🎥 Video Player</button>
                 <button class="tab-btn" onclick="switchTab('directoryTab')">Classroom List</button>
+                <button id="adminTabBtn" class="tab-btn hidden" onclick="switchTab('adminTab')">Admin & Gradebook</button>
             </div>
 
-            <!-- Tab 1: Transfers & Profile/Security -->
+            <!-- Tab 1: Transfer & Profile -->
             <div id="transferTab" class="tab-content">
                 <div class="dashboard-grid">
                     <div class="card">
-                        <div class="card-title">Transfer FARADS (Select Name)</div>
+                        <div class="card-title">Send FARADS</div>
                         <form onsubmit="handleTransfer(event)">
                             <div class="form-group">
-                                <label>Classmate / Teacher</label>
+                                <label>Select Recipient</label>
                                 <select id="transferRecipientSelect" class="form-control" required></select>
                             </div>
                             <div class="form-group">
                                 <label>Amount (FARADS)</label>
                                 <input type="number" id="transferAmount" class="form-control" min="1" step="any" placeholder="0.00" required>
                             </div>
-                            <button type="submit" class="btn" style="width: 100%;">Send FARADS</button>
+                            <button type="submit" class="btn" style="width: 100%;">Transfer Now</button>
                         </form>
                     </div>
 
                     <div class="card">
-                        <div class="card-title">Profile & Security</div>
-                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        <div class="card-title">My Profile & Grades</div>
+
+                        <!-- Avatar Photo Upload & Live Camera -->
+                        <div style="text-align: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
                             <div id="profileAvatarContainer">
                                 <div class="profile-avatar-preview" id="avatarPreviewText">👤</div>
                             </div>
-                            <div style="flex: 1; min-width: 190px;">
-                                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.45rem;">Profile Photo</label>
-                                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                                    <button type="button" class="btn btn-sm" onclick="document.getElementById('profileImageInput').click()">📁 Upload File / Photo</button>
-                                    <button type="button" class="btn btn-warning btn-sm" onclick="openCameraCapture()">📷 Take a Photo</button>
-                                    <button type="button" id="removeAvatarBtn" class="btn btn-danger btn-sm hidden" onclick="removeProfileAvatar()">✕ Remove</button>
-                                </div>
-                                <input type="file" id="profileImageInput" accept="image/*" class="hidden" onchange="handleProfileImageUpload(event)">
+                            <input type="file" id="avatarUploadInput" accept="image/*" class="hidden" onchange="handleProfileImageUpload(event)">
+                            <div style="display: flex; gap: 0.4rem; justify-content: center; flex-wrap: wrap;">
+                                <button type="button" class="btn btn-sm" onclick="document.getElementById('avatarUploadInput').click()">📁 Upload File</button>
+                                <button type="button" class="btn btn-warning btn-sm" onclick="openCameraCapture()">📷 Take Photo</button>
+                                <button type="button" id="removeAvatarBtn" class="btn btn-danger btn-sm hidden" onclick="removeProfileAvatar()">✕ Remove</button>
                             </div>
                         </div>
 
-                        <div class="form-group" style="margin-bottom: 0.75rem;">
-                            <label style="font-size: 0.8rem;">Display Nickname</label>
+                        <!-- Nickname Editor -->
+                        <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">My Nickname (Shown on site)</label>
                             <div style="display: flex; gap: 0.4rem;">
                                 <input type="text" id="userNicknameInput" class="form-control" style="padding: 0.4rem; font-size: 0.9rem;" placeholder="e.g. Jared">
                                 <button type="button" class="btn btn-sm" onclick="saveNickname()">Save</button>
@@ -574,9 +567,9 @@
 
                         <p><strong>Real Name:</strong> <span id="infoName">-</span></p>
                         <p style="margin-top: 0.4rem;"><strong>10-Digit ID:</strong> <span id="infoId">-</span></p>
-                        <p style="margin-top: 0.4rem;"><strong>Role:</strong> <span id="infoRole">-</span></p>
+                        <p style="margin-top: 0.4rem;"><strong>Role / Gender:</strong> <span id="infoRole">-</span></p>
                         <p style="margin-top: 0.4rem;"><strong>Available Balance:</strong> <span id="infoBalance" style="color: var(--accent); font-weight: bold;">0</span> FARADS</p>
-                        
+
                         <div id="studentGradesSection" style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
                             <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Computed Category Grades</h4>
                             <p style="font-size: 0.9rem;">Written Works (<span id="dispWeightW">30</span>%): <strong id="gradeWritten" style="color: var(--success);">0</strong></p>
@@ -741,7 +734,6 @@
             <!-- Tab 4: Class & Quizzes -->
             <div id="classTab" class="tab-content hidden">
                 <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr;">
-                    <!-- Lessons & Notes Section -->
                     <div class="card">
                         <div class="card-title">
                             <span>📚 Lessons & Notes</span>
@@ -752,7 +744,6 @@
                         </div>
                     </div>
 
-                    <!-- Quizzes Section -->
                     <div class="card">
                         <div class="card-title">
                             <span>🧠 Classroom Quizzes</span>
@@ -765,37 +756,40 @@
                 </div>
             </div>
 
-            <!-- Tab 5: Video Player -->
-            <div id="videoPlayerTab" class="tab-content hidden">
-                <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <!-- Tab 5: Video Player Hub -->
+            <div id="videoTab" class="tab-content hidden">
+                <div class="card" style="max-width: 850px; margin: 0 auto;">
                     <div class="card-title">
-                        <span>▶️ Video Player Hub</span>
-                        <span id="nowPlayingTitle" style="font-size: 0.9rem; color: var(--text-muted);">No video loaded</span>
+                        <span>🎥 Video Player</span>
+                        <span id="activeVideoTitle" style="font-size: 0.9rem; color: var(--accent);">No Video Loaded</span>
                     </div>
-                    <div style="background: #000; border-radius: 8px; overflow: hidden; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 1rem;">
-                        <video id="customVideoPlayer" controls style="width: 100%; height: 100%; object-fit: contain;">
-                            Your browser does not support the video tag.
-                        </video>
-                        <div id="videoPlaceholderMessage" style="position: absolute; color: var(--text-muted); text-align: center; padding: 1rem;">
-                            <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">📺 No Video Selected</p>
-                            <p style="font-size: 0.85rem;">Click a video link from the <strong>Lessons & Notes</strong> tab to play it here!</p>
+                    <div style="position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <div id="ytPlayerWrapper" style="width: 100%; height: 100%;">
+                            <div id="ytPlayerFrame"></div>
+                        </div>
+                        <video id="html5VideoPlayer" class="hidden" style="width: 100%; height: 100%;" controls></video>
+                        <div id="videoPlaceholderMsg" style="position: absolute; color: var(--text-muted); text-align: center; padding: 1rem; pointer-events: none;">
+                            <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">Select a lesson video link to watch</p>
+                            <p style="font-size: 0.85rem;">Click "▶ Watch Video" on any published lesson in the Class & Quizzes tab.</p>
                         </div>
                     </div>
-                    <!-- Custom Player Controls Bar -->
-                    <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <button class="btn btn-sm" onclick="adjustVideoVolume(-0.1)">🔊 Vol -</button>
-                            <button class="btn btn-sm" onclick="adjustVideoVolume(0.1)">🔊 Vol +</button>
-                            <span id="volumeDisplay" style="font-size: 0.85rem; color: var(--text-muted);">Vol: 100%</span>
+                    <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: space-between;">
+                        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                            <button class="btn btn-sm" onclick="changeVideoVolume(-10)">🔉 - Vol</button>
+                            <input type="range" id="videoVolumeSlider" min="0" max="100" value="100" oninput="setVideoVolume(this.value)">
+                            <button class="btn btn-sm" onclick="changeVideoVolume(10)">🔊 + Vol</button>
+                            <span id="volumeLabel" style="font-size: 0.85rem; color: var(--accent); font-weight: bold; min-width: 40px;">100%</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <label style="font-size: 0.85rem; color: var(--text-muted);">Speed:</label>
-                            <select id="videoSpeedSelect" class="form-control" style="padding: 0.3rem; font-size: 0.85rem; width: 100px;" onchange="changeVideoSpeed(this.value)">
+                        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                            <label style="font-size: 0.9rem; color: var(--text-muted);">Playback Speed:</label>
+                            <select id="videoSpeedSelect" class="form-control" style="width: auto; padding: 0.35rem 0.65rem;" onchange="setVideoSpeed(this.value)">
+                                <option value="0.25">0.25x</option>
                                 <option value="0.5">0.5x</option>
                                 <option value="0.75">0.75x</option>
                                 <option value="1" selected>1.0x (Normal)</option>
                                 <option value="1.25">1.25x</option>
                                 <option value="1.5">1.5x</option>
+                                <option value="1.75">1.75x</option>
                                 <option value="2">2.0x</option>
                             </select>
                         </div>
@@ -963,7 +957,7 @@
     <div id="patchNotesModal" class="modal-overlay hidden" onclick="closePatchNotesModal(event)">
         <div class="modal-card" onclick="event.stopPropagation()">
             <div class="card-title" style="border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
-                <span>📜 System Patch Notes</span>
+                <span>📜 Patched Notes</span>
                 <button class="btn btn-danger btn-sm" onclick="closePatchNotesModal()">Close</button>
             </div>
             <div id="patchNotesBody" style="font-size: 0.95rem; line-height: 1.6; max-height: 60vh; overflow-y: auto; padding-right: 0.5rem;">
@@ -971,10 +965,10 @@
                     <h3 style="color: var(--accent);">Version 15</h3>
                     <p style="color: var(--text-muted); font-size: 0.85rem;">Released: November 2026</p>
                     <ul style="margin-left: 1.25rem; margin-top: 0.3rem;">
-                        <li>Added custom 10-digit ID and Gender selection on Sign Up.</li>
-                        <li>Added dynamic Teacher Quiz customizer (choose number of choices, answers, and Farads reward per question).</li>
-                        <li>Added Video Player Hub with speed and volume adjustment controls.</li>
-                        <li>Fixed Supabase Realtime drop issues with automatic background re-subscription.</li>
+                        <li>Added flexible gender options (Male, Female, Custom typed gender, or Prefer not to say) on sign up.</li>
+                        <li>Fixed Supabase client initialization, upsert error reporting, and schema synchronization.</li>
+                        <li>Advanced Teacher Quiz Builder with multiple-choice or written answer modes.</li>
+                        <li>Dedicated Video Player tab with live volume and playback speed controls.</li>
                     </ul>
                 </div>
             </div>
@@ -994,8 +988,12 @@
                     <input type="text" id="lessonTitleInput" class="form-control" placeholder="e.g. Introduction to Ohm's Law" required>
                 </div>
                 <div class="form-group">
-                    <label>Content / Notes / Video URL (.mp4 or direct video link)</label>
-                    <textarea id="lessonContentInput" class="form-control" rows="5" placeholder="Write lesson notes or paste direct video links (e.g. https://.../video.mp4)..." required></textarea>
+                    <label>Video Link (YouTube or Direct MP4 Link - Optional)</label>
+                    <input type="text" id="lessonVideoInput" class="form-control" placeholder="https://www.youtube.com/watch?v=... or .mp4 link">
+                </div>
+                <div class="form-group">
+                    <label>Content / Reading Material / Notes</label>
+                    <textarea id="lessonContentInput" class="form-control" rows="4" placeholder="Write lesson notes or reading instructions here..." required></textarea>
                 </div>
                 <button type="submit" class="btn" style="width: 100%;">Publish Lesson</button>
             </form>
@@ -1011,26 +1009,29 @@
             </div>
             <form onsubmit="handleCreateQuiz(event)" style="margin-top: 1rem;">
                 <div class="form-group">
-                    <label>Quiz Question</label>
-                    <input type="text" id="quizQuestionInput" class="form-control" placeholder="e.g. What is the unit of electrical resistance?" required>
+                    <label>Quiz Title</label>
+                    <input type="text" id="quizTitleInput" class="form-control" placeholder="e.g. Week 4 Circuit Quiz" required>
+                </div>
+                <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.5rem;">
+                    <div class="form-group">
+                        <label>Number of Questions</label>
+                        <input type="number" id="quizNumQuestions" class="form-control" min="1" max="20" value="3" onchange="renderQuizBuilderQuestions()" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Answer Style</label>
+                        <select id="quizNumChoices" class="form-control" onchange="renderQuizBuilderQuestions()">
+                            <option value="2">2 Choices (A, B)</option>
+                            <option value="3">3 Choices (A, B, C)</option>
+                            <option value="4" selected>4 Choices (A, B, C, D)</option>
+                            <option value="0">Written Answer (Type Answer)</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Number of Choices / Options</label>
-                    <select id="quizNumChoices" class="form-control" onchange="renderQuizChoiceInputs()">
-                        <option value="2">2 Choices (A, B)</option>
-                        <option value="3">3 Choices (A, B, C)</option>
-                        <option value="4" selected>4 Choices (A, B, C, D)</option>
-                    </select>
-                </div>
-                <div id="quizChoicesContainer"></div>
-                <div class="form-group">
-                    <label>Correct Answer</label>
-                    <select id="quizCorrectInput" class="form-control" required></select>
-                </div>
-                <div class="form-group">
-                    <label>Farads Reward per Correct Answer</label>
+                    <label>Farads per Correct Answer</label>
                     <input type="number" id="quizRewardInput" class="form-control" min="1" value="50" required>
                 </div>
+                <div id="quizBuilderQuestionsContainer" style="max-height: 40vh; overflow-y: auto; padding-right: 0.5rem; margin-bottom: 1rem;"></div>
                 <button type="submit" class="btn btn-warning" style="width: 100%;">Publish Quiz</button>
             </form>
         </div>
@@ -1040,7 +1041,15 @@
         const SUPABASE_URL = 'https://sujpdopplexaxgnizvil.supabase.co';
         const SUPABASE_KEY = 'sb_publishable__srdeSwL95qHFZLfO2N3WQ_WJSNcB58';
         const SECRET_ADMIN_CODE = 'FARADAYADMIN';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let supabaseClient = null;
+        try {
+            if (window.supabase && typeof window.supabase.createClient === 'function') {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            }
+        } catch (e) {
+            console.error("Supabase initialization error:", e);
+        }
 
         const DEFAULT_COLUMNS = [
             { id: "written1", name: "Quiz 1", category: "Written" },
@@ -1096,8 +1105,8 @@
         ];
 
         const DEFAULT_ACCOUNTS = [
-            { id: "1111111111", name: "Tester Student 1", nickname: "", group: "Tester", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[], inventory:[], completedQuizzes:[], privacy: {}, avatar: "" },
-            { id: "2222222222", name: "Tester Student 2", nickname: "", group: "Tester", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[], inventory:[], completedQuizzes:[], privacy: {}, avatar: "" },
+            { id: "1111111111", name: "Tester Student 1", nickname: "", group: "Male", pass: "testpass1", balance: 1500, scores: {written1:90, written2:92, perf1:88, perf2:90, exam1:91, bonus:3}, history:[], inventory:[], completedQuizzes:[], privacy: {}, avatar: "" },
+            { id: "2222222222", name: "Tester Student 2", nickname: "", group: "Female", pass: "testpass2", balance: 2000, scores: {written1:85, written2:88, perf1:86, perf2:89, exam1:87, bonus:1}, history:[], inventory:[], completedQuizzes:[], privacy: {}, avatar: "" },
             { id: "8888888888", name: "Tester Admin Teacher", nickname: "", group: "Admin", pass: "admintest", balance: 99999, isAdmin: true, scores: {}, history:[], inventory:[], completedQuizzes:[], privacy: {}, avatar: "" }
         ];
 
@@ -1113,8 +1122,13 @@
         let shopEditMode = false;
         let mediaStream = null;
         let useFrontCamera = true;
-        let currentUser = null;
-        let cart = {};
+        let ytPlayer = null;
+        let ytReady = false;
+        let activeVideoMode = 'none';
+
+        function onYouTubeIframeAPIReady() {
+            ytReady = true;
+        }
 
         function getDisplayName(acc) {
             if (!acc) return '';
@@ -1129,17 +1143,23 @@
             return accounts.map(acc => {
                 if (!acc.group) {
                     const def = DEFAULT_ACCOUNTS.find(d => d.id === acc.id);
-                    acc.group = def ? def.group : (acc.isAdmin ? "Admin" : "Male");
+                    acc.group = def ? def.group : (acc.isAdmin ? "Admin" : "Prefer not to say");
                 }
                 if (!acc.privacy) acc.privacy = {};
                 if (!acc.avatar) acc.avatar = "";
                 if (acc.nickname === undefined) acc.nickname = "";
                 if (!acc.completedQuizzes) acc.completedQuizzes = [];
+                if (!acc.scores) acc.scores = {};
                 return acc;
             });
         }
 
         async function loadAllData() {
+            if (!supabaseClient) {
+                console.warn("Supabase client unavailable; running in offline/local mode.");
+                if (ACCOUNTS_DATA.length === 0) initDefaults();
+                return;
+            }
             try {
                 const { data, error } = await supabaseClient
                     .from('app_data')
@@ -1147,25 +1167,24 @@
                     .eq('id', 1)
                     .maybeSingle();
 
-                if (error || !data) {
-                    ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
-                    GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
-                    GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
-                    GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
-                    SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
-                    LESSONS_DATA = [];
-                    QUIZZES_DATA = [];
-                    AUCTION_STATE = null;
+                if (error) {
+                    console.error("Supabase select error:", error.message, error.details);
+                    if (ACCOUNTS_DATA.length === 0) initDefaults();
+                    return;
+                }
+
+                if (!data) {
+                    initDefaults();
                     await saveAllData();
                 } else {
                     const rawAccounts = data.accounts && data.accounts.length > 0 ? data.accounts : JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
                     ACCOUNTS_DATA = normalizeAccounts(rawAccounts);
                     GRADE_COLUMNS = data.columns && data.columns.length > 0 ? data.columns : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
                     GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
-                    GRADE_CONV_RATE = data.convRate !== undefined ? data.convRate : DEFAULT_CONVERSION_RATE;
-                    LESSONS_DATA = data.lessons || [];
-                    QUIZZES_DATA = data.quizzes || [];
-                    
+                    GRADE_CONV_RATE = data.convRate !== undefined && data.convRate !== null ? data.convRate : DEFAULT_CONVERSION_RATE;
+                    LESSONS_DATA = Array.isArray(data.lessons) ? data.lessons : [];
+                    QUIZZES_DATA = Array.isArray(data.quizzes) ? data.quizzes : [];
+
                     let loadedCats = data.shop_categories && data.shop_categories.length > 0 ? data.shop_categories : JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
                     let showcaseCat = loadedCats.find(c => c.id === 'cat_showcase');
                     if (!showcaseCat) {
@@ -1178,16 +1197,20 @@
                     checkShowcasePriceFluctuation();
                 }
             } catch (err) {
-                console.error("Failed to load data from Supabase, using defaults:", err);
-                ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
-                GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
-                GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
-                GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
-                SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
-                LESSONS_DATA = [];
-                QUIZZES_DATA = [];
-                AUCTION_STATE = null;
+                console.error("Failed to load data from Supabase:", err);
+                if (ACCOUNTS_DATA.length === 0) initDefaults();
             }
+        }
+
+        function initDefaults() {
+            ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
+            GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+            GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+            GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+            SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
+            LESSONS_DATA = [];
+            QUIZZES_DATA = [];
+            AUCTION_STATE = null;
         }
 
         function checkShowcasePriceFluctuation() {
@@ -1214,28 +1237,36 @@
         }
 
         async function saveAllData() {
+            if (!supabaseClient) return;
             try {
-                await supabaseClient
+                const payload = {
+                    id: 1,
+                    accounts: ACCOUNTS_DATA,
+                    columns: GRADE_COLUMNS,
+                    weights: GRADE_WEIGHTS,
+                    convRate: GRADE_CONV_RATE,
+                    shop_categories: SHOP_CATEGORIES,
+                    lessons: LESSONS_DATA,
+                    quizzes: QUIZZES_DATA,
+                    auction: AUCTION_STATE
+                };
+
+                const { error } = await supabaseClient
                     .from('app_data')
-                    .upsert({
-                        id: 1,
-                        accounts: ACCOUNTS_DATA,
-                        columns: GRADE_COLUMNS,
-                        weights: GRADE_WEIGHTS,
-                        convRate: GRADE_CONV_RATE,
-                        shop_categories: SHOP_CATEGORIES,
-                        lessons: LESSONS_DATA,
-                        quizzes: QUIZZES_DATA,
-                        auction: AUCTION_STATE
-                    });
+                    .upsert(payload, { onConflict: 'id' });
+
+                if (error) {
+                    console.error("Supabase upsert error:", error.message, error.details);
+                    showAlert(`Database sync warning: ${error.message}`, 'warning');
+                }
             } catch (err) {
                 console.error("Failed to save data to Supabase:", err);
             }
         }
 
-        // Robust Supabase Realtime Subscription with Reconnection
-        function initRealtimeSubscription() {
-            const channel = supabaseClient.channel('app_data_changes')
+        if (supabaseClient) {
+            supabaseClient
+                .channel('app_data_changes')
                 .on(
                     'postgres_changes',
                     { event: '*', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
@@ -1244,17 +1275,19 @@
                         if (!updated) return;
 
                         if (updated.accounts) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
-                        GRADE_COLUMNS = updated.columns || GRADE_COLUMNS;
-                        GRADE_WEIGHTS = updated.weights || GRADE_WEIGHTS;
-                        GRADE_CONV_RATE = updated.convRate !== undefined ? updated.convRate : GRADE_CONV_RATE;
+                        if (updated.columns) GRADE_COLUMNS = updated.columns;
+                        if (updated.weights) GRADE_WEIGHTS = updated.weights;
+                        if (updated.convRate !== undefined && updated.convRate !== null) GRADE_CONV_RATE = updated.convRate;
                         if (updated.shop_categories) SHOP_CATEGORIES = updated.shop_categories;
-                        LESSONS_DATA = updated.lessons || LESSONS_DATA;
-                        QUIZZES_DATA = updated.quizzes || QUIZZES_DATA;
+                        if (updated.lessons) LESSONS_DATA = updated.lessons;
+                        if (updated.quizzes) QUIZZES_DATA = updated.quizzes;
                         AUCTION_STATE = updated.auction || null;
 
                         if (currentUser) {
                             updateUserDisplays();
                             handleAuctionRealtimeSync();
+                            populateTransferDropdown();
+                            populateAdminDropdown();
                         }
                         renderShopItems();
                         renderGradebookSheet();
@@ -1262,29 +1295,13 @@
                         renderLessonsAndQuizzes();
                     }
                 )
-                .subscribe((status, err) => {
-                    if (status === 'CHANNEL_ERROR' || status === 'CLOSED') {
-                        console.warn('Realtime connection lost or errored. Reconnecting...', err);
-                        setTimeout(() => {
-                            supabaseClient.removeChannel(channel);
-                            initRealtimeSubscription();
-                        }, 3000);
-                    }
-                });
+                .subscribe();
         }
 
         async function resetAllData() {
             if (confirm("Reset all system data, lessons, quizzes, shop items, and accounts in Supabase?")) {
                 try {
-                    ACCOUNTS_DATA = JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
-                    GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
-                    GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
-                    GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
-                    SHOP_CATEGORIES = JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
-                    LESSONS_DATA = [];
-                    QUIZZES_DATA = [];
-                    AUCTION_STATE = null;
-
+                    initDefaults();
                     await saveAllData();
                     if (currentUser) {
                         currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id) || null;
@@ -1308,19 +1325,40 @@
         function toggleAdminCodeInput() {
             const role = document.getElementById('signupRole').value;
             const codeGroup = document.getElementById('adminCodeGroup');
-            if (role === 'Admin') codeGroup.classList.remove('hidden');
-            else codeGroup.classList.add('hidden');
+            const genderGroup = document.getElementById('genderGroup');
+            const customGenderGroup = document.getElementById('customGenderGroup');
+            if (role === 'Admin') {
+                codeGroup.classList.remove('hidden');
+                genderGroup.classList.add('hidden');
+                customGenderGroup.classList.add('hidden');
+            } else {
+                codeGroup.classList.add('hidden');
+                genderGroup.classList.remove('hidden');
+                checkGenderSelection();
+            }
+        }
+
+        function checkGenderSelection() {
+            const genderVal = document.getElementById('signupGender').value;
+            const customGroup = document.getElementById('customGenderGroup');
+            if (genderVal === 'Other') {
+                customGroup.classList.remove('hidden');
+            } else {
+                customGroup.classList.add('hidden');
+            }
         }
 
         async function handleSignUp(e) {
             e.preventDefault();
             await loadAllData();
 
-            let customId = document.getElementById('signupIdInput').value.trim();
+            const customIdInput = document.getElementById('signupCustomId').value.trim();
             const name = document.getElementById('signupName').value.trim();
             const nickname = document.getElementById('signupNickname').value.trim();
             const pass = document.getElementById('signupPass').value.trim();
             const role = document.getElementById('signupRole').value;
+            const genderSelect = document.getElementById('signupGender').value;
+            const customGenderInput = document.getElementById('signupCustomGender').value.trim();
             const adminCode = document.getElementById('signupAdminCode').value.trim();
 
             if (!name || !pass) {
@@ -1328,31 +1366,33 @@
                 return;
             }
 
-            let isAdmin = false;
-            let group = role; // Male, Female, Tester, or Admin
-
-            if (role === 'Admin') {
-                if (adminCode !== SECRET_ADMIN_CODE) {
-                    showAlert('Invalid Admin Secret Code! Account created as Student (Male).', 'danger');
-                    group = 'Male';
-                } else {
-                    isAdmin = true;
-                    group = 'Admin';
-                }
-            }
-
-            // Handle custom ID vs auto-generation
-            let newId = "";
-            if (customId) {
-                if (ACCOUNTS_DATA.some(acc => acc.id === customId)) {
-                    showAlert('This ID is already taken! Please choose another 10-digit ID.', 'danger');
-                    return;
-                }
-                newId = customId;
-            } else {
+            let newId = customIdInput;
+            if (!newId) {
                 newId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
                 while (ACCOUNTS_DATA.some(acc => acc.id === newId)) {
                     newId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+                }
+            } else {
+                if (!/^\d{10}$/.test(newId)) {
+                    showAlert('Account ID must be exactly 10 digits.', 'danger');
+                    return;
+                }
+                if (ACCOUNTS_DATA.some(acc => acc.id === newId)) {
+                    showAlert('This 10-Digit ID is already taken! Please choose another one.', 'danger');
+                    return;
+                }
+            }
+
+            let isAdmin = false;
+            let resolvedGender = genderSelect === 'Other' ? (customGenderInput || 'Custom') : genderSelect;
+            let group = resolvedGender;
+
+            if (role === 'Admin') {
+                if (adminCode !== SECRET_ADMIN_CODE) {
+                    showAlert('Invalid Admin Secret Code! Account created as Student.', 'danger');
+                } else {
+                    isAdmin = true;
+                    group = 'Admin';
                 }
             }
 
@@ -1375,12 +1415,18 @@
             ACCOUNTS_DATA.push(newAccount);
             await saveAllData();
 
-            showAlert(`Account created successfully! Your ID is: ${newId}`, 'success');
-            document.getElementById('signupIdInput').value = '';
+            populateDirectory();
+            populateTransferDropdown();
+            populateAdminDropdown();
+            renderGradebookSheet();
+
+            showAlert(`Account created! Added to Classroom List. Your ID is: ${newId}`, 'success');
+            document.getElementById('signupCustomId').value = '';
             document.getElementById('signupName').value = '';
             document.getElementById('signupNickname').value = '';
             document.getElementById('signupPass').value = '';
             document.getElementById('signupAdminCode').value = '';
+            document.getElementById('signupCustomGender').value = '';
             toggleAuthMode(e);
             document.getElementById('loginId').value = newId;
         }
@@ -1528,7 +1574,7 @@
 
         function openAddQuizModal() {
             document.getElementById('addQuizModal').classList.remove('hidden');
-            renderQuizChoiceInputs();
+            renderQuizBuilderQuestions();
         }
 
         function closeAddQuizModal(e) {
@@ -1537,32 +1583,68 @@
             }
         }
 
-        function renderQuizChoiceInputs() {
-            const numChoices = parseInt(document.getElementById('quizNumChoices').value);
-            const container = document.getElementById('quizChoicesContainer');
-            const correctSelect = document.getElementById('quizCorrectInput');
-            
-            let choicesHtml = '';
-            let correctOptionsHtml = '';
-            const labels = ['A', 'B', 'C', 'D'];
+        function renderQuizBuilderQuestions() {
+            const numQ = Math.max(1, Math.min(20, parseInt(document.getElementById('quizNumQuestions').value) || 1));
+            const numC = parseInt(document.getElementById('quizNumChoices').value);
+            const container = document.getElementById('quizBuilderQuestionsContainer');
+            if (!container) return;
 
-            for (let i = 0; i < numChoices; i++) {
-                choicesHtml += `
-                    <div class="form-group" style="margin-bottom: 0.75rem;">
-                        <label>Option ${labels[i]}</label>
-                        <input type="text" id="quizOpt_${i}" class="form-control" placeholder="Option ${labels[i]} text" required>
-                    </div>
-                `;
-                correctOptionsHtml += `<option value="${i}">Option ${labels[i]}</option>`;
+            let html = '';
+            const optionsLetter = ['A', 'B', 'C', 'D'];
+
+            for (let i = 0; i < numQ; i++) {
+                if (numC === 0) {
+                    html += `
+                        <div style="background: var(--bg-primary); padding: 0.75rem; border-radius: 6px; margin-bottom: 0.75rem; border: 1px solid var(--border);">
+                            <p style="font-size: 0.85rem; font-weight: bold; color: var(--accent); margin-bottom: 0.3rem;">Question ${i + 1} (Written Answer)</p>
+                            <div class="form-group" style="margin-bottom: 0.4rem;">
+                                <input type="text" id="q_${i}_text" class="form-control" style="padding: 0.35rem; font-size: 0.9rem;" placeholder="Type question here..." required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 0.75rem; color: var(--text-muted);">Exact Correct Answer (Case-insensitive):</label>
+                                <input type="text" id="q_${i}_written_ans" class="form-control" style="padding: 0.35rem; font-size: 0.85rem;" placeholder="Type the exact answer students must write..." required>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    let choicesHtml = '';
+                    let selectCorrectOpts = '';
+                    for (let c = 0; c < numC; c++) {
+                        choicesHtml += `
+                            <div style="margin-bottom: 0.3rem;">
+                                <input type="text" id="q_${i}_opt_${c}" class="form-control" style="padding: 0.3rem; font-size: 0.85rem;" placeholder="Option ${optionsLetter[c]}" required>
+                            </div>
+                        `;
+                        selectCorrectOpts += `<option value="${c}">Option ${optionsLetter[c]}</option>`;
+                    }
+
+                    html += `
+                        <div style="background: var(--bg-primary); padding: 0.75rem; border-radius: 6px; margin-bottom: 0.75rem; border: 1px solid var(--border);">
+                            <p style="font-size: 0.85rem; font-weight: bold; color: var(--accent); margin-bottom: 0.3rem;">Question ${i + 1} (Multiple Choice)</p>
+                            <div class="form-group" style="margin-bottom: 0.4rem;">
+                                <input type="text" id="q_${i}_text" class="form-control" style="padding: 0.35rem; font-size: 0.9rem;" placeholder="Type question here..." required>
+                            </div>
+                            <div style="margin-bottom: 0.4rem;">
+                                <label style="font-size: 0.75rem; color: var(--text-muted);">Choices:</label>
+                                ${choicesHtml}
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 0.75rem; color: var(--text-muted);">Correct Answer:</label>
+                                <select id="q_${i}_correct" class="form-control" style="padding: 0.3rem; font-size: 0.85rem;">
+                                    ${selectCorrectOpts}
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                }
             }
-
-            container.innerHTML = choicesHtml;
-            correctSelect.innerHTML = correctOptionsHtml;
+            container.innerHTML = html;
         }
 
         async function handleCreateLesson(e) {
             e.preventDefault();
             const title = document.getElementById('lessonTitleInput').value.trim();
+            const videoUrl = document.getElementById('lessonVideoInput').value.trim();
             const content = document.getElementById('lessonContentInput').value.trim();
 
             if (!title || !content) return;
@@ -1570,6 +1652,7 @@
             LESSONS_DATA.push({
                 id: Date.now(),
                 title: title,
+                videoUrl: videoUrl,
                 content: content,
                 author: getDisplayName(currentUser),
                 date: new Date().toLocaleDateString()
@@ -1577,6 +1660,7 @@
 
             await saveAllData();
             document.getElementById('lessonTitleInput').value = '';
+            document.getElementById('lessonVideoInput').value = '';
             document.getElementById('lessonContentInput').value = '';
             closeAddLessonModal();
             renderLessonsAndQuizzes();
@@ -1585,44 +1669,139 @@
 
         async function handleCreateQuiz(e) {
             e.preventDefault();
-            const question = document.getElementById('quizQuestionInput').value.trim();
-            const numChoices = parseInt(document.getElementById('quizNumChoices').value);
-            
-            let options = [];
-            for (let i = 0; i < numChoices; i++) {
-                const optVal = document.getElementById(`quizOpt_${i}`).value.trim();
-                options.push(optVal);
+            const title = document.getElementById('quizTitleInput').value.trim() || "Classroom Quiz";
+            const numQ = Math.max(1, Math.min(20, parseInt(document.getElementById('quizNumQuestions').value) || 1));
+            const numC = parseInt(document.getElementById('quizNumChoices').value);
+            const reward = parseFloat(document.getElementById('quizRewardInput').value) || 50;
+
+            let questionsList = [];
+            for (let i = 0; i < numQ; i++) {
+                const qText = document.getElementById(`q_${i}_text`).value.trim();
+                if (!qText) return;
+
+                if (numC === 0) {
+                    const writtenAns = document.getElementById(`q_${i}_written_ans`).value.trim();
+                    if (!writtenAns) return;
+                    questionsList.push({
+                        type: 'written',
+                        question: qText,
+                        writtenAnswer: writtenAns
+                    });
+                } else {
+                    let opts = [];
+                    for (let c = 0; c < numC; c++) {
+                        opts.push(document.getElementById(`q_${i}_opt_${c}`).value.trim());
+                    }
+                    const correct = parseInt(document.getElementById(`q_${i}_correct`).value);
+                    questionsList.push({
+                        type: 'mc',
+                        question: qText,
+                        options: opts,
+                        correctAnswer: correct
+                    });
+                }
             }
-
-            const correct = parseInt(document.getElementById('quizCorrectInput').value);
-            const reward = parseFloat(document.getElementById('quizRewardInput').value);
-
-            if (!question || isNaN(reward) || reward < 1) return;
 
             QUIZZES_DATA.push({
                 id: Date.now(),
-                question: question,
-                options: options,
-                correctAnswer: correct,
+                title: title,
+                questions: questionsList,
                 reward: reward,
                 author: getDisplayName(currentUser)
             });
 
             await saveAllData();
-            document.getElementById('quizQuestionInput').value = '';
-            document.getElementById('quizRewardInput').value = '50';
+            document.getElementById('quizTitleInput').value = '';
             closeAddQuizModal();
             renderLessonsAndQuizzes();
             showAlert('Quiz published successfully!', 'success');
         }
 
-        async function submitQuizAnswer(quizId) {
-            const selectedOption = document.querySelector(`input[name="quiz_${quizId}"]:checked`);
-            if (!selectedOption) {
-                showAlert('Please select an option before submitting!', 'danger');
+        function extractYouTubeId(url) {
+            const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+            const match = url.match(regExp);
+            return match ? match[1] : null;
+        }
+
+        function loadVideoInPlayer(videoUrl, title) {
+            const placeholder = document.getElementById('videoPlaceholderMsg');
+            const titleDisplay = document.getElementById('activeVideoTitle');
+            const ytWrapper = document.getElementById('ytPlayerWrapper');
+            const html5Vid = document.getElementById('html5VideoPlayer');
+
+            if (!videoUrl) {
+                showAlert('This lesson does not have a video link attached.', 'warning');
                 return;
             }
 
+            placeholder.classList.add('hidden');
+            titleDisplay.innerText = title;
+            switchTab('videoTab');
+
+            const ytId = extractYouTubeId(videoUrl);
+            if (ytId) {
+                activeVideoMode = 'youtube';
+                html5Vid.pause();
+                html5Vid.classList.add('hidden');
+                ytWrapper.classList.remove('hidden');
+
+                if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+                    ytPlayer.loadVideoById(ytId);
+                } else if (ytReady && window.YT) {
+                    ytPlayer = new YT.Player('ytPlayerFrame', {
+                        height: '100%',
+                        width: '100%',
+                        videoId: ytId,
+                        playerVars: { autoplay: 1, controls: 1 },
+                        events: {
+                            onReady: (event) => {
+                                event.target.setVolume(parseInt(document.getElementById('videoVolumeSlider').value));
+                                event.target.setPlaybackRate(parseFloat(document.getElementById('videoSpeedSelect').value));
+                            }
+                        }
+                    });
+                } else {
+                    ytWrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>`;
+                }
+            } else {
+                activeVideoMode = 'html5';
+                if (ytPlayer && typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
+                ytWrapper.classList.add('hidden');
+                html5Vid.classList.remove('hidden');
+                html5Vid.src = videoUrl;
+                html5Vid.volume = parseInt(document.getElementById('videoVolumeSlider').value) / 100;
+                html5Vid.playbackRate = parseFloat(document.getElementById('videoSpeedSelect').value);
+                html5Vid.play();
+            }
+        }
+
+        function changeVideoVolume(delta) {
+            const slider = document.getElementById('videoVolumeSlider');
+            let newVal = Math.max(0, Math.min(100, parseInt(slider.value) + delta));
+            slider.value = newVal;
+            setVideoVolume(newVal);
+        }
+
+        function setVideoVolume(val) {
+            const vol = parseInt(val);
+            document.getElementById('volumeLabel').innerText = `${vol}%`;
+            if (activeVideoMode === 'youtube' && ytPlayer && typeof ytPlayer.setVolume === 'function') {
+                ytPlayer.setVolume(vol);
+            } else if (activeVideoMode === 'html5') {
+                document.getElementById('html5VideoPlayer').volume = vol / 100;
+            }
+        }
+
+        function setVideoSpeed(speedVal) {
+            const speed = parseFloat(speedVal);
+            if (activeVideoMode === 'youtube' && ytPlayer && typeof ytPlayer.setPlaybackRate === 'function') {
+                ytPlayer.setPlaybackRate(speed);
+            } else if (activeVideoMode === 'html5') {
+                document.getElementById('html5VideoPlayer').playbackRate = speed;
+            }
+        }
+
+        async function submitQuizAnswer(quizId) {
             const quiz = QUIZZES_DATA.find(q => q.id === quizId);
             if (!quiz) return;
 
@@ -1632,53 +1811,33 @@
                 return;
             }
 
-            const chosenIndex = parseInt(selectedOption.value);
-            if (chosenIndex === quiz.correctAnswer) {
-                currentUser.balance += quiz.reward;
+            let scoreCount = 0;
+
+            quiz.questions.forEach((q, idx) => {
+                if (q.type === 'written') {
+                    const inputEl = document.getElementById(`quiz_${quizId}_written_${idx}`);
+                    if (inputEl && inputEl.value.trim().toLowerCase() === q.writtenAnswer.trim().toLowerCase()) {
+                        scoreCount++;
+                    }
+                } else {
+                    const selectedOption = document.querySelector(`input[name="quiz_${quizId}_q_${idx}"]:checked`);
+                    if (selectedOption && parseInt(selectedOption.value) === q.correctAnswer) {
+                        scoreCount++;
+                    }
+                }
+            });
+
+            if (scoreCount > 0) {
+                const earnedFarads = quiz.reward * scoreCount;
+                currentUser.balance += earnedFarads;
                 currentUser.completedQuizzes.push(quizId);
                 await saveAllData();
                 updateUserDisplays();
                 renderLessonsAndQuizzes();
-                showAlert(`Correct! You earned +${quiz.reward} FARADS!`, 'success');
+                showAlert(`You got ${scoreCount}/${quiz.questions.length} correct and earned +${earnedFarads} FARADS!`, 'success');
             } else {
-                showAlert('Incorrect answer. Try reviewing the lessons and try again!', 'danger');
+                showAlert(`You got 0/${quiz.questions.length} correct. Review the lesson and try again!`, 'danger');
             }
-        }
-
-        function loadVideoInPlayer(url, title) {
-            const videoPlayer = document.getElementById('customVideoPlayer');
-            const placeholderMsg = document.getElementById('videoPlaceholderMessage');
-            const nowPlaying = document.getElementById('nowPlayingTitle');
-
-            videoPlayer.src = url;
-            videoPlayer.load();
-            placeholderMsg.style.display = 'none';
-            nowPlaying.innerText = `Now Playing: ${title}`;
-            switchTab('videoPlayerTab');
-            videoPlayer.play().catch(e => console.log("Autoplay prevented:", e));
-        }
-
-        function adjustVideoVolume(delta) {
-            const videoPlayer = document.getElementById('customVideoPlayer');
-            let newVol = Math.max(0, Math.min(1, videoPlayer.volume + delta));
-            videoPlayer.volume = newVol;
-            document.getElementById('volumeDisplay').innerText = `Vol: ${Math.round(newVol * 100)}%`;
-        }
-
-        function changeVideoSpeed(speedVal) {
-            const videoPlayer = document.getElementById('customVideoPlayer');
-            videoPlayer.playbackRate = parseFloat(speedVal);
-        }
-
-        function formatLessonContentWithLinks(content) {
-            // Convert URLs in content into clickable links or video player triggers
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            return content.replace(urlRegex, (url) => {
-                if (url.match(/\.(mp4|webm|ogg)$/i) || url.includes('video')) {
-                    return `<a href="#" onclick="loadVideoInPlayer('${url}', 'Lesson Video'); return false;" style="color: var(--accent); font-weight: bold;">▶️ Watch Video (${url})</a>`;
-                }
-                return `<a href="${url}" target="_blank" style="color: var(--accent);">${url}</a>`;
-            });
         }
 
         function renderLessonsAndQuizzes() {
@@ -1697,7 +1856,6 @@
                 if (addQuizBtn) addQuizBtn.classList.add('hidden');
             }
 
-            // Render Lessons
             if (LESSONS_DATA.length === 0) {
                 lessonsContainer.innerHTML = `<p style="color: var(--text-muted);">No lessons published yet.</p>`;
             } else {
@@ -1705,35 +1863,48 @@
                     <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
                         <h4 style="color: var(--accent); margin-bottom: 0.25rem;">${lesson.title}</h4>
                         <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">By ${lesson.author} on ${lesson.date}</p>
-                        <p style="font-size: 0.95rem; white-space: pre-wrap; line-height: 1.5;">${formatLessonContentWithLinks(lesson.content)}</p>
+                        <p style="font-size: 0.95rem; white-space: pre-wrap; line-height: 1.5; margin-bottom: 0.75rem;">${lesson.content}</p>
+                        ${lesson.videoUrl ? `
+                            <button class="btn btn-warning btn-sm" onclick="loadVideoInPlayer('${lesson.videoUrl.replace(/'/g, "\\'")}', '${lesson.title.replace(/'/g, "\\'")}')">▶ Watch Video</button>
+                        ` : ''}
                     </div>
                 `).join('');
             }
 
-            // Render Quizzes
             if (QUIZZES_DATA.length === 0) {
                 quizzesContainer.innerHTML = `<p style="color: var(--text-muted);">No quizzes available right now.</p>`;
             } else {
                 quizzesContainer.innerHTML = QUIZZES_DATA.map(quiz => {
                     const isCompleted = currentUser && currentUser.completedQuizzes && currentUser.completedQuizzes.includes(quiz.id);
-                    const labels = ['A', 'B', 'C', 'D'];
+
                     return `
                         <div style="background: var(--bg-primary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid var(--border);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                <h4 style="color: var(--accent); font-size: 1rem;">${quiz.question}</h4>
-                                <span style="background: rgba(34,197,94,0.15); color: var(--success); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">+${quiz.reward} F</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <h4 style="color: var(--accent); font-size: 1rem;">${quiz.title || 'Class Quiz'} (${quiz.questions.length} Qs)</h4>
+                                <span style="background: rgba(34,197,94,0.15); color: var(--success); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">+${quiz.reward} F / correct</span>
                             </div>
                             ${isCompleted ? `
-                                <p style="color: var(--success); font-size: 0.9rem; font-weight: bold; margin-top: 0.5rem;">✅ Quiz completed & reward claimed!</p>
+                                <p style="color: var(--success); font-size: 0.9rem; font-weight: bold; margin-top: 0.5rem;">✅ Quiz completed & Farads reward claimed!</p>
                             ` : `
-                                <div style="display: flex; flex-direction: column; gap: 0.4rem; margin: 0.75rem 0; font-size: 0.9rem;">
-                                    ${quiz.options.map((opt, optIdx) => `
-                                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                                            <input type="radio" name="quiz_${quiz.id}" value="${optIdx}"> [${labels[optIdx]}] ${opt}
-                                        </label>
+                                <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem;">
+                                    ${quiz.questions.map((q, qIdx) => `
+                                        <div style="background: var(--bg-card); padding: 0.75rem; border-radius: 6px;">
+                                            <p style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem;">${qIdx + 1}. ${q.question}</p>
+                                            ${q.type === 'written' ? `
+                                                <input type="text" id="quiz_${quiz.id}_written_${qIdx}" class="form-control" style="padding: 0.4rem; font-size: 0.85rem;" placeholder="Type your answer here...">
+                                            ` : `
+                                                <div style="display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem;">
+                                                    ${q.options.map((opt, optIdx) => `
+                                                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                                            <input type="radio" name="quiz_${quiz.id}_q_${qIdx}" value="${optIdx}"> ${opt}
+                                                        </label>
+                                                    `).join('')}
+                                                </div>
+                                            `}
+                                        </div>
                                     `).join('')}
                                 </div>
-                                <button class="btn btn-sm" onclick="submitQuizAnswer(${quiz.id})">Submit Answer</button>
+                                <button class="btn btn-sm" onclick="submitQuizAnswer(${quiz.id})">Submit Quiz Answers</button>
                             `}
                         </div>
                     `;
@@ -1790,7 +1961,7 @@
         async function handleAddShopItem(e) {
             e.preventDefault();
             const catIdx = parseInt(document.getElementById('newItemCategorySelect').value);
-            const icon = document.getElementById('newItemIcon').value.trim() || "🎁";
+            const icon = document.getElementById('newItemIcon').value.trim() || "🛍️";
             const imageUrl = document.getElementById('newItemImgUrl').value.trim();
             const name = document.getElementById('newItemName').value.trim();
             const price = parseFloat(document.getElementById('newItemPrice').value);
@@ -2080,7 +2251,7 @@
         async function finalizeAuctionWinner() {
             if (!AUCTION_STATE || !currentUser?.isAdmin) return;
             AUCTION_STATE.status = 'closed';
-            
+
             const sortedBids = [...AUCTION_STATE.bidsHistory].reverse();
             let winner = null;
             let winningBid = 0;
@@ -2122,7 +2293,7 @@
                 if (inviteBox) inviteBox.classList.add('hidden');
                 noAuctionView.classList.remove('hidden');
                 activeAuctionView.classList.add('hidden');
-                
+
                 if (statusTag) {
                     if (AUCTION_STATE && AUCTION_STATE.winnerName && AUCTION_STATE.status === 'closed') {
                         statusTag.innerText = `Ended: ${AUCTION_STATE.winnerName}`;
@@ -2192,9 +2363,11 @@
             }
         }
 
+        let currentUser = null;
+        let cart = {};
+
         async function initApp() {
             await loadAllData();
-            initRealtimeSubscription();
             renderShopItems();
             populateTransferDropdown();
             populateDirectory();
@@ -2239,6 +2412,7 @@
                 document.getElementById('userNicknameInput').value = currentUser.nickname || '';
 
                 populateTransferDropdown();
+                populateAdminDropdown();
                 renderShopItems();
                 updateUserDisplays();
                 handleAuctionRealtimeSync();
@@ -2314,14 +2488,14 @@
 
         function computeStudentGrades(student) {
             if (student.isAdmin) return { w: 0, p: 0, e: 0, final: 0 };
-            
+
             let wSum = 0, wCount = 0;
             let pSum = 0, pCount = 0;
             let eSum = 0, eCount = 0;
-            let bonus = student.scores['bonus'] || 0;
+            let bonus = (student.scores && student.scores['bonus']) || 0;
 
             GRADE_COLUMNS.forEach(col => {
-                const val = student.scores[col.id] || 0;
+                const val = (student.scores && student.scores[col.id]) || 0;
                 if (col.category === 'Written') { wSum += val; wCount++; }
                 else if (col.category === 'Performance') { pSum += val; pCount++; }
                 else if (col.category === 'Exam') { eSum += val; eCount++; }
@@ -2331,8 +2505,8 @@
             const avgP = pCount > 0 ? (pSum / pCount) : 0;
             const avgE = eCount > 0 ? (eSum / eCount) : 0;
 
-            const final = ((avgW * (GRADE_WEIGHTS.w / 100)) + 
-                           (avgP * (GRADE_WEIGHTS.p / 100)) + 
+            const final = ((avgW * (GRADE_WEIGHTS.w / 100)) +
+                           (avgP * (GRADE_WEIGHTS.p / 100)) +
                            (avgE * (GRADE_WEIGHTS.e / 100))) + bonus;
 
             return {
@@ -2346,6 +2520,7 @@
         function updateUserDisplays() {
             if (!currentUser) return;
             currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id);
+            if (!currentUser) return;
 
             document.getElementById('userNameDisplay').innerText = getDisplayName(currentUser);
             document.getElementById('userBalanceDisplay').innerText = currentUser.balance.toLocaleString();
@@ -2353,7 +2528,7 @@
             document.getElementById('infoId').innerText = currentUser.id;
             document.getElementById('infoRole').innerText = currentUser.isAdmin ? "Teacher / Admin" : `Student (${currentUser.group})`;
             document.getElementById('infoBalance').innerText = currentUser.balance.toLocaleString();
-            
+
             const avatarContainer = document.getElementById('profileAvatarContainer');
             const removeBtn = document.getElementById('removeAvatarBtn');
             if (currentUser.avatar) {
@@ -2404,7 +2579,7 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.remove('hidden');
-            
+
             const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.getAttribute('onclick')?.includes(tabId));
             if (activeBtn) activeBtn.classList.add('active');
         }
@@ -2414,11 +2589,12 @@
             box.className = `alert alert-${type}`;
             box.innerText = msg;
             box.classList.remove('hidden');
-            setTimeout(() => box.classList.add('hidden'), 4000);
+            setTimeout(() => box.classList.add('hidden'), 4500);
         }
 
         function populateTransferDropdown() {
             const select = document.getElementById('transferRecipientSelect');
+            if (!select) return;
             select.innerHTML = ACCOUNTS_DATA
                 .filter(acc => acc.id !== currentUser?.id)
                 .map(acc => `<option value="${acc.id}">${getDisplayName(acc)} (${acc.id})</option>`)
@@ -2617,7 +2793,7 @@
         }
 
         async function confirmCheckout(total) {
-            currentUser.balance -= total; 
+            currentUser.balance -= total;
             const dateStr = new Date().toLocaleString();
             let orderSummary = { date: dateStr, items: {...cart}, total: total };
             if (!currentUser.history) currentUser.history = [];
@@ -2649,6 +2825,7 @@
         function populateAdminDropdown() {
             const depositSelect = document.getElementById('adminStudentSelect');
             const resetSelect = document.getElementById('adminResetStudentSelect');
+            if (!depositSelect || !resetSelect) return;
             const studentOptions = ACCOUNTS_DATA
                 .filter(acc => !acc.isAdmin)
                 .map(acc => `<option value="${acc.id}">${getDisplayName(acc)} (${acc.id})</option>`)
@@ -2745,6 +2922,7 @@
 
         function renderGradebookSheet() {
             const headerRow = document.getElementById('worksheetHeaderRow');
+            if (!headerRow) return;
             let headerHtml = `<th>ID</th><th>Student Name</th>`;
             GRADE_COLUMNS.forEach(col => {
                 headerHtml += `
@@ -2761,7 +2939,7 @@
             tbody.innerHTML = ACCOUNTS_DATA.filter(acc => !acc.isAdmin).map(acc => {
                 let rowHtml = `<tr><td><code>${acc.id}</code></td><td>${getDisplayName(acc)} <span style="font-size:0.75rem; color:var(--text-muted);">(${acc.name})</span></td>`;
                 GRADE_COLUMNS.forEach(col => {
-                    const val = acc.scores[col.id] || 0;
+                    const val = (acc.scores && acc.scores[col.id]) || 0;
                     rowHtml += `<td><input type="number" class="sheet-input" id="score_${acc.id}_${col.id}" value="${val}" min="0" max="100"></td>`;
                 });
                 const final = computeStudentGrades(acc).final;
@@ -2796,7 +2974,7 @@
 
             const males = nonAdmins.filter(acc => acc.group === 'Male').sort(sortAlpha);
             const females = nonAdmins.filter(acc => acc.group === 'Female').sort(sortAlpha);
-            const testers = nonAdmins.filter(acc => acc.group === 'Tester').sort(sortAlpha);
+            const others = nonAdmins.filter(acc => acc.group !== 'Male' && acc.group !== 'Female').sort(sortAlpha);
 
             const renderGroupTable = (title, list) => {
                 if (list.length === 0) return '';
@@ -2809,6 +2987,7 @@
                                     <th>Avatar</th>
                                     <th>10-Digit ID</th>
                                     <th>Name / Nickname</th>
+                                    <th>Gender</th>
                                     <th>Balance</th>
                                     <th>Role / Final Grade</th>
                                 </tr>
@@ -2832,6 +3011,7 @@
                                             <td>${avatarThumb}</td>
                                             <td><code>${acc.id}</code></td>
                                             <td>${nameDisplayHtml} ${isSelf ? '<span style="color: var(--accent); font-size: 0.8rem;">(You)</span>' : ''}</td>
+                                            <td>${acc.isAdmin ? 'Admin' : acc.group}</td>
                                             <td>${balanceText}</td>
                                             <td>${finalText}</td>
                                         </tr>
@@ -2843,7 +3023,10 @@
                 `;
             };
 
-            container.innerHTML = renderGroupTable('Teachers', teachers) + renderGroupTable('Male Students', males) + renderGroupTable('Female Students', females) + renderGroupTable('Tester Accounts', testers);
+            container.innerHTML = renderGroupTable('Teachers', teachers) + 
+                                  renderGroupTable('Male Students', males) + 
+                                  renderGroupTable('Female Students', females) + 
+                                  renderGroupTable('Other / Unspecified Gender', others);
         }
 
         function openStudentProfileModal(studentId) {
@@ -2901,7 +3084,7 @@
                 <p><strong>Real Name:</strong> ${student.name}</p>
                 <p style="margin-top: 0.4rem;"><strong>Nickname:</strong> ${student.nickname || 'None'}</p>
                 <p style="margin-top: 0.4rem;"><strong>10-Digit ID:</strong> <code>${student.id}</code></p>
-                <p style="margin-top: 0.4rem;"><strong>Role / Group:</strong> ${student.isAdmin ? 'Teacher' : student.group}</p>
+                <p style="margin-top: 0.4rem;"><strong>Role / Gender:</strong> ${student.isAdmin ? 'Teacher' : student.group}</p>
                 <p style="margin-top: 0.4rem;"><strong>Available Balance:</strong> ${canSeeBalance ? `<span style="color: var(--accent); font-weight: bold;">${student.balance.toLocaleString()} FARADS</span>` : `<span style="color: var(--text-muted); font-style: italic;">🔒 Private</span>`}</p>
 
                 ${academicHtml}
