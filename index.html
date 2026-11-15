@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faraday Classroom Economy & Gradebook</title>
+    <title>Faraday Tech</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="ft_logo.png">
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- YouTube IFrame API -->
@@ -20,6 +22,7 @@
             --danger: #ef4444;
             --warning: #f59e0b;
             --border: #334155;
+            --custom-bg-image: none;
         }
 
         * {
@@ -31,10 +34,24 @@
 
         body {
             background-color: var(--bg-primary);
+            background-image: var(--custom-bg-image);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        /* Overlay if background image is active to keep text readable */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            z-index: -1;
+            pointer-events: none;
         }
 
         header {
@@ -54,7 +71,14 @@
             color: var(--accent);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+        }
+
+        .brand img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            border-radius: 6px;
         }
 
         .container {
@@ -412,7 +436,9 @@
 <body>
 
     <header id="mainHeader" class="hidden">
-        <div class="brand">⚡ FARADAY ECONOMY</div>
+        <div class="brand">
+            <img src="ft_logo.png" alt="Faraday Tech Logo"> Faraday Tech
+        </div>
         <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
             <span id="userNameDisplay" style="font-weight: 600;">User</span>
             <span class="balance-badge"><span id="userBalanceDisplay">0</span> FARADS</span>
@@ -438,9 +464,13 @@
 
         <!-- Auth View: Sign In -->
         <div id="loginSection" class="auth-wrapper">
-            <div class="card">
-                <div class="card-title">Sign In to Faraday</div>
-                <form onsubmit="handleLogin(event)">
+            <div class="card" style="text-align: center;">
+                <div style="margin-bottom: 1.25rem;">
+                    <img src="ft_logo.png" alt="Faraday Tech Logo" style="width: 72px; height: 72px; object-fit: contain; margin-bottom: 0.5rem;">
+                    <h2 style="color: var(--accent); font-size: 1.6rem;">Faraday Tech</h2>
+                </div>
+                <div class="card-title" style="justify-content: center; margin-bottom: 1rem;">Sign In to Faraday Tech</div>
+                <form onsubmit="handleLogin(event)" style="text-align: left;">
                     <div class="form-group">
                         <label>10-Digit Account ID</label>
                         <input type="text" id="loginId" class="form-control" maxlength="10" placeholder="Enter your 10-digit ID" required>
@@ -459,9 +489,13 @@
 
         <!-- Auth View: Sign Up -->
         <div id="signupSection" class="auth-wrapper hidden">
-            <div class="card">
-                <div class="card-title">Create Faraday Account</div>
-                <form onsubmit="handleSignUp(event)">
+            <div class="card" style="text-align: center;">
+                <div style="margin-bottom: 1.25rem;">
+                    <img src="ft_logo.png" alt="Faraday Tech Logo" style="width: 64px; height: 64px; object-fit: contain; margin-bottom: 0.5rem;">
+                    <h2 style="color: var(--accent); font-size: 1.4rem;">Faraday Tech</h2>
+                </div>
+                <div class="card-title" style="justify-content: center; margin-bottom: 1rem;">Create Faraday Tech Account</div>
+                <form onsubmit="handleSignUp(event)" style="text-align: left;">
                     <div class="form-group">
                         <label>Custom 10-Digit Account ID (Optional - leave blank to auto-generate)</label>
                         <input type="text" id="signupCustomId" class="form-control" maxlength="10" pattern="\d{10}" title="Must be exactly 10 digits" placeholder="e.g. 1234567890">
@@ -799,6 +833,20 @@
 
             <!-- Tab 6: Admin & Gradebook -->
             <div id="adminTab" class="tab-content hidden">
+                <div class="card" style="margin-bottom: 1.5rem; border-color: var(--warning);">
+                    <div class="card-title" style="color: var(--warning);">🎨 Website Customization (Background Image)</div>
+                    <div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; align-items: flex-end;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Background Image URL</label>
+                            <input type="text" id="adminBgUrlInput" class="form-control" placeholder="https://example.com/background.jpg">
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-warning" style="flex: 1;" onclick="applyWebsiteBackground()">Set Background</button>
+                            <button class="btn btn-danger" onclick="clearWebsiteBackground()">Remove</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="dashboard-grid" style="margin-bottom: 1.5rem;">
                     <div class="card" style="margin-bottom: 0;">
                         <div class="card-title">Host Live Auction</div>
@@ -962,13 +1010,12 @@
             </div>
             <div id="patchNotesBody" style="font-size: 0.95rem; line-height: 1.6; max-height: 60vh; overflow-y: auto; padding-right: 0.5rem;">
                 <div style="margin-bottom: 1.25rem;">
-                    <h3 style="color: var(--accent);">Version 15</h3>
+                    <h3 style="color: var(--accent);">Version 16</h3>
                     <p style="color: var(--text-muted); font-size: 0.85rem;">Released: November 2026</p>
                     <ul style="margin-left: 1.25rem; margin-top: 0.3rem;">
-                        <li>Added flexible gender options (Male, Female, Custom typed gender, or Prefer not to say) on sign up.</li>
-                        <li>Fixed Supabase client initialization, upsert error reporting, and schema synchronization.</li>
-                        <li>Advanced Teacher Quiz Builder with multiple-choice or written answer modes.</li>
-                        <li>Dedicated Video Player tab with live volume and playback speed controls.</li>
+                        <li>Restored original site name "Faraday Tech" and official logo across headers, sign-in views, and browser tabs.</li>
+                        <li>Added Admin feature to set or update a custom background image for the entire website.</li>
+                        <li>Flexible gender selection and robust Supabase synchronization.</li>
                     </ul>
                 </div>
             </div>
@@ -1118,6 +1165,7 @@
         let LESSONS_DATA = [];
         let QUIZZES_DATA = [];
         let AUCTION_STATE = null;
+        let WEBSITE_BACKGROUND = "";
         let activeBiddingInterval = null;
         let shopEditMode = false;
         let mediaStream = null;
@@ -1184,6 +1232,7 @@
                     GRADE_CONV_RATE = data.convRate !== undefined && data.convRate !== null ? data.convRate : DEFAULT_CONVERSION_RATE;
                     LESSONS_DATA = Array.isArray(data.lessons) ? data.lessons : [];
                     QUIZZES_DATA = Array.isArray(data.quizzes) ? data.quizzes : [];
+                    WEBSITE_BACKGROUND = data.background || "";
 
                     let loadedCats = data.shop_categories && data.shop_categories.length > 0 ? data.shop_categories : JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
                     let showcaseCat = loadedCats.find(c => c.id === 'cat_showcase');
@@ -1194,6 +1243,7 @@
                     }
                     SHOP_CATEGORIES = loadedCats;
                     AUCTION_STATE = data.auction || null;
+                    applyBackgroundToDOM(WEBSITE_BACKGROUND);
                     checkShowcasePriceFluctuation();
                 }
             } catch (err) {
@@ -1211,6 +1261,33 @@
             LESSONS_DATA = [];
             QUIZZES_DATA = [];
             AUCTION_STATE = null;
+            WEBSITE_BACKGROUND = "";
+            applyBackgroundToDOM("");
+        }
+
+        function applyBackgroundToDOM(bgUrl) {
+            if (bgUrl && bgUrl.trim() !== '') {
+                document.documentElement.style.setProperty('--custom-bg-image', `url('${bgUrl.trim()}')`);
+            } else {
+                document.documentElement.style.setProperty('--custom-bg-image', 'none');
+            }
+        }
+
+        async function applyWebsiteBackground() {
+            const urlInput = document.getElementById('adminBgUrlInput').value.trim();
+            WEBSITE_BACKGROUND = urlInput;
+            applyBackgroundToDOM(urlInput);
+            await saveAllData();
+            showAlert('Website background updated successfully!', 'success');
+        }
+
+        async function clearWebsiteBackground() {
+            WEBSITE_BACKGROUND = "";
+            applyBackgroundToDOM("");
+            const inputEl = document.getElementById('adminBgUrlInput');
+            if (inputEl) inputEl.value = '';
+            await saveAllData();
+            showAlert('Website background removed.', 'warning');
         }
 
         function checkShowcasePriceFluctuation() {
@@ -1248,7 +1325,8 @@
                     shop_categories: SHOP_CATEGORIES,
                     lessons: LESSONS_DATA,
                     quizzes: QUIZZES_DATA,
-                    auction: AUCTION_STATE
+                    auction: AUCTION_STATE,
+                    background: WEBSITE_BACKGROUND
                 };
 
                 const { error } = await supabaseClient
@@ -1282,6 +1360,12 @@
                         if (updated.lessons) LESSONS_DATA = updated.lessons;
                         if (updated.quizzes) QUIZZES_DATA = updated.quizzes;
                         AUCTION_STATE = updated.auction || null;
+                        if (updated.background !== undefined) {
+                            WEBSITE_BACKGROUND = updated.background;
+                            applyBackgroundToDOM(WEBSITE_BACKGROUND);
+                            const bgInput = document.getElementById('adminBgUrlInput');
+                            if (bgInput && document.activeElement !== bgInput) bgInput.value = WEBSITE_BACKGROUND;
+                        }
 
                         if (currentUser) {
                             updateUserDisplays();
@@ -1299,7 +1383,7 @@
         }
 
         async function resetAllData() {
-            if (confirm("Reset all system data, lessons, quizzes, shop items, and accounts in Supabase?")) {
+            if (confirm("Reset all system data, lessons, quizzes, shop items, background, and accounts in Supabase?")) {
                 try {
                     initDefaults();
                     await saveAllData();
@@ -2378,6 +2462,8 @@
             document.getElementById('weightP').value = GRADE_WEIGHTS.p;
             document.getElementById('weightE').value = GRADE_WEIGHTS.e;
             document.getElementById('gradeConvRateInput').value = GRADE_CONV_RATE;
+            const bgInput = document.getElementById('adminBgUrlInput');
+            if (bgInput) bgInput.value = WEBSITE_BACKGROUND;
         }
 
         async function handleLogin(e) {
@@ -2773,7 +2859,7 @@
             const dateStr = new Date().toLocaleString();
             let receiptHtml = `
                 <div class="receipt-box">
-                    <strong>=== FARADAY STORE RECEIPT ===</strong><br>
+                    <strong>=== FARADAY TECH STORE RECEIPT ===</strong><br>
                     Date: ${dateStr}<br>
                     Buyer: ${getDisplayName(currentUser)}<br>
                     -----------------------------------<br>
