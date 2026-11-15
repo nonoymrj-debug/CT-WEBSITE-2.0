@@ -419,125 +419,11 @@
             padding-left: 0.6rem;
         }
 
-        /* Messenger-style Chat room */
-        .messenger-shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:570px;height:min(72vh,720px);border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg-primary)}
-        .messenger-sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;min-width:0;background:var(--bg-card)}
-        .messenger-side-head{padding:1rem;border-bottom:1px solid var(--border)}
-        .messenger-side-head h3{color:var(--text-main);margin-bottom:.7rem}
-        .messenger-search{width:100%;padding:.65rem .8rem;border-radius:20px;border:1px solid var(--border);background:var(--bg-primary);color:var(--text-main)}
-        .messenger-contacts{overflow-y:auto;flex:1}
-        .messenger-contact{width:100%;display:flex;align-items:center;gap:.7rem;padding:.8rem 1rem;border:0;border-bottom:1px solid rgba(148,163,184,.1);background:transparent;color:var(--text-main);text-align:left;cursor:pointer}
-        .messenger-contact:hover,.messenger-contact.active{background:rgba(56,189,248,.13)}
-        .messenger-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 40px;background:rgba(56,189,248,.18);color:var(--accent);font-weight:800}
-        .messenger-contact-meta{min-width:0;flex:1}.messenger-contact-name{font-weight:700;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.messenger-contact-preview{font-size:.78rem;color:var(--text-muted);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:.2rem}
-        .messenger-main{display:flex;flex-direction:column;min-width:0;min-height:0}
-        .messenger-chat-head{padding:.9rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.7rem;background:var(--bg-card)}
-        .messenger-chat-head strong{display:block}.messenger-chat-head small{color:var(--text-muted)}
-        .messenger-thread{padding:1rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:.65rem;background:linear-gradient(rgba(15,23,42,.15),rgba(15,23,42,.15)),var(--bg-primary)}
-        .messenger-empty{margin:auto;text-align:center;color:var(--text-muted);padding:2rem}
-        .message-row{display:flex;flex-direction:column;max-width:min(78%,560px);align-self:flex-start}.message-row.mine{align-self:flex-end;align-items:flex-end}
-        .message-sender{font-size:.72rem;color:var(--text-muted);margin:0 .55rem .2rem}.message-bubble{padding:.7rem .9rem;border-radius:16px 16px 16px 4px;background:var(--bg-card);border:1px solid var(--border);white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.45}
-        .message-row.mine .message-bubble{background:var(--accent);color:#082f49;border-color:var(--accent);border-radius:16px 16px 4px 16px}
-        .message-time{font-size:.68rem;color:var(--text-muted);margin:.2rem .55rem 0}
-        .message-seen{font-size:.68rem;color:#8fb9ff;margin:.12rem .55rem 0;text-align:right}
-        .chat-typing-indicator{align-self:flex-start;padding:.4rem .7rem;border-radius:14px;background:rgba(148,163,184,.18);color:var(--text-muted);font-size:.8rem;font-style:italic}
-        .messenger-compose textarea{overflow-y:auto}
-        .messenger-compose{flex:0 0 auto;padding:.65rem .85rem;border-top:1px solid rgba(148,163,184,.18);background:#20232b;position:relative;z-index:2}
-        .messenger-compose form{display:flex;gap:.55rem;align-items:center;background:#3a241f;border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:.28rem .35rem .28rem .9rem;min-height:48px}
-        .messenger-compose textarea{flex:1;min-width:0;resize:none;min-height:34px;max-height:110px;height:34px;padding:.48rem .15rem;border:0!important;outline:none!important;box-shadow:none!important;border-radius:0;background:transparent!important;color:#fff!important;font:inherit;line-height:1.35}
-        .messenger-compose textarea::placeholder{color:rgba(255,255,255,.65)}
-        .messenger-compose .chat-send-button{flex:0 0 auto;min-width:42px;height:40px;padding:.45rem .9rem;border:0;border-radius:22px;background:#e43b16;color:#fff;font-weight:700}
-        .messenger-compose .chat-send-button:disabled{opacity:.55;cursor:wait}
-        @media(max-width:760px){.messenger-compose{padding:.55rem}.messenger-compose form{min-height:46px}}
-        .messenger-tools{padding:.6rem 1rem;border-top:1px solid var(--border);background:var(--bg-card)}
-        @media(max-width:760px){.messenger-shell{grid-template-columns:1fr;height:auto;min-height:620px}.messenger-sidebar{max-height:210px;border-right:0;border-bottom:1px solid var(--border)}.messenger-contacts{display:flex;overflow-x:auto;overflow-y:hidden}.messenger-contact{min-width:190px;border-right:1px solid var(--border);border-bottom:0}.messenger-thread{min-height:300px}.message-row{max-width:90%}}
-    
-        /* Chat room: closer to the Messenger reference layout */
-        .messenger-shell{grid-template-columns: minmax(285px, 32%) minmax(0,1fr);height: min(78vh,780px);min-height:620px;border:0;border-radius:0;background:#20232b}
-        .messenger-sidebar{background:#202124;border-right:1px solid #34363e;position:relative;z-index:4;pointer-events:auto}
-        .messenger-side-head{padding:1.1rem 1rem .9rem;border-bottom:0}
-        .messenger-side-head h3{font-size:1.45rem;letter-spacing:-.03em;margin:0 0 .85rem;color:#f7f7f8}
-        .messenger-search{height:40px;border:0;background:#35373d;color:#f8fafc;padding:0 1rem}
-        .messenger-search::placeholder{color:#b8bbc4}
-        .messenger-contacts{padding:.15rem .45rem .7rem;position:relative;z-index:5;pointer-events:auto}
-        .messenger-contact{min-height:74px;padding:.65rem .7rem;border:0;border-radius:11px;gap:.75rem;position:relative;z-index:6;pointer-events:auto;cursor:pointer}
-        .messenger-contact:hover{background:#2b2e35}
-        .messenger-contact.active{background:#303b50}
-        .messenger-avatar{width:48px;height:48px;flex-basis:48px;border:2px solid rgba(255,255,255,.13);background:#39465d;color:#fff}
-        .messenger-contact-name{font-size:.93rem;color:#f4f5f7}
-        .messenger-contact-preview{font-size:.78rem;color:#aeb3bf}
-        .messenger-main{background:#202a63;position:relative}
-        .messenger-chat-head{min-height:64px;padding:.75rem 1rem;background:#20245a;border:0;color:#fff;position:relative;z-index:1}
-        .messenger-chat-head .messenger-avatar{width:42px;height:42px;flex-basis:42px;background:#425b77}
-        .messenger-chat-head strong{font-size:1rem;color:#fff}
-        .messenger-chat-head small{display:block;color:#b9c3df;font-size:.78rem;margin-top:.15rem}
-        .messenger-head-actions{margin-left:auto;display:flex;align-items:center;gap:.35rem}
-        .messenger-head-actions button{width:36px;height:36px;border:0;border-radius:50%;background:transparent;color:#8fb5ff;font-size:1.1rem;cursor:pointer}
-        .messenger-head-actions button:hover{background:rgba(255,255,255,.12)}
-        .messenger-thread{
-            position:relative;isolation:isolate;padding:1.2rem 1.35rem;
-            background-color:#202b45;
-            background-image:none;
-            background-size:cover;
-            background-position:50% 50%;
-            background-repeat:no-repeat;
-        }
-        .messenger-thread:before{content:none !important;display:none !important}
-        .message-row{max-width:min(80%,600px)}
-        .message-sender{color:#d4d8e7}
-        .message-bubble{background:#17254d;color:#fff;border:0;border-radius:17px 17px 17px 5px;box-shadow:0 2px 8px rgba(0,0,0,.13)}
-        .message-row.mine .message-bubble{background:#0877bd;color:#fff;border-radius:17px 17px 5px 17px}
-        .message-time{color:#d5d9e8}
-        .messenger-compose{padding:.55rem .8rem;background:#20245a;border:0}
-        .messenger-compose form{display:flex;align-items:center;gap:.55rem;background:#143d5a;border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:.25rem .35rem .25rem .65rem}
-        .messenger-compose textarea{flex:1;min-height:38px;max-height:100px;border:0!important;outline:0;background:transparent!important;color:#fff!important;box-shadow:none!important;padding:.55rem .5rem}
-        .messenger-compose textarea::placeholder{color:#c0c9d7}
-        .messenger-compose .btn{border-radius:20px;padding:.55rem .9rem}
-        .messenger-compose-tools{display:flex;gap:.15rem;align-items:center}
-        .messenger-compose-tools button{width:32px;height:34px;border:0;background:transparent;color:#8db5ff;font-size:1.05rem;cursor:pointer;border-radius:8px}
-        .messenger-compose-tools button:hover{background:rgba(255,255,255,.12)}
-        .messenger-tools{background:#20245a;border:0;padding:.55rem .9rem .8rem;color:#fff}
-        .messenger-tools details summary{color:#a9c8ff!important}
-        .messenger-tools .form-control{background:#151d43}
-        @media(max-width:760px){
-          .messenger-shell{grid-template-columns:1fr;height:78vh;min-height:570px}
-          .messenger-sidebar{max-height:190px;border-right:0;border-bottom:1px solid #34363e}
-          .messenger-contact{min-width:185px;min-height:65px}
-          .messenger-avatar{width:42px;height:42px;flex-basis:42px}
-          .messenger-thread{min-height:250px;padding:.9rem}
-          .messenger-chat-head{min-height:58px}
-        }
-
-        /* Chat identity, history, wallpapers and role guide */
-        .message-line{display:flex;align-items:flex-end;gap:.5rem;max-width:min(88%,680px);align-self:flex-start}
-        .message-line.mine{align-self:flex-end;flex-direction:row-reverse}
-        .message-avatar{width:34px;height:34px;flex:0 0 34px;border-radius:50%;object-fit:cover;background:#40516d;border:2px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.85rem}
-        .message-content{min-width:0;display:flex;flex-direction:column}
-        .message-row{max-width:100%;align-self:stretch}
-        .message-row.mine{align-items:flex-end}
-        .message-sender{font-size:.74rem;color:#e0e7ff;margin:0 .55rem .2rem}
-        .message-date-divider{align-self:center;margin:.75rem auto;padding:.3rem .8rem;border-radius:20px;background:rgba(10,18,43,.58);color:#f8fafc;font-size:.72rem;letter-spacing:.02em}
-        .message-time{color:#e5e7eb;font-size:.68rem}
-        .chat-wallpaper-tools{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;padding:.15rem 0 .7rem}
-        .chat-wallpaper-label{color:var(--text-muted);font-size:.8rem;font-weight:700;margin-right:.25rem}
-        .messenger-thread{background-size:cover;background-position:center;background-repeat:no-repeat}
-        .website-guide-card{max-width:760px}
-        .guide-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin:1rem 0}
-        .guide-tabs button.active{outline:2px solid var(--accent)}
-        .guide-page{line-height:1.6}.guide-page h3{color:var(--accent);margin:.3rem 0}.guide-page p{color:var(--text-muted);margin-bottom:.8rem}.guide-page ol{padding-left:1.35rem}.guide-page li{margin:.45rem 0}
-        .guide-art{max-width:420px;margin:.5rem auto 1rem}.guide-art svg{display:block;width:100%;height:auto;border-radius:14px}
-        @media(max-width:760px){.message-line{max-width:96%}.chat-wallpaper-tools{align-items:flex-start}}
-
-
-        /* Reliable chat layout: pin the composer inside the conversation panel. */
-        @media(max-width:760px){}
-
-    
-
-        /* FINAL CHAT FIX: use normal flex layout so the composer cannot be pushed outside the chat panel. */
+        
         @media(max-width:760px){
         }
 </style>
+<!-- Faraday Tech sync patch: Realtime status diagnostics + same-browser cross-tab sync + visibility recovery -->
 </head>
 <body>
 
@@ -1294,13 +1180,7 @@
         let QUIZZES_DATA = [];
         let AUCTION_STATE = null;
         let PATCH_NOTES = [];
-        let CHAT_MESSAGES = [];
-        let CHAT_TYPING = [];
-        let chatTypingTimer = null;
-        let chatTypingStopTimer = null;
-        let chatTypingActive = false;
-        let chatSeenTimer = null;
-        let MARKET_LISTINGS = [];
+let MARKET_LISTINGS = [];
         let BANNED_ACCOUNTS = [];
         let REMOVED_ACCOUNT_IDS = [];
         const LOCAL_DATA_KEY = "faradayTechAppData_v1";
@@ -1313,47 +1193,8 @@
         let ytPlayer = null;
         let ytReady = false;
         let activeVideoMode = 'none';
-        let activeChatId = 'all';
-        let PUBLIC_CHAT_BACKGROUND = '';
-        let PERSONAL_CHAT_BACKGROUND = '';
-        const CHAT_HISTORY_LIMIT = 2000;
-
-        function onYouTubeIframeAPIReady() {
+function onYouTubeIframeAPIReady() {
             ytReady = true;
-            if (typeof window.__faradayYouTubeReadyCallback === 'function') {
-                try { window.__faradayYouTubeReadyCallback(); } catch (err) {
-                    console.warn('[Faraday Video] YouTube ready callback failed:', err);
-                }
-            }
-        }
-
-        function waitForYouTubeAPI(timeoutMs = 10000) {
-            return new Promise((resolve) => {
-                if (window.YT && typeof window.YT.Player === 'function') {
-                    ytReady = true;
-                    resolve(true);
-                    return;
-                }
-                let finished = false;
-                const finish = (ready) => {
-                    if (finished) return;
-                    finished = true;
-                    clearInterval(checker);
-                    clearTimeout(timer);
-                    window.__faradayYouTubeReadyCallback = null;
-                    resolve(ready);
-                };
-                window.__faradayYouTubeReadyCallback = () => {
-                    if (window.YT && typeof window.YT.Player === 'function') finish(true);
-                };
-                const checker = setInterval(() => {
-                    if (window.YT && typeof window.YT.Player === 'function') {
-                        ytReady = true;
-                        finish(true);
-                    }
-                }, 100);
-                const timer = setTimeout(() => finish(false), timeoutMs);
-            });
         }
 
         function getDisplayName(acc) {
@@ -1396,10 +1237,7 @@
                 QUIZZES_DATA = d.quizzes || [];
                 AUCTION_STATE = d.auction || null;
                 PATCH_NOTES = Array.isArray(d.patch_notes) ? d.patch_notes : [];
-                CHAT_MESSAGES = Array.isArray(d.chat_messages) ? d.chat_messages : [];
-                CHAT_TYPING = Array.isArray(d.chat_typing) ? d.chat_typing : [];
-                PUBLIC_CHAT_BACKGROUND = d.public_chat_background || ''; 
-                MARKET_LISTINGS = Array.isArray(d.market_listings) ? d.market_listings : [];
+MARKET_LISTINGS = Array.isArray(d.market_listings) ? d.market_listings : [];
                 BANNED_ACCOUNTS = Array.isArray(d.banned_accounts) ? d.banned_accounts : [];
                 REMOVED_ACCOUNT_IDS = Array.isArray(d.removed_accounts) ? d.removed_accounts : [];
                 ACCOUNTS_DATA = ACCOUNTS_DATA.filter(a => !REMOVED_ACCOUNT_IDS.includes(String(a.id)));
@@ -1450,12 +1288,9 @@
                     QUIZZES_DATA = Array.isArray(data.quizzes) ? data.quizzes : [];
                     let cached = {};
                     try { cached = JSON.parse(localStorage.getItem(LOCAL_DATA_KEY) || "{}"); } catch (_) { cached = {}; }
-                    PUBLIC_CHAT_BACKGROUND = data.public_chat_background !== undefined && data.public_chat_background !== null ? data.public_chat_background : (cached.public_chat_background || "");
-                    PATCH_NOTES = Array.isArray(data.patch_notes) ? data.patch_notes : (Array.isArray(cached.patch_notes) ? cached.patch_notes : []);
+PATCH_NOTES = Array.isArray(data.patch_notes) ? data.patch_notes : (Array.isArray(cached.patch_notes) ? cached.patch_notes : []);
                     ACCOUNTS_DATA = normalizeAccounts(ACCOUNTS_DATA);
-                    CHAT_MESSAGES = Array.isArray(data.chat_messages) ? data.chat_messages : [];
-                    CHAT_TYPING = Array.isArray(data.chat_typing) ? data.chat_typing : [];
-                    MARKET_LISTINGS = Array.isArray(data.market_listings) ? data.market_listings : [];
+MARKET_LISTINGS = Array.isArray(data.market_listings) ? data.market_listings : [];
                     BANNED_ACCOUNTS = Array.isArray(data.banned_accounts) ? data.banned_accounts : [];
                     PATCH_NOTES = Array.isArray(data.patch_notes) ? data.patch_notes : PATCH_NOTES;
 
@@ -1486,7 +1321,7 @@
             QUIZZES_DATA = [];
             AUCTION_STATE = null;
             PATCH_NOTES = [];
-            CHAT_MESSAGES = []; MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = []; PUBLIC_CHAT_BACKGROUND = ''; 
+MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = []; 
         }
 
         function checkShowcasePriceFluctuation() {
@@ -1542,10 +1377,7 @@
                     quizzes: QUIZZES_DATA,
                     auction: AUCTION_STATE,
                     patch_notes: PATCH_NOTES,
-                    chat_messages: CHAT_MESSAGES,
-                    chat_typing: CHAT_TYPING,
-                    public_chat_background: PUBLIC_CHAT_BACKGROUND,
-                    market_listings: MARKET_LISTINGS,
+market_listings: MARKET_LISTINGS,
                     banned_accounts: BANNED_ACCOUNTS,
                     removed_accounts: REMOVED_ACCOUNT_IDS
                 };
@@ -1570,47 +1402,106 @@
             }
         }
 
+        // Apply one authoritative app_data row to the current tab.
+        // This is shared by Supabase Realtime and the same-browser storage fallback.
+        function applyRemoteAppData(updated, source = 'remote') {
+            if (!updated || Number(updated.id) !== 1) return;
+
+            if (Array.isArray(updated.accounts)) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
+            if (Array.isArray(updated.columns)) GRADE_COLUMNS = updated.columns;
+            if (updated.weights && typeof updated.weights === 'object') GRADE_WEIGHTS = updated.weights;
+            if (updated.convRate !== undefined && updated.convRate !== null) GRADE_CONV_RATE = updated.convRate;
+            if (Array.isArray(updated.shop_categories)) SHOP_CATEGORIES = updated.shop_categories;
+            if (Array.isArray(updated.lessons)) LESSONS_DATA = updated.lessons;
+            if (Array.isArray(updated.quizzes)) QUIZZES_DATA = updated.quizzes;
+            if (Array.isArray(updated.market_listings)) MARKET_LISTINGS = updated.market_listings;
+            if (Array.isArray(updated.banned_accounts)) BANNED_ACCOUNTS = updated.banned_accounts;
+            if (Array.isArray(updated.removed_accounts)) REMOVED_ACCOUNT_IDS = updated.removed_accounts;
+            if (Array.isArray(updated.patch_notes)) PATCH_NOTES = updated.patch_notes;
+            AUCTION_STATE = updated.auction || null;
+
+            // Keep this tab's signed-in user pointed at the newly received account record.
+            if (currentUser) {
+                const refreshedUser = ACCOUNTS_DATA.find(acc => String(acc.id) === String(currentUser.id));
+                if (refreshedUser) currentUser = refreshedUser;
+            }
+
+            // Do not write back when this update itself came from the storage event;
+            // otherwise two tabs could repeatedly echo the same change to each other.
+            if (source !== 'same-browser tab storage') {
+                try {
+                    localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(updated));
+                } catch (storageError) {
+                    console.warn('[Faraday Realtime] Could not cache incoming update:', storageError);
+                }
+            }
+
+            if (currentUser) {
+                updateUserDisplays();
+                handleAuctionRealtimeSync();
+                populateTransferDropdown();
+                populateAdminDropdown();
+                renderMarketplace();
+            }
+            renderShopItems();
+            renderGradebookSheet();
+            populateDirectory();
+            renderLessonsAndQuizzes();
+            if (typeof renderPatchNotes === 'function') renderPatchNotes();
+            console.info(`[Faraday Sync] Applied ${source} update`, new Date().toLocaleTimeString());
+        }
+
+        // Realtime status is logged so connection failures are visible in DevTools.
+        let faradayRealtimeChannel = null;
         if (supabaseClient) {
-            supabaseClient
-                .channel('app_data_changes')
+            faradayRealtimeChannel = supabaseClient
+                .channel('faraday_app_data_live_v2')
                 .on(
                     'postgres_changes',
                     { event: '*', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
                     (payload) => {
-                        const updated = payload.new;
-                        if (!updated) return;
-
-                        if (updated.accounts) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
-                        if (updated.columns) GRADE_COLUMNS = updated.columns;
-                        if (updated.weights) GRADE_WEIGHTS = updated.weights;
-                        if (updated.convRate !== undefined && updated.convRate !== null) GRADE_CONV_RATE = updated.convRate;
-                        if (updated.shop_categories) SHOP_CATEGORIES = updated.shop_categories;
-                        if (updated.lessons) LESSONS_DATA = updated.lessons;
-                        if (updated.quizzes) QUIZZES_DATA = updated.quizzes;
-                        if (Array.isArray(updated.chat_messages)) CHAT_MESSAGES = updated.chat_messages;
-                        if (Array.isArray(updated.chat_typing)) CHAT_TYPING = updated.chat_typing;
-                        if (updated.public_chat_background !== undefined) { PUBLIC_CHAT_BACKGROUND = updated.public_chat_background || ''; if (activeChatId === 'all') applyChatBackground(); }
-                        if (Array.isArray(updated.market_listings)) MARKET_LISTINGS = updated.market_listings;
-                        if (Array.isArray(updated.banned_accounts)) BANNED_ACCOUNTS = updated.banned_accounts;
-                        if (Array.isArray(updated.removed_accounts)) REMOVED_ACCOUNT_IDS = updated.removed_accounts;
-                        if (Array.isArray(updated.patch_notes)) PATCH_NOTES = updated.patch_notes;
-                        AUCTION_STATE = updated.auction || null;
-
-                        if (currentUser) {
-                            updateUserDisplays();
-                            handleAuctionRealtimeSync();
-                            populateTransferDropdown();
-                            populateAdminDropdown();
-                                            renderMarketplace();
-                        }
-                        renderShopItems();
-                        renderGradebookSheet();
-                        populateDirectory();
-                        renderLessonsAndQuizzes();
+                        console.info('[Faraday Realtime] Database event received:', payload.eventType);
+                        if (payload.new) applyRemoteAppData(payload.new, 'Supabase Realtime');
                     }
                 )
-                .subscribe();
+                .subscribe((status, err) => {
+                    console.info('[Faraday Realtime] Subscription status:', status, err || '');
+                    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+                        console.error('[Faraday Realtime] Subscription problem. Check publication membership, SELECT/RLS access, and project Realtime status.', err || '');
+                    }
+                });
+        } else {
+            console.error('[Faraday Realtime] Supabase client was not initialized. Check the CDN script and project URL/key.');
         }
+
+        // localStorage events fire in OTHER tabs on the same browser/origin.
+        // The writing tab does not receive its own storage event.
+        window.addEventListener('storage', (event) => {
+            if (event.key !== LOCAL_DATA_KEY || !event.newValue) return;
+            try {
+                const updated = JSON.parse(event.newValue);
+                applyRemoteAppData(updated, 'same-browser tab storage');
+            } catch (err) {
+                console.warn('[Faraday Sync] Ignored invalid cross-tab storage update:', err);
+            }
+        });
+
+        // When a tab becomes visible again, pull the latest authoritative database row.
+        // This is a recovery path for sleeping tabs or a dropped WebSocket.
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState !== 'visible' || !supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('app_data')
+                    .select('*')
+                    .eq('id', 1)
+                    .maybeSingle();
+                if (error) throw error;
+                if (data) applyRemoteAppData(data, 'visibility recovery');
+            } catch (err) {
+                console.warn('[Faraday Sync] Could not refresh after tab became visible:', err);
+            }
+        });
 
         async function resetAllData() {
             if (confirm("Reset all system data, lessons, quizzes, shop items, background, and accounts in Supabase?")) {
@@ -2099,7 +1990,7 @@
             loadVideoInPlayer(button.dataset.videoUrl || '', button.dataset.videoTitle || 'Lesson video');
         }
 
-        async function loadVideoInPlayer(videoUrl, title) {
+        function loadVideoInPlayer(videoUrl, title) {
             const placeholder = document.getElementById('videoPlaceholderMsg');
             const titleDisplay = document.getElementById('activeVideoTitle');
             const ytWrapper = document.getElementById('ytPlayerWrapper');
@@ -2126,81 +2017,41 @@
                 ytWrapper.classList.remove('hidden');
                 ytWrapper.innerHTML = '<div id="ytPlayerFrame" style="width:100%;height:100%;min-height:300px"></div>';
                 const external = document.getElementById('videoExternalLink');
-                if (external) {
-                    external.href = `https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}`;
-                    external.classList.remove('hidden');
-                }
-
-                showVideoHelp('Connecting to YouTube player controls…', 'info');
-                const apiAvailable = location.protocol !== 'file:' && await waitForYouTubeAPI(12000);
-
-                if (apiAvailable && window.YT && typeof YT.Player === 'function') {
+                if (external) { external.href = `https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}`; external.classList.remove('hidden'); }
+                const makeIframeFallback = () => {
+                    const frame = document.createElement('iframe');
+                    frame.id = 'ytPlayerFrame'; frame.title = title || 'YouTube video';
+                    frame.style.cssText = 'display:block;width:100%;height:100%;min-height:300px;border:0';
+                    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                    frame.allowFullscreen = true; frame.referrerPolicy = 'origin';
+                    const params = new URLSearchParams({autoplay:'0', controls:'1', playsinline:'1', rel:'0', enablejsapi:'1'});
+                    if (location.origin && location.origin !== 'null') params.set('origin', location.origin);
+                    if (location.href && location.protocol !== 'file:') params.set('widget_referrer', location.href);
+                    frame.src = `https://www.youtube.com/embed/${encodeURIComponent(ytId)}?${params.toString()}`;
+                    ytWrapper.replaceChildren(frame);
+                };
+                if (location.protocol === 'file:') {
+                    showVideoHelp('This page is opened directly as a file. YouTube Error 153 can occur because file:// pages do not send a normal website referrer. Run Faraday Tech on localhost or host it on HTTPS. The external YouTube link is available below the player.', 'warning');
+                    makeIframeFallback();
+                } else if (ytReady && window.YT && typeof YT.Player === 'function') {
                     try {
                         ytPlayer = new YT.Player('ytPlayerFrame', {
-                            width: '100%',
-                            height: '100%',
-                            videoId: ytId,
-                            playerVars: {
-                                autoplay: 0,
-                                controls: 1,
-                                playsinline: 1,
-                                rel: 0,
-                                enablejsapi: 1,
-                                origin: location.origin,
-                                widget_referrer: location.href
-                            },
-                            events: {
-                                onReady: (event) => {
-                                    const volumeControl = document.getElementById('videoVolumeSlider');
-                                    const speedControl = document.getElementById('videoSpeedSelect');
-                                    const vol = volumeControl ? Number(volumeControl.value) : 100;
-                                    const speed = speedControl ? Number(speedControl.value) : 1;
-                                    event.target.setVolume(Math.max(0, Math.min(100, vol)));
-                                    try { event.target.setPlaybackRate(speed); } catch (_) {}
-                                    showVideoHelp('Video player ready. Volume and playback speed controls are enabled.', 'success');
-                                },
-                                onStateChange: () => {},
-                                onError: (event) => {
-                                    const codes = {
-                                        2: 'The video ID or URL is invalid.',
-                                        5: 'The video cannot be played in the HTML5 player.',
-                                        100: 'The video was removed or is private.',
-                                        101: 'The video owner does not allow embedded playback.',
-                                        150: 'The video owner does not allow embedded playback.',
-                                        153: 'YouTube did not receive a valid referrer/client identity. Open Faraday Tech from its HTTPS website.'
-                                    };
-                                    const detail = codes[event.data] || 'YouTube could not play this video.';
-                                    showVideoHelp(detail + ' You can also open the video directly on YouTube.', 'error');
-                                    showAlert('YouTube playback error ' + event.data + ': ' + detail, 'danger');
+                            width:'100%', height:'100%', videoId:ytId,
+                            playerVars:{autoplay:0,controls:1,playsinline:1,rel:0,origin:location.origin,widget_referrer:location.href},
+                            events:{
+                                onReady:(event)=>{event.target.setVolume(Number(document.getElementById('videoVolumeSlider').value)||100);event.target.setPlaybackRate(Number(document.getElementById('videoSpeedSelect').value)||1);showVideoHelp('Video player ready. Press Play to start.', 'info');},
+                                onError:(event)=>{
+                                    const codes={2:'The video ID or URL is invalid.',5:'The video cannot be played in the HTML5 player.',100:'The video was removed or is private.',101:'The video owner does not allow embedded playback.',150:'The video owner does not allow embedded playback.',153:'YouTube did not receive a valid referrer/client identity. Open Faraday Tech through localhost or an HTTPS website, not directly as a file.'};
+                                    const detail=codes[event.data]||'YouTube could not play this video.';
+                                    showVideoHelp(detail+' You can also use the Open this video on YouTube link below.', 'error');
+                                    showAlert('YouTube playback error '+event.data+': '+detail, 'danger');
                                 }
                             }
                         });
-                    } catch (err) {
-                        console.error('[Faraday Video] Could not initialize controllable YouTube player:', err);
-                        ytPlayer = null;
-                        showVideoHelp('The YouTube control API could not initialize. Reload Faraday Tech and try again, or open the video on YouTube.', 'error');
-                    }
+                    } catch (err) { console.warn('YouTube API initialization failed; using iframe fallback.',err); makeIframeFallback(); }
                 } else {
-                    // Keep playback available, but clearly explain that custom controls require the IFrame API.
-                    const frame = document.createElement('iframe');
-                    frame.id = 'ytPlayerFrame';
-                    frame.title = title || 'YouTube video';
-                    frame.style.cssText = 'display:block;width:100%;height:100%;min-height:300px;border:0';
-                    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-                    frame.allowFullscreen = true;
-                    frame.referrerPolicy = 'strict-origin-when-cross-origin';
-                    const params = new URLSearchParams({
-                        autoplay: '0',
-                        controls: '1',
-                        playsinline: '1',
-                        rel: '0',
-                        enablejsapi: '1'
-                    });
-                    if (location.origin && location.origin !== 'null') params.set('origin', location.origin);
-                    params.set('widget_referrer', location.href);
-                    frame.src = `https://www.youtube.com/embed/${encodeURIComponent(ytId)}?${params.toString()}`;
-                    ytWrapper.replaceChildren(frame);
-                    showVideoHelp('YouTube is playing in compatibility mode. Custom volume and speed controls are unavailable because the YouTube control API did not load. Check that youtube.com/iframe_api is not blocked, then reload.', 'warning');
+                    showVideoHelp('Loading YouTube player… If it does not start, check your internet connection or open the video directly on YouTube.', 'info');
+                    makeIframeFallback();
                 }
             } else {
                 const external = document.getElementById('videoExternalLink');
@@ -2231,58 +2082,27 @@
 
         function changeVideoVolume(delta) {
             const slider = document.getElementById('videoVolumeSlider');
-            if (!slider) return;
-            const current = Number(slider.value) || 0;
-            const newVal = Math.max(0, Math.min(100, current + Number(delta || 0)));
-            slider.value = String(newVal);
+            let newVal = Math.max(0, Math.min(100, parseInt(slider.value) + delta));
+            slider.value = newVal;
             setVideoVolume(newVal);
         }
 
         function setVideoVolume(val) {
-            const slider = document.getElementById('videoVolumeSlider');
-            const label = document.getElementById('volumeLabel');
-            const vol = Math.max(0, Math.min(100, Number(val)));
-            if (!Number.isFinite(vol)) return;
-            if (slider) slider.value = String(vol);
-            if (label) label.innerText = `${Math.round(vol)}%`;
-
-            if (activeVideoMode === 'youtube') {
-                if (ytPlayer && typeof ytPlayer.setVolume === 'function' && typeof ytPlayer.getPlayerState === 'function') {
-                    try { ytPlayer.setVolume(vol); } catch (err) { console.warn('[Faraday Video] YouTube volume change failed:', err); }
-                } else {
-                    console.warn('[Faraday Video] YouTube player API is not ready; volume control cannot be applied yet.');
-                }
+            const vol = parseInt(val);
+            document.getElementById('volumeLabel').innerText = `${vol}%`;
+            if (activeVideoMode === 'youtube' && ytPlayer && typeof ytPlayer.setVolume === 'function') {
+                ytPlayer.setVolume(vol);
             } else if (activeVideoMode === 'html5') {
-                const video = document.getElementById('html5VideoPlayer');
-                if (video) video.volume = vol / 100;
+                document.getElementById('html5VideoPlayer').volume = vol / 100;
             }
         }
 
         function setVideoSpeed(speedVal) {
-            const speed = Number(speedVal);
-            if (!Number.isFinite(speed) || speed <= 0) return;
-
-            if (activeVideoMode === 'youtube') {
-                if (ytPlayer && typeof ytPlayer.setPlaybackRate === 'function' && typeof ytPlayer.getPlayerState === 'function') {
-                    try {
-                        ytPlayer.setPlaybackRate(speed);
-                        // YouTube may only support a subset of requested rates for a particular video.
-                        const supported = typeof ytPlayer.getAvailablePlaybackRates === 'function'
-                            ? ytPlayer.getAvailablePlaybackRates()
-                            : [];
-                        if (supported.length && !supported.some(rate => Math.abs(rate - speed) < 0.001)) {
-                            showVideoHelp(`This YouTube video does not support ${speed}x playback speed. Choose one of the supported rates.`, 'warning');
-                        }
-                    } catch (err) {
-                        console.warn('[Faraday Video] YouTube playback speed change failed:', err);
-                        showVideoHelp('Could not change YouTube playback speed. Try another speed supported by this video.', 'warning');
-                    }
-                } else {
-                    console.warn('[Faraday Video] YouTube player API is not ready; speed control cannot be applied yet.');
-                }
+            const speed = parseFloat(speedVal);
+            if (activeVideoMode === 'youtube' && ytPlayer && typeof ytPlayer.setPlaybackRate === 'function') {
+                ytPlayer.setPlaybackRate(speed);
             } else if (activeVideoMode === 'html5') {
-                const video = document.getElementById('html5VideoPlayer');
-                if (video) video.playbackRate = speed;
+                document.getElementById('html5VideoPlayer').playbackRate = speed;
             }
         }
 
@@ -2905,8 +2725,8 @@
             renderPatchNotes();
             renderDeveloperAccounts();
             renderAchievements();
-            loadChatBgAdjustments();
-            applyChatBackground();
+            
+            
             renderMarketplace();
             return true;
         }
@@ -3125,344 +2945,6 @@
             `).join('');
         }
 
-        function getChatConversationMessages(chatId) {
-            if (chatId === 'all') return CHAT_MESSAGES.filter(m => String(m.to) === 'all');
-            return CHAT_MESSAGES.filter(m => (String(m.from) === String(currentUser.id) && String(m.to) === String(chatId)) || (String(m.from) === String(chatId) && String(m.to) === String(currentUser.id)));
-        }
-
-        function selectChatConversation(chatId) {
-            activeChatId = chatId || 'all';
-            const recipient = document.getElementById('chatRecipient');
-            if (recipient) recipient.value = activeChatId;
-        }
-
-        function renderChatAvatar(account, extraClass = '') {
-            if (!account) return `<span class="messenger-avatar ${extraClass}">Everyone</span>`;
-            const nickname = getDisplayName(account) || account.name || 'User';
-            const initial = escapeHtml(nickname.trim().slice(0,1).toUpperCase() || '?');
-            const avatar = account.avatar ? `<img class="messenger-avatar ${extraClass}" src="${escapeHtml(account.avatar)}" alt="${escapeHtml(nickname)}" loading="lazy">` : `<span class="messenger-avatar ${extraClass}" aria-label="${escapeHtml(nickname)}">${initial}</span>`;
-            return avatar;
-        }
-
-        function renderChatContacts() {
-            if (!currentUser) return;
-            const list = document.getElementById('chatContactList');
-            if (!list) return;
-            const q = (document.getElementById('chatContactSearch')?.value || '').toLowerCase().trim();
-            const people = ACCOUNTS_DATA.filter(a => String(a.id) !== String(currentUser.id) && !BANNED_ACCOUNTS.some(b => String(b.id) === String(a.id)));
-            const contacts = [{id:'all',name:'Everyone',group:'Public room',account:null}, ...people.map(a => ({id:String(a.id),name:getDisplayName(a),group:a.isWebDeveloper?'Web Developer':(a.isAdmin?'Teacher':'Student'),account:a}))];
-            const filtered = contacts.filter(c => (c.name+' '+c.group).toLowerCase().includes(q));
-            list.innerHTML = filtered.map(c => {
-                const msgs = getChatConversationMessages(String(c.id));
-                const last = msgs[msgs.length-1];
-                const selected = activeChatId === c.id ? ' active' : '';
-                const avatar = c.account ? renderChatAvatar(c.account) : '<span class="messenger-avatar">E</span>';
-                const preview = last ? (last.from === currentUser.id ? 'You: ' : '') + (last.text || 'Trade offer') : c.group;
-                return `<button type="button" class="messenger-contact${selected}" data-chat-id="${escapeHtml(String(c.id))}" aria-pressed="${activeChatId === c.id}">${avatar}<span class="messenger-contact-meta"><span class="messenger-contact-name">${escapeHtml(c.name)}</span><span class="messenger-contact-preview">${escapeHtml(preview)}</span></span></button>`;
-            }).join('') || '<div class="messenger-empty">No matching people.</div>';
-        }
-
-
-        function chatConversationKey() {
-            if (activeChatId === 'all') return 'all';
-            return [String(currentUser?.id || ''), String(activeChatId)].sort().join(':');
-        }
-        function autoResizeChatInput(input) {
-            if (!input) return;
-            input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 132) + 'px';
-        }
-        async function publishChatTyping(isTyping) {
-            if (!currentUser || !supabaseClient) return;
-            const key = chatConversationKey();
-            const now = Date.now();
-            CHAT_TYPING = CHAT_TYPING.filter(t => !(String(t.userId) === String(currentUser.id) && t.conversation === key));
-            if (isTyping) CHAT_TYPING.push({userId:String(currentUser.id), conversation:key, updatedAt:now, expiresAt:now + 3500});
-            try { await saveAllData(); } catch (err) { console.warn('Typing status could not sync', err); }
-        }
-        function handleChatTyping() {
-            const input = document.getElementById('chatMessageInput');
-            if (input) autoResizeChatInput(input);
-            if (!currentUser || !supabaseClient) return;
-            if (!chatTypingActive) {
-                chatTypingActive = true;
-                publishChatTyping(true);
-            }
-            clearTimeout(chatTypingStopTimer);
-            chatTypingStopTimer = setTimeout(() => {
-                chatTypingActive = false;
-                publishChatTyping(false);
-            }, 2200);
-        }
-        function getTypingText() {
-            const key = chatConversationKey();
-            const active = CHAT_TYPING.filter(t => t.conversation === key &&
-                String(t.userId) !== String(currentUser?.id) && Number(t.expiresAt || 0) > Date.now());
-            if (!active.length) return '';
-            const names = active.map(t => getDisplayName(ACCOUNTS_DATA.find(a => String(a.id) === String(t.userId))) || 'Someone');
-            return names.length === 1 ? `${names[0]} is typing…` : 'Several people are typing…';
-        }
-        function markVisibleMessagesSeen() {
-            if (!currentUser || activeChatId === 'all' || !supabaseClient) return;
-            clearTimeout(chatSeenTimer);
-            chatSeenTimer = setTimeout(async () => {
-                let changed = false;
-                CHAT_MESSAGES.forEach(m => {
-                    if (String(m.from) === String(activeChatId) && String(m.to) === String(currentUser.id)) {
-                        const seen = Array.isArray(m.seenBy) ? m.seenBy : [];
-                        if (!seen.some(id => String(id) === String(currentUser.id))) {
-                            m.seenBy = [...seen, String(currentUser.id)];
-                            m.seenAt = new Date().toISOString();
-                            changed = true;
-                        }
-                    }
-                });
-                if (changed) await saveAllData();
-            }, 350);
-        }
-
-        // Render the complete Messenger-style chat view. This function was missing in the prior build,
-        // which left contacts visible but prevented conversations from opening reliably.
-        function renderChatRoom() {
-            if (!currentUser) return;
-            const contactList = document.getElementById('chatContactList');
-            const thread = document.getElementById('chatMessages');
-            const title = document.getElementById('activeChatTitle');
-            const subtitle = document.getElementById('activeChatSubtitle');
-            const avatarHost = document.getElementById('activeChatAvatar');
-            const recipient = document.getElementById('chatRecipient');
-            if (!contactList || !thread) return;
-
-            // Keep the selected conversation valid if an account was removed or banned.
-            if (activeChatId !== 'all' && !ACCOUNTS_DATA.some(a => String(a.id) === String(activeChatId) && String(a.id) !== String(currentUser.id))) {
-                activeChatId = 'all';
-            }
-            if (recipient) recipient.value = activeChatId;
-            renderChatContacts();
-
-            const selectedAccount = activeChatId === 'all' ? null : ACCOUNTS_DATA.find(a => String(a.id) === String(activeChatId));
-            if (title) title.textContent = selectedAccount ? getDisplayName(selectedAccount) : 'Everyone';
-            if (subtitle) subtitle.textContent = selectedAccount ? `${selectedAccount.isWebDeveloper ? 'Web Developer' : selectedAccount.isAdmin ? 'Teacher' : 'Student'} · Private conversation` : 'Public chat room';
-            if (avatarHost) {
-                avatarHost.innerHTML = selectedAccount ? renderChatAvatar(selectedAccount) : 'E';
-                avatarHost.setAttribute('aria-label', selectedAccount ? getDisplayName(selectedAccount) : 'Everyone');
-            }
-
-            const messages = getChatConversationMessages(activeChatId).slice().sort((a,b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
-            if (!messages.length) {
-                thread.innerHTML = `<div class="messenger-empty" style="margin:auto;text-align:center;color:#d6dbea;padding:2rem">${activeChatId === 'all' ? 'No messages yet. Start the conversation.' : 'No messages with this person yet. Say hello!'}</div>`;
-            } else {
-                let lastDate = '';
-                thread.innerHTML = messages.map(m => {
-                    const stamp = m.createdAt || new Date().toISOString();
-                    const day = new Date(stamp).toLocaleDateString();
-                    const divider = day !== lastDate ? `<div class="message-date-divider">${escapeHtml(formatChatDate(stamp))}</div>` : '';
-                    lastDate = day;
-                    const mine = String(m.from) === String(currentUser.id);
-                    const sender = ACCOUNTS_DATA.find(a => String(a.id) === String(m.from));
-                    const senderName = mine ? 'You' : (sender ? getDisplayName(sender) : 'Former account');
-                    const body = escapeHtml(m.text || (m.type === 'trade' ? 'Collection trade offer' : ''));
-                    const tradeActions = m.type === 'trade' && !mine && m.status === 'pending'
-                        ? `<div style="display:flex;gap:.4rem;margin-top:.55rem"><button type="button" class="btn btn-sm" onclick="respondToTrade('${escapeHtml(String(m.id))}',true)">Accept trade</button><button type="button" class="btn btn-sm btn-danger" onclick="respondToTrade('${escapeHtml(String(m.id))}',false)">Decline</button></div>`
-                        : (m.type === 'trade' ? `<small style="display:block;margin-top:.4rem;opacity:.8">Trade ${escapeHtml(m.status || 'pending')}</small>` : '');
-                    const seen = mine && activeChatId !== 'all' && Array.isArray(m.seenBy) && m.seenBy.some(id => String(id) === String(activeChatId));
-                    return `${divider}<div class="message-row${mine ? ' mine' : ''}"><div class="message-sender">${escapeHtml(senderName)}</div><div class="message-bubble">${body}${tradeActions}<div class="message-time" style="margin-top:.3rem;text-align:right">${escapeHtml(formatChatTime(stamp))}</div></div>${seen ? '<div class="message-seen">Seen</div>' : ''}</div>`;
-                }).join('');
-            }
-            const typingText = getTypingText();
-            if (typingText) thread.insertAdjacentHTML('beforeend', `<div class="chat-typing-indicator">${escapeHtml(typingText)}</div>`);
-            applyChatBackground();
-            thread.scrollTop = thread.scrollHeight;
-            markVisibleMessagesSeen();
-        }
-
-        document.addEventListener('click', function(event) {
-            const contact = event.target.closest('#chatContactList [data-chat-id]');
-            if (contact) selectChatConversation(contact.getAttribute('data-chat-id'));
-        });
-
-        function formatChatDate(value) {
-            const d = new Date(value);
-            if (Number.isNaN(d.getTime())) return 'Date unavailable';
-            return d.toLocaleDateString(undefined, {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-        }
-        function formatChatTime(value) {
-            const d = new Date(value);
-            return Number.isNaN(d.getTime()) ? '' : d.toLocaleString([], {year:'numeric', month:'long', day:'numeric', hour:'numeric', minute:'2-digit', second:'2-digit'});
-        }
-        function getPersonalChatBgKey() { return `faradayChatBackground_${currentUser ? currentUser.id : 'guest'}`; }
-        let CHAT_BG_ADJUST = { scale: 100, x: 50, y: 50 };
-        function loadChatBgAdjustments() {
-            try { CHAT_BG_ADJUST = {...CHAT_BG_ADJUST, ...JSON.parse(localStorage.getItem('faradayChatBgAdjust') || '{}')}; } catch (_) {}
-            ['chatBgScale','chatBgX','chatBgY'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.value=[CHAT_BG_ADJUST.scale,CHAT_BG_ADJUST.x,CHAT_BG_ADJUST.y][i];});
-        }
-        function updateChatBackgroundAdjustments() {
-            CHAT_BG_ADJUST = {
-                scale: Number(document.getElementById('chatBgScale')?.value || 100),
-                x: Number(document.getElementById('chatBgX')?.value || 50),
-                y: Number(document.getElementById('chatBgY')?.value || 50)
-            };
-            try { localStorage.setItem('faradayChatBgAdjust', JSON.stringify(CHAT_BG_ADJUST)); } catch (_) {}
-            applyChatBackground();
-        }
-        function resetChatBackgroundAdjustments() {
-            CHAT_BG_ADJUST = {scale:100,x:50,y:50};
-            ['chatBgScale','chatBgX','chatBgY'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.value=[100,50,50][i];});
-            try { localStorage.setItem('faradayChatBgAdjust', JSON.stringify(CHAT_BG_ADJUST)); } catch (_) {}
-            applyChatBackground();
-        }
-        function applyChatBackground() {
-            const thread = document.getElementById('chatMessages');
-            if (!thread) return;
-            const chosen = PERSONAL_CHAT_BACKGROUND || (activeChatId === 'all' ? (PUBLIC_CHAT_BACKGROUND || '') : '');
-            const safe = safeBackgroundUrl(chosen);
-            thread.style.backgroundImage = safe
-                ? `linear-gradient(rgba(8,15,35,.20),rgba(8,15,35,.20)),url("${safe.replace(/"/g,'%22')}")`
-                : 'none';
-            thread.style.backgroundSize = safe ? `cover, ${CHAT_BG_ADJUST.scale}% auto` : 'cover';
-            thread.style.backgroundPosition = safe ? `center center, ${CHAT_BG_ADJUST.x}% ${CHAT_BG_ADJUST.y}%` : 'center center';
-            thread.style.backgroundRepeat = 'no-repeat, no-repeat';
-        }
-
-        function compressChatWallpaper(file) { return compressImageForStorage(file, 460000); }
-
-        async function handlePersonalChatBackground(event) {
-            const file = event.target.files?.[0]; if (!file) return;
-            try {
-                PERSONAL_CHAT_BACKGROUND = await compressChatWallpaper(file);
-                localStorage.setItem(getPersonalChatBgKey(), PERSONAL_CHAT_BACKGROUND);
-                applyChatBackground();
-                showAlert('Your personal chat background has been applied and saved on this device.', 'success');
-            } catch (err) { showAlert(err.message || 'Could not save this image. Try another image.', 'warning'); }
-            event.target.value = '';
-        }
-        function applyPersonalChatBackgroundUrl() {
-            const field = document.getElementById('personalChatBgUrl');
-            const url = safeBackgroundUrl(field?.value || '');
-            if (!url) return showAlert('Enter a valid http(s) image URL.', 'warning');
-            try {
-                PERSONAL_CHAT_BACKGROUND = url;
-                localStorage.setItem(getPersonalChatBgKey(), url);
-                applyChatBackground();
-                showAlert('Your personal chat background has been applied.', 'success');
-            } catch (err) { showAlert('Browser storage is full. Use a smaller image file or an image URL.', 'danger'); }
-        }
-        async function handlePublicChatBackground(event) {
-            if (!(currentUser?.isAdmin || currentUser?.isWebDeveloper)) return showAlert('Only teachers and the Web Developer can change the public room background.', 'danger');
-            const file = event.target.files?.[0]; if (!file) return;
-            try {
-                PUBLIC_CHAT_BACKGROUND = await compressChatWallpaper(file);
-                await saveAllData();
-                if (activeChatId === 'all') applyChatBackground();
-                    showAlert('Public room background applied and saved. Other users will see it after Supabase sync.', 'success');
-            } catch (err) { showAlert(err.message || 'Could not save this image. Try another image.', 'warning'); }
-            event.target.value = '';
-        }
-        async function applyPublicChatBackgroundUrl() {
-            if (!(currentUser?.isAdmin || currentUser?.isWebDeveloper)) return showAlert('Only teachers and the Web Developer can change the public room background.', 'danger');
-            const field = document.getElementById('publicChatBgUrl');
-            const url = safeBackgroundUrl(field?.value || '');
-            if (!url) return showAlert('Enter a valid http(s) image URL.', 'warning');
-            PUBLIC_CHAT_BACKGROUND = url;
-            await saveAllData();
-            if (activeChatId === 'all') applyChatBackground();
-            showAlert('Public room background applied and saved. Other users will see it after Supabase sync.', 'success');
-        }
-        async function resetPersonalChatBackground() {
-            PERSONAL_CHAT_BACKGROUND = '';
-            try { localStorage.removeItem(getPersonalChatBgKey()); } catch (_) {}
-            const field = document.getElementById('personalChatBgUrl'); if (field) field.value = '';
-            applyChatBackground();
-            showAlert('Your personal chat background was reset.', 'success');
-        }
-        async function resetPublicChatBackground() {
-            if (!(currentUser?.isAdmin || currentUser?.isWebDeveloper)) return;
-            PUBLIC_CHAT_BACKGROUND = '';
-            const field = document.getElementById('publicChatBgUrl'); if (field) field.value = '';
-            await saveAllData(); applyChatBackground(); renderChatRoom();
-            showAlert('Public room background reset.', 'success');
-        }
-
-        function showChatInfo() { showAlert(activeChatId === 'all' ? 'Public chat: everyone can send messages. Only teachers and the Web Developer can change its shared background.' : 'Private conversation: only you see your personal chat background.', 'success'); }
-
-        function insertChatText(value) {
-            const input = document.getElementById('chatMessageInput');
-            if (!input) return;
-            input.value = (input.value || '') + value;
-            input.focus();
-        }
-
-        async function sendChatMessage(e) {
-            if (e) e.preventDefault();
-            if (!currentUser) return showAlert('Please sign in before sending a message.', 'warning');
-            const input = document.getElementById('chatMessageInput');
-            if (!input) return;
-            const textValue = input.value.trim();
-            if (!textValue) return;
-            if (activeChatId !== 'all' && !ACCOUNTS_DATA.some(a => String(a.id) === String(activeChatId) && String(a.id) !== String(currentUser.id))) {
-                return showAlert('This account is no longer available. Please choose another conversation.', 'warning');
-            }
-
-            const sendButton = input.form?.querySelector('button[type="submit"]');
-            if (sendButton) sendButton.disabled = true;
-            const message = {
-                id: (window.crypto && typeof window.crypto.randomUUID === 'function') ? window.crypto.randomUUID() : `msg-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-                from: String(currentUser.id),
-                to: String(activeChatId),
-                text: textValue,
-                type: 'message',
-                createdAt: new Date().toISOString(),
-                seenBy: []
-            };
-            const previousMessages = CHAT_MESSAGES.slice();
-            CHAT_MESSAGES = [...CHAT_MESSAGES, message].slice(-CHAT_HISTORY_LIMIT);
-
-            const saved = await saveAllData();
-            if (saved) {
-                input.value = '';
-                input.style.height = '34px';
-                clearTimeout(chatTypingTimer);
-                clearTimeout(chatTypingStopTimer);
-                chatTypingActive = false;
-                publishChatTyping(false);
-                input.focus();
-                // When Supabase is not configured this is a local-only message on this device.
-                if (!supabaseClient) showAlert('Message saved on this device only. Connect Supabase to chat across accounts.', 'warning');
-            } else {
-                CHAT_MESSAGES = previousMessages;
-                }
-            if (sendButton) sendButton.disabled = false;
-        }
-
-        async function proposeCollectionTrade(e) {
-            e.preventDefault();
-            if (!currentUser) return;
-            const idx = Number(document.getElementById('tradeOfferItem').value);
-            const item = currentUser.inventory?.[idx];
-            const recipientId = document.getElementById('tradeRecipient').value;
-            const wantItem = document.getElementById('tradeWantItem').value.trim();
-            if (!item || !recipientId || !wantItem) return showAlert('Choose an item and a recipient, then enter what you want.', 'warning');
-            CHAT_MESSAGES.push({id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), from:currentUser.id, to:recipientId, type:'trade', offerItem:item.item, offerIndex:idx, wantItem, status:'pending', text:`Trade offer: I offer ${item.item} in exchange for ${wantItem}.`, createdAt:new Date().toISOString()});
-            await saveAllData(); renderChatRoom(); showAlert('Trade offer sent through Chat room.', 'success');
-        }
-
-        async function respondToTrade(messageId, accept) {
-            const offer = CHAT_MESSAGES.find(m => m.id === messageId && m.type === 'trade');
-            if (!offer || offer.to !== currentUser?.id || offer.status !== 'pending') return;
-            if (!accept) { offer.status='declined'; await saveAllData(); renderChatRoom(); return; }
-            const sender = ACCOUNTS_DATA.find(a => a.id === offer.from);
-            const senderItem = sender?.inventory?.[offer.offerIndex];
-            const myIndex = (currentUser.inventory || []).findIndex(it => String(it.item).toLowerCase() === String(offer.wantItem).toLowerCase());
-            if (!sender || !senderItem || myIndex < 0) return showAlert(`You need an item named "${offer.wantItem}" in your collection to accept this trade.`, 'warning');
-            const myItem = currentUser.inventory[myIndex];
-            sender.inventory.splice(offer.offerIndex,1);
-            currentUser.inventory.splice(myIndex,1);
-            sender.inventory.push(myItem); currentUser.inventory.push(senderItem);
-            offer.status='accepted';
-            CHAT_MESSAGES.push({id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),from:currentUser.id,to:offer.from,type:'message',text:`I accepted your trade: ${senderItem.item} ↔ ${myItem.item}.`,createdAt:new Date().toISOString()});
-            await saveAllData(); updateUserDisplays(); renderChatRoom(); showAlert('Trade completed successfully!', 'success');
-        }
-
         function renderMarketplace() {
             if (!currentUser) return;
             const list = document.getElementById('marketplaceListings');
@@ -3494,8 +2976,7 @@
             currentUser.balance -= listing.price; seller.balance += listing.price;
             currentUser.inventory = currentUser.inventory || []; currentUser.inventory.push({...listing.itemSnapshot, value:listing.price});
             listing.status='sold'; listing.buyerId=currentUser.id; listing.soldAt=new Date().toISOString();
-            CHAT_MESSAGES.push({id:crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),from:currentUser.id,to:seller.id,type:'message',text:`I purchased your listed item: ${listing.itemName}.`,createdAt:new Date().toISOString()});
-            await saveAllData(); updateUserDisplays(); renderMarketplace(); showAlert('Purchase completed!', 'success');
+await saveAllData(); updateUserDisplays(); renderMarketplace(); showAlert('Purchase completed!', 'success');
         }
 
         async function cancelMarketListing(listingId) {
@@ -3537,7 +3018,7 @@
             if (existing && localStorage.getItem('faradayTechRememberedLogin')) {
                 try { const saved=JSON.parse(localStorage.getItem('faradayTechRememberedLogin')); if(saved.id===id) localStorage.removeItem('faradayTechRememberedLogin'); } catch(_){}
             }
-            await saveAllData(); renderDeveloperAccounts(); renderChatRoom(); showAlert(existing?'Account unbanned.':'Account banned.', 'success');
+            await saveAllData(); renderDeveloperAccounts();  showAlert(existing?'Account unbanned.':'Account banned.', 'success');
         }
 
         async function removeAccount(id) {
@@ -3548,8 +3029,7 @@
             BANNED_ACCOUNTS = BANNED_ACCOUNTS.filter(b => b.id !== id);
             REMOVED_ACCOUNT_IDS = Array.from(new Set([...REMOVED_ACCOUNT_IDS, String(id)]));
             MARKET_LISTINGS = MARKET_LISTINGS.filter(x => x.sellerId !== id && x.buyerId !== id);
-            CHAT_MESSAGES = CHAT_MESSAGES.filter(m => m.from !== id && m.to !== id);
-            await saveAllData(); populateDirectory(); populateTransferDropdown(); populateAdminDropdown(); renderDeveloperAccounts(); renderChatRoom(); renderMarketplace(); showAlert('Account permanently removed.', 'success');
+await saveAllData(); populateDirectory(); populateTransferDropdown(); populateAdminDropdown(); renderDeveloperAccounts();  renderMarketplace(); showAlert('Account permanently removed.', 'success');
         }
 
         function switchTab(tabId) {
