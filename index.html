@@ -1536,47 +1536,84 @@
             }
         }
 
-        if (supabaseClient) {
-            supabaseClient
-                .channel('app_data_changes')
-                .on(
-                    'postgres_changes',
+        // Supabase Realtime: keep every open client in sync with the shared app_data row.
+        // The database table must be added to the supabase_realtime publication (see setup SQL).
+        let appDataRealtimeChannel = null;
+        let appDataRealtimeReady = false;
+        let lastRealtimePayloadAt = 0;
+
+        function applyRemoteAppData(updated) {
+            if (!updated || Number(updated.id) !== 1) return;
+
+            // Replace the shared state with the latest committed database snapshot.
+            if (Array.isArray(updated.accounts)) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
+            if (Array.isArray(updated.columns)) GRADE_COLUMNS = updated.columns;
+            if (Array.isArray(updated.weights)) GRADE_WEIGHTS = updated.weights;
+            if (updated.convRate !== undefined && updated.convRate !== null) GRADE_CONV_RATE = updated.convRate;
+            if (Array.isArray(updated.shop_categories)) SHOP_CATEGORIES = updated.shop_categories;
+            if (Array.isArray(updated.lessons)) LESSONS_DATA = updated.lessons;
+            if (Array.isArray(updated.quizzes)) QUIZZES_DATA = updated.quizzes;
+            if (Array.isArray(updated.chat_messages)) CHAT_MESSAGES = updated.chat_messages;
+            if (Array.isArray(updated.chat_typing)) CHAT_TYPING = updated.chat_typing;
+            if (updated.public_chat_background !== undefined) PUBLIC_CHAT_BACKGROUND = updated.public_chat_background || '';
+            if (Array.isArray(updated.market_listings)) MARKET_LISTINGS = updated.market_listings;
+            if (Array.isArray(updated.banned_accounts)) BANNED_ACCOUNTS = updated.banned_accounts;
+            if (Array.isArray(updated.removed_accounts)) REMOVED_ACCOUNT_IDS = updated.removed_accounts;
+            if (Array.isArray(updated.patch_notes)) PATCH_NOTES = updated.patch_notes;
+            if (Object.prototype.hasOwnProperty.call(updated, 'auction')) AUCTION_STATE = updated.auction || null;
+
+            // Keep local cache aligned with the latest database snapshot.
+            try {
+                localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(updated));
+            } catch (cacheError) {
+                console.warn('Could not cache realtime database update:', cacheError);
+            }
+
+            if (currentUser) {
+                currentUser = ACCOUNTS_DATA.find(a => String(a.id) === String(currentUser.id)) || currentUser;
+                updateUserDisplays();
+                handleAuctionRealtimeSync();
+                populateTransferDropdown();
+                populateAdminDropdown();
+                renderMarketplace();
+            }
+            renderShopItems();
+            renderGradebookSheet();
+            populateDirectory();
+            renderLessonsAndQuizzes();
+            renderPatchNotes();
+            if (typeof renderChat === 'function') renderChat();
+            if (activeChatId === 'all') applyChatBackground();
+            lastRealtimePayloadAt = Date.now();
+        }
+
+        function connectAppDataRealtime() {
+            if (!supabaseClient) return;
+            if (appDataRealtimeChannel) {
+                try { supabaseClient.removeChannel(appDataRealtimeChannel); } catch (_) {}
+            }
+            appDataRealtimeChannel = supabaseClient
+                .channel('app_data_changes_v2')
+                .on('postgres_changes',
                     { event: '*', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
                     (payload) => {
-                        const updated = payload.new;
-                        if (!updated) return;
-
-                        if (updated.accounts) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
-                        if (updated.columns) GRADE_COLUMNS = updated.columns;
-                        if (updated.weights) GRADE_WEIGHTS = updated.weights;
-                        if (updated.convRate !== undefined && updated.convRate !== null) GRADE_CONV_RATE = updated.convRate;
-                        if (updated.shop_categories) SHOP_CATEGORIES = updated.shop_categories;
-                        if (updated.lessons) LESSONS_DATA = updated.lessons;
-                        if (updated.quizzes) QUIZZES_DATA = updated.quizzes;
-                        if (Array.isArray(updated.chat_messages)) CHAT_MESSAGES = updated.chat_messages;
-                        if (Array.isArray(updated.chat_typing)) CHAT_TYPING = updated.chat_typing;
-                        if (updated.public_chat_background !== undefined) { PUBLIC_CHAT_BACKGROUND = updated.public_chat_background || ''; if (activeChatId === 'all') applyChatBackground(); }
-                        if (Array.isArray(updated.market_listings)) MARKET_LISTINGS = updated.market_listings;
-                        if (Array.isArray(updated.banned_accounts)) BANNED_ACCOUNTS = updated.banned_accounts;
-                        if (Array.isArray(updated.removed_accounts)) REMOVED_ACCOUNT_IDS = updated.removed_accounts;
-                        if (Array.isArray(updated.patch_notes)) PATCH_NOTES = updated.patch_notes;
-                        AUCTION_STATE = updated.auction || null;
-
-                        if (currentUser) {
-                            updateUserDisplays();
-                            handleAuctionRealtimeSync();
-                            populateTransferDropdown();
-                            populateAdminDropdown();
-                                            renderMarketplace();
+                        if (payload.eventType === 'DELETE') {
+                            console.error('The shared app_data row was deleted. Restore row id=1 before using the app.');
+                            return;
                         }
-                        renderShopItems();
-                        renderGradebookSheet();
-                        populateDirectory();
-                        renderLessonsAndQuizzes();
+                        applyRemoteAppData(payload.new);
+                    })
+                .subscribe((status, err) => {
+                    console.info('Supabase Realtime status:', status, err || '');
+                    appDataRealtimeReady = status === 'SUBSCRIBED';
+                    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+                        console.warn('Realtime is not connected. Check the app_data publication and Supabase Realtime settings.');
                     }
-                )
-                .subscribe();
+                });
         }
+
+        if (supabaseClient) connectAppDataRealtime();
+
 
         async function resetAllData() {
             if (confirm("Reset all system data, lessons, quizzes, shop items, background, and accounts in Supabase?")) {
