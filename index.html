@@ -538,7 +538,7 @@
         @media(max-width:760px){
         }
 </style>
-</head>
+<!-- Faraday Tech sync patch: Realtime status diagnostics + same-browser cross-tab sync + visibility recovery -->\n</head>
 <body>
 
     <header id="mainHeader" class="hidden">
@@ -1536,41 +1536,47 @@
             }
         }
 
-        // Supabase Realtime: keep every open client in sync with the shared app_data row.
-        // The database table must be added to the supabase_realtime publication (see setup SQL).
-        let appDataRealtimeChannel = null;
-        let appDataRealtimeReady = false;
-        let lastRealtimePayloadAt = 0;
-
-        function applyRemoteAppData(updated) {
+        // Apply one authoritative app_data row to the current tab.
+        // This is shared by Supabase Realtime and the same-browser storage fallback.
+        function applyRemoteAppData(updated, source = 'remote') {
             if (!updated || Number(updated.id) !== 1) return;
 
-            // Replace the shared state with the latest committed database snapshot.
             if (Array.isArray(updated.accounts)) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
             if (Array.isArray(updated.columns)) GRADE_COLUMNS = updated.columns;
-            if (Array.isArray(updated.weights)) GRADE_WEIGHTS = updated.weights;
+            if (updated.weights && typeof updated.weights === 'object') GRADE_WEIGHTS = updated.weights;
             if (updated.convRate !== undefined && updated.convRate !== null) GRADE_CONV_RATE = updated.convRate;
             if (Array.isArray(updated.shop_categories)) SHOP_CATEGORIES = updated.shop_categories;
             if (Array.isArray(updated.lessons)) LESSONS_DATA = updated.lessons;
             if (Array.isArray(updated.quizzes)) QUIZZES_DATA = updated.quizzes;
             if (Array.isArray(updated.chat_messages)) CHAT_MESSAGES = updated.chat_messages;
             if (Array.isArray(updated.chat_typing)) CHAT_TYPING = updated.chat_typing;
-            if (updated.public_chat_background !== undefined) PUBLIC_CHAT_BACKGROUND = updated.public_chat_background || '';
+            if (updated.public_chat_background !== undefined) {
+                PUBLIC_CHAT_BACKGROUND = updated.public_chat_background || '';
+                if (typeof activeChatId !== 'undefined' && activeChatId === 'all' && typeof applyChatBackground === 'function') applyChatBackground();
+            }
             if (Array.isArray(updated.market_listings)) MARKET_LISTINGS = updated.market_listings;
             if (Array.isArray(updated.banned_accounts)) BANNED_ACCOUNTS = updated.banned_accounts;
             if (Array.isArray(updated.removed_accounts)) REMOVED_ACCOUNT_IDS = updated.removed_accounts;
             if (Array.isArray(updated.patch_notes)) PATCH_NOTES = updated.patch_notes;
-            if (Object.prototype.hasOwnProperty.call(updated, 'auction')) AUCTION_STATE = updated.auction || null;
+            AUCTION_STATE = updated.auction || null;
 
-            // Keep local cache aligned with the latest database snapshot.
-            try {
-                localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(updated));
-            } catch (cacheError) {
-                console.warn('Could not cache realtime database update:', cacheError);
+            // Keep this tab's signed-in user pointed at the newly received account record.
+            if (currentUser) {
+                const refreshedUser = ACCOUNTS_DATA.find(acc => String(acc.id) === String(currentUser.id));
+                if (refreshedUser) currentUser = refreshedUser;
+            }
+
+            // Do not write back when this update itself came from the storage event;
+            // otherwise two tabs could repeatedly echo the same change to each other.
+            if (source !== 'same-browser tab storage') {
+                try {
+                    localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(updated));
+                } catch (storageError) {
+                    console.warn('[Faraday Realtime] Could not cache incoming update:', storageError);
+                }
             }
 
             if (currentUser) {
-                currentUser = ACCOUNTS_DATA.find(a => String(a.id) === String(currentUser.id)) || currentUser;
                 updateUserDisplays();
                 handleAuctionRealtimeSync();
                 populateTransferDropdown();
@@ -1581,39 +1587,61 @@
             renderGradebookSheet();
             populateDirectory();
             renderLessonsAndQuizzes();
-            renderPatchNotes();
-            if (typeof renderChat === 'function') renderChat();
-            if (activeChatId === 'all') applyChatBackground();
-            lastRealtimePayloadAt = Date.now();
+            if (typeof renderPatchNotes === 'function') renderPatchNotes();
+            console.info(`[Faraday Sync] Applied ${source} update`, new Date().toLocaleTimeString());
         }
 
-        function connectAppDataRealtime() {
-            if (!supabaseClient) return;
-            if (appDataRealtimeChannel) {
-                try { supabaseClient.removeChannel(appDataRealtimeChannel); } catch (_) {}
-            }
-            appDataRealtimeChannel = supabaseClient
-                .channel('app_data_changes_v2')
-                .on('postgres_changes',
+        // Realtime status is logged so connection failures are visible in DevTools.
+        let faradayRealtimeChannel = null;
+        if (supabaseClient) {
+            faradayRealtimeChannel = supabaseClient
+                .channel('faraday_app_data_live_v2')
+                .on(
+                    'postgres_changes',
                     { event: '*', schema: 'public', table: 'app_data', filter: 'id=eq.1' },
                     (payload) => {
-                        if (payload.eventType === 'DELETE') {
-                            console.error('The shared app_data row was deleted. Restore row id=1 before using the app.');
-                            return;
-                        }
-                        applyRemoteAppData(payload.new);
-                    })
+                        console.info('[Faraday Realtime] Database event received:', payload.eventType);
+                        if (payload.new) applyRemoteAppData(payload.new, 'Supabase Realtime');
+                    }
+                )
                 .subscribe((status, err) => {
-                    console.info('Supabase Realtime status:', status, err || '');
-                    appDataRealtimeReady = status === 'SUBSCRIBED';
+                    console.info('[Faraday Realtime] Subscription status:', status, err || '');
                     if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
-                        console.warn('Realtime is not connected. Check the app_data publication and Supabase Realtime settings.');
+                        console.error('[Faraday Realtime] Subscription problem. Check publication membership, SELECT/RLS access, and project Realtime status.', err || '');
                     }
                 });
+        } else {
+            console.error('[Faraday Realtime] Supabase client was not initialized. Check the CDN script and project URL/key.');
         }
 
-        if (supabaseClient) connectAppDataRealtime();
+        // localStorage events fire in OTHER tabs on the same browser/origin.
+        // The writing tab does not receive its own storage event.
+        window.addEventListener('storage', (event) => {
+            if (event.key !== LOCAL_DATA_KEY || !event.newValue) return;
+            try {
+                const updated = JSON.parse(event.newValue);
+                applyRemoteAppData(updated, 'same-browser tab storage');
+            } catch (err) {
+                console.warn('[Faraday Sync] Ignored invalid cross-tab storage update:', err);
+            }
+        });
 
+        // When a tab becomes visible again, pull the latest authoritative database row.
+        // This is a recovery path for sleeping tabs or a dropped WebSocket.
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState !== 'visible' || !supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('app_data')
+                    .select('*')
+                    .eq('id', 1)
+                    .maybeSingle();
+                if (error) throw error;
+                if (data) applyRemoteAppData(data, 'visibility recovery');
+            } catch (err) {
+                console.warn('[Faraday Sync] Could not refresh after tab became visible:', err);
+            }
+        });
 
         async function resetAllData() {
             if (confirm("Reset all system data, lessons, quizzes, shop items, background, and accounts in Supabase?")) {
