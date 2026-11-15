@@ -603,6 +603,10 @@
                         <p style="margin-top: 0.4rem;"><strong>10-Digit ID:</strong> <span id="infoId">-</span></p>
                         <p style="margin-top: 0.4rem;"><strong>Role / Gender:</strong> <span id="infoRole">-</span></p>
                         <p style="margin-top: 0.4rem;"><strong>Available Balance:</strong> <span id="infoBalance" style="color: var(--accent); font-weight: bold;">0</span> FARADS</p>
+                        <div style="margin-top: 0.9rem;">
+                            <button type="button" class="btn btn-warning btn-sm" style="width:100%;" onclick="returnStudentInfo()">↩ Return Info</button>
+                            <p style="font-size:0.78rem;color:var(--text-muted);margin-top:0.35rem;">Restore your most recently saved profile, grades, balance, and student records.</p>
+                        </div>
 
                         <div id="studentGradesSection" style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
                             <h4 style="color: var(--accent); margin-bottom: 0.5rem;">Computed Category Grades</h4>
@@ -1365,7 +1369,85 @@ MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = [];
             if (modified) saveAllData();
         }
 
+        // Student recovery data is stored inside each account record so it follows
+        // the student across devices through the shared app_data.accounts JSON.
+        const RETURN_INFO_FIELDS = ["nickname", "avatar", "privacy", "scores", "balance", "history", "inventory", "completedQuizzes"];
+
+        function getReturnInfoSnapshot(account) {
+            const snapshot = {};
+            RETURN_INFO_FIELDS.forEach(field => {
+                snapshot[field] = account && account[field] !== undefined
+                    ? JSON.parse(JSON.stringify(account[field]))
+                    : (field === "balance" ? 0 : (["history", "inventory", "completedQuizzes"].includes(field) ? [] : (["scores", "privacy"].includes(field) ? {} : "")));
+            });
+            snapshot.savedAt = new Date().toISOString();
+            return snapshot;
+        }
+
+        function rememberStudentInfo(account, snapshot) {
+            if (!account || account.isAdmin || account.isWebDeveloper || account.group === "Admin" || account.group === "Web Developer") return;
+            if (!Array.isArray(account._returnInfo)) account._returnInfo = [];
+            const clean = {};
+            RETURN_INFO_FIELDS.forEach(field => {
+                if (snapshot[field] !== undefined) clean[field] = JSON.parse(JSON.stringify(snapshot[field]));
+            });
+            clean.savedAt = snapshot.savedAt || new Date().toISOString();
+            const last = account._returnInfo[account._returnInfo.length - 1];
+            if (last && JSON.stringify(RETURN_INFO_FIELDS.map(k => last[k])) === JSON.stringify(RETURN_INFO_FIELDS.map(k => clean[k]))) return;
+            account._returnInfo.push(clean);
+            if (account._returnInfo.length > 5) account._returnInfo = account._returnInfo.slice(-5);
+        }
+
+        function captureStudentRecoveryFromCachedData() {
+            try {
+                const raw = localStorage.getItem(LOCAL_DATA_KEY);
+                if (!raw) return;
+                const previous = JSON.parse(raw);
+                if (!Array.isArray(previous.accounts)) return;
+                ACCOUNTS_DATA.forEach(account => {
+                    if (account.isAdmin || account.isWebDeveloper || account.group === "Admin" || account.group === "Web Developer") return;
+                    const old = previous.accounts.find(item => String(item.id) === String(account.id));
+                    if (!old) return;
+                    const oldSnapshot = getReturnInfoSnapshot(old);
+                    const currentSnapshot = getReturnInfoSnapshot(account);
+                    const comparableOld = RETURN_INFO_FIELDS.map(k => oldSnapshot[k]);
+                    const comparableCurrent = RETURN_INFO_FIELDS.map(k => currentSnapshot[k]);
+                    if (JSON.stringify(comparableOld) !== JSON.stringify(comparableCurrent)) {
+                        rememberStudentInfo(account, oldSnapshot);
+                    }
+                });
+            } catch (err) {
+                console.warn("[Faraday Recovery] Could not compare previous student data:", err);
+            }
+        }
+
+        async function returnStudentInfo() {
+            if (!currentUser) return;
+            const account = ACCOUNTS_DATA.find(item => String(item.id) === String(currentUser.id));
+            if (!account || account.isAdmin || account.isWebDeveloper || account.group === "Admin" || account.group === "Web Developer") {
+                showAlert("Return Info is available for student accounts only.", "warning");
+                return;
+            }
+            if (!Array.isArray(account._returnInfo) || account._returnInfo.length === 0) {
+                showAlert("No saved recovery information is available for your account yet.", "warning");
+                return;
+            }
+            if (!confirm("Restore your most recently saved student information? This will replace your current profile details, grades, balance, inventory, and quiz records with the saved copy.")) return;
+
+            const snapshot = account._returnInfo.pop();
+            RETURN_INFO_FIELDS.forEach(field => {
+                if (snapshot[field] !== undefined) account[field] = JSON.parse(JSON.stringify(snapshot[field]));
+            });
+            currentUser = account;
+            const saved = await saveAllData();
+            updateUserDisplays();
+            if (typeof renderGradebookSheet === "function") renderGradebookSheet();
+            if (saved) showAlert("Your saved student information has been restored.", "success");
+            else showAlert("Your information was restored in this tab, but Supabase could not sync it. Check the Console.", "warning");
+        }
+
         async function saveAllData() {
+            captureStudentRecoveryFromCachedData();
             const payload = {
                     id: 1,
                     accounts: ACCOUNTS_DATA,
@@ -1504,18 +1586,39 @@ market_listings: MARKET_LISTINGS,
         });
 
         async function resetAllData() {
-            if (confirm("Reset all system data, lessons, quizzes, shop items, background, and accounts in Supabase?")) {
-                try {
-                    initDefaults();
-                    await saveAllData();
-                    if (currentUser) {
-                        currentUser = ACCOUNTS_DATA.find(acc => acc.id === currentUser.id) || null;
+            const studentCount = ACCOUNTS_DATA.filter(acc =>
+                !acc.isAdmin && !acc.isWebDeveloper && acc.group !== "Admin" && acc.group !== "Web Developer"
+            ).length;
+
+            if (!confirm(`Reset the gradebook to Faraday Tech's default grade settings? All ${studentCount} student accounts and their existing grades, balances, profiles, and records will be kept.`)) return;
+
+            try {
+                // Keep the entire current account list. Never replace it with DEFAULT_ACCOUNTS.
+                // Capture one recovery point before applying the default grade configuration.
+                ACCOUNTS_DATA.forEach(account => {
+                    if (!account.isAdmin && !account.isWebDeveloper && account.group !== "Admin" && account.group !== "Web Developer") {
+                        rememberStudentInfo(account, getReturnInfoSnapshot(account));
                     }
-                    initApp();
-                    showAlert("System fully reset to default.", "success");
-                } catch (err) {
-                    showAlert("Failed to reset system data.", "danger");
+                });
+
+                GRADE_COLUMNS = JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                GRADE_WEIGHTS = JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                GRADE_CONV_RATE = DEFAULT_CONVERSION_RATE;
+
+                const saved = await saveAllData();
+                if (!saved) {
+                    showAlert("The default grade settings were applied locally, but Supabase did not confirm the save. Check the Console before refreshing.", "warning");
+                    return;
                 }
+
+                if (currentUser) {
+                    currentUser = ACCOUNTS_DATA.find(acc => String(acc.id) === String(currentUser.id)) || null;
+                }
+                initApp();
+                showAlert(`Default grade settings restored. All ${studentCount} student accounts were preserved.`, "success");
+            } catch (err) {
+                console.error("[Faraday Reset] Reset failed:", err);
+                showAlert("Failed to reset grade settings. Your student accounts were not intentionally removed.", "danger");
             }
         }
 
