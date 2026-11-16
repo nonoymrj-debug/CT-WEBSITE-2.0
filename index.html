@@ -2931,13 +2931,25 @@ market_listings: MARKET_LISTINGS,
             await loadAllData();
             const idInput = document.getElementById('loginId').value.trim();
             const passInput = document.getElementById('loginPass').value;
-            const user = ACCOUNTS_DATA.find(acc => String(acc.id).trim() === idInput && String(acc.pass) === passInput);
+            let user = ACCOUNTS_DATA.find(acc => String(acc.id).trim() === idInput && String(acc.pass) === passInput);
+
+            // Recovery path for the published default Web Developer credentials.
+            // Some older app_data rows contain a Web Developer profile with a legacy
+            // ID/password. Accept the documented default pair and open that existing
+            // developer profile without overwriting its saved account data.
+            if (!user && idInput === String(WEBDEV_ACCOUNT.id) && passInput === WEBDEV_ACCOUNT.pass) {
+                user = ACCOUNTS_DATA.find(acc => acc.isWebDeveloper === true || String(acc.group || '').trim().toLowerCase() === 'web developer');
+                if (!user) {
+                    user = JSON.parse(JSON.stringify(WEBDEV_ACCOUNT));
+                    ACCOUNTS_DATA.push(user);
+                }
+            }
 
             if (user && BANNED_ACCOUNTS.some(entry => String(entry.id) === String(user.id))) {
                 return showAlert('This account has been banned from Faraday Tech. Contact the Web Developer.', 'danger');
             }
             if (user) {
-                if (user.isWebDeveloper) {
+                if (user.isWebDeveloper || String(user.group || '').trim().toLowerCase() === 'web developer') {
                     const enteredCode = window.prompt('Enter the Web Developer special code to continue:');
                     if (enteredCode !== WEBDEV_ACCESS_CODE) return showAlert('Incorrect Web Developer special code.', 'danger');
                 } else if (user.isAdmin || String(user.group).toLowerCase() === 'admin') {
