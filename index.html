@@ -422,6 +422,25 @@
         
         @media(max-width:760px){
         }
+
+/* FARADAY TECH 5.0 — BLUE DESIGN SYSTEM */
+:root{--bg-primary:#eff6ff;--bg-card:#fff;--text-main:#102a43;--text-muted:#58708a;--accent:#2563eb;--accent-hover:#1d4ed8;--success:#15803d;--danger:#dc2626;--warning:#d97706;--border:#c7d9f2;--ft-navy:#0b2d59;--ft-blue:#123f7a;--ft-mid:#1d5fbf;--ft-light:#dbeafe;--ft-pale:#f4f8ff}
+html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(--text-main)!important;display:block!important}
+#mainHeader{position:sticky;top:0;z-index:900;background:linear-gradient(105deg,#08264d,#104a91 58%,#2563eb)!important;border-bottom:1px solid #4c83c8!important;padding:.75rem 1.25rem!important;min-height:76px;box-shadow:0 5px 20px #092b562e}
+#mainHeader .brand,#mainHeader .brand h2{color:#fff!important}#mainHeader .brand{font-size:1.55rem;letter-spacing:.04em}#mainHeader .btn{background:#eaf3ff!important;color:#103a70!important;border:1px solid #b9d4f5}
+.container{max-width:none!important;width:100%!important;margin:0!important;padding:1.15rem 1.35rem 2rem 252px!important}
+.card,.modal-card{background:#fff!important;color:var(--text-main)!important;border:1px solid var(--border)!important;box-shadow:0 5px 18px #194c870f!important}.card-title{color:#123f7a!important}
+.form-control,.sheet-input{background:#f8fbff!important;color:#102a43!important;border:1px solid #b8cde8!important}.form-control:focus,.sheet-input:focus{border-color:#2563eb!important;box-shadow:0 0 0 3px #2563eb1f}
+.btn{background:#2563eb!important;color:#fff!important;border:1px solid #1d4ed8!important;border-radius:10px!important}.btn:hover{background:#174ea6!important;color:#fff!important}.btn-warning{background:#dbeafe!important;color:#123f7a!important;border-color:#93b9e8!important}.btn-danger{background:#dc3545!important;color:#fff!important;border-color:#c52b3a!important}
+.tabs{position:fixed!important;left:0;top:76px;bottom:0;width:232px;display:flex!important;flex-direction:column!important;align-items:stretch;gap:.42rem!important;padding:1rem .8rem!important;margin:0!important;overflow-y:auto;background:linear-gradient(180deg,#e8f1ff,#d7e7fb)!important;border-right:1px solid #bfd3ed!important;border-bottom:0!important;z-index:800}
+.tab-btn{width:100%;text-align:left!important;display:flex;align-items:center;gap:.65rem;padding:.72rem .85rem!important;border-radius:999px!important;background:#c6d9f1!important;color:#173e70!important;border:1px solid #b3cbe9!important;font-weight:700!important;transition:all .16s ease}.tab-btn:hover{background:#a9c9f0!important;transform:translateX(2px)}.tab-btn.active{background:linear-gradient(90deg,#1d5fbf,#3b82f6)!important;color:#fff!important;border-color:#1d5fbf!important;box-shadow:0 4px 10px #1d5fbf33}
+#appSection{min-height:calc(100vh - 80px)}#alertBox{position:sticky;top:84px;z-index:850}.dashboard-grid{gap:1rem!important}.shop-item{background:#f8fbff!important;border-color:#c7d9f2!important;color:#102a43!important}.item-placeholder{background:#eaf3ff!important;border-color:#bfd3ed!important}.item-price,.balance-badge{color:#1d5fbf!important}.balance-badge{background:#e4efff!important;border-color:#8db5e8!important}table th{background:#eaf2ff!important;color:#244d7c!important}table td{color:#17324f!important}tr.clickable-row:hover{background:#edf5ff!important}.receipt-box{background:#eff6ff!important;color:#123f7a!important}.timer-badge{background:#e7f0ff!important;color:#1d4ed8!important}.alert-success{background:#ecfdf3!important;color:#166534!important}.alert-danger{background:#fff1f2!important;color:#9f1239!important}.alert-warning{background:#fffbeb!important;color:#92400e!important}
+#ftConnectionStatus{display:inline-flex;align-items:center;gap:.45rem;padding:.38rem .72rem;border-radius:999px;background:#ffffff24;color:#fff;border:1px solid #ffffff40;font-size:.78rem;font-weight:700}#ftConnectionStatus[data-state=offline],#ftConnectionStatus[data-state=error]{background:#991b1b}#ftConnectionStatus[data-state=saving]{background:#1e40af}
+#homeTab .home-hero{background:linear-gradient(115deg,#0b2d59,#1d5fbf 68%,#60a5fa);color:#fff;border-radius:18px;padding:1.5rem;margin-bottom:1rem}#homeTab .home-hero h2{color:#fff!important;font-size:1.5rem;margin-bottom:.3rem}#homeTab .home-stat{background:#fff;border:1px solid #c7d9f2;border-radius:14px;padding:1rem;box-shadow:0 4px 12px #194c870f}#homeTab .home-stat strong{display:block;font-size:1.55rem;color:#1d5fbf}#homeTab .quick-link{display:flex;align-items:center;gap:.7rem;min-height:58px;text-align:left;background:#f5f9ff!important;color:#174477!important;border:1px solid #c7d9f2!important}#homeTab .quick-link:hover{background:#e1edff!important}#homeTab .home-section-title{color:#123f7a;font-weight:800;margin:1rem 0 .65rem}
+.container:has(#loginSection:not(.hidden)),.container:has(#signupSection:not(.hidden)){padding-left:1.35rem!important}.auth-wrapper{max-width:480px!important;margin:3rem auto!important}.auth-wrapper .card{border-radius:18px!important}.profile-avatar-preview{border-color:#2563eb!important}
+@media(max-width:900px){.container{padding:1rem!important}.tabs{position:sticky!important;top:76px;bottom:auto;width:100%;height:auto;flex-direction:row!important;overflow-x:auto;white-space:nowrap;padding:.6rem!important;z-index:700}.tab-btn{width:auto;min-width:max-content;text-align:center!important;padding:.58rem .85rem!important}}
+@media(max-width:600px){#mainHeader{padding:.65rem .8rem!important;min-height:64px}#mainHeader .brand{font-size:1.15rem}#mainHeader .brand img{width:42px!important;height:42px!important}.container{padding:.65rem!important}.tabs{top:64px}.auth-wrapper{margin:1.2rem auto!important;padding:0 .3rem}.dashboard-grid{grid-template-columns:1fr!important}}
+
 </style>
 <!-- Faraday Tech sync patch: Realtime status diagnostics + same-browser cross-tab sync + visibility recovery -->
 </head>
@@ -436,6 +455,7 @@
             <span id="userNameDisplay" style="font-weight: 600;">User</span>
             <span class="balance-badge"><span id="userBalanceDisplay">0</span> FARADS</span>
             <button class="btn btn-warning btn-sm" onclick="openPatchNotesModal()">📜 Patched Notes</button>
+            <span id="ftConnectionStatus" data-state="connecting">◌ Connecting</span>
             <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
         </div>
     </header>
@@ -545,6 +565,7 @@
         <!-- Main App Interface -->
         <div id="appSection" class="hidden">
             <div class="tabs">
+                <button class="tab-btn active" id="homeTabBtn" onclick="switchTab('homeTab')">⌂ Home</button>
                 <button class="tab-btn active" onclick="switchTab('transferTab')">Transfer & Profile</button>
                 <button class="tab-btn" onclick="switchTab('shopTab')">School Store</button>
                 <button class="tab-btn" onclick="switchTab('auctionTab')">Live Auction</button>
@@ -557,6 +578,12 @@
             </div>
 
             <!-- Tab 1: Transfer & Profile -->
+            <div id="homeTab" class="tab-content">
+                <div class="home-hero"><div style="display:flex;justify-content:space-between;gap:1rem;align-items:center;flex-wrap:wrap"><div><div style="font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;font-weight:800">Student workspace</div><h2 id="homeWelcome">Welcome to Faraday Tech!</h2><p style="opacity:.9">Your classroom, rewards and activities — all in one place.</p></div><button class="btn" style="background:#fff!important;color:#123f7a!important;border-color:#fff!important" onclick="openWebsiteGuide()">📘 Tutorial & Help</button></div></div>
+                <div class="dashboard-grid" style="grid-template-columns:repeat(auto-fit,minmax(175px,1fr))"><div class="home-stat">💰 FARADS Balance<strong id="homeBalance">0</strong><small>Available balance</small></div><div class="home-stat">🏆 Achievements<strong id="homeAchievements">0</strong><small>Badges earned</small></div><div class="home-stat">🎒 Collection<strong id="homeInventory">0</strong><small>Items owned</small></div><div class="home-stat">📚 Quizzes<strong id="homeQuizzes">0</strong><small>Completed quizzes</small></div></div>
+                <div class="home-section-title">Quick access</div><div class="dashboard-grid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))"><button class="btn quick-link" onclick="switchTab('transferTab')">👤 Transfer & Profile</button><button class="btn quick-link" onclick="switchTab('shopTab')">🛍️ School Store</button><button class="btn quick-link" onclick="switchTab('auctionTab')">🔨 Live Auction</button><button class="btn quick-link" onclick="switchTab('classTab')">📚 Classes & Quizzes</button><button class="btn quick-link" onclick="switchTab('videoTab')">▶️ Video Player</button><button class="btn quick-link" onclick="switchTab('directoryTab')">👥 Classroom List</button><button class="btn quick-link" onclick="switchTab('achievementsTab')">🏅 Achievements</button><button class="btn quick-link" onclick="switchTab('shopTab')">🏪 Marketplace & Store</button></div>
+                <div class="card" style="margin-top:1rem"><div class="card-title">Getting started</div><p style="color:var(--text-muted)">Explore your profile, check your FARADS, join class activities and visit the School Store. Replay the student tutorial anytime using Tutorial & Help.</p></div>
+            </div>
             <div id="transferTab" class="tab-content">
                 <div class="dashboard-grid">
                     <div class="card">
@@ -1110,6 +1137,24 @@
         const SECRET_ADMIN_CODE = 'FARADAYADMIN';
 
         let supabaseClient = null;
+        let faradayDataRevision = 0;
+        let faradaySaveQueue = Promise.resolve();
+        let faradayLastLoadError = null;
+        let faradayServerOffsetMs = 0;
+        let auctionDisplayInterval = null;
+        let auctionBidInFlight = false;
+        async function syncFaradayServerClock(){ if(!supabaseClient)return false; try{const t0=Date.now();const {data,error}=await supabaseClient.rpc('faraday_server_now');if(error)throw error;const serverMs=new Date(data).getTime();if(!Number.isFinite(serverMs))throw new Error('Invalid server clock response');faradayServerOffsetMs=serverMs-(t0+Date.now())/2;return true;}catch(e){console.warn('Could not synchronize server clock:',e);return false;} }
+        function faradayNow(){return Date.now()+faradayServerOffsetMs;}
+        function getAuctionSeconds(){if(!AUCTION_STATE)return 0;const end=Number(AUCTION_STATE.endsAt||AUCTION_STATE.end_at||0);if(end>0)return Math.max(0,Math.ceil((end-faradayNow())/1000));return Math.max(0,Number(AUCTION_STATE.timer)||0);}
+        function ensureAuctionDisplayTicker(){if(auctionDisplayInterval)return;auctionDisplayInterval=setInterval(()=>{if(!currentUser||!AUCTION_STATE||!['countdown','active'].includes(AUCTION_STATE.status)){clearInterval(auctionDisplayInterval);auctionDisplayInterval=null;return;}const t=getAuctionSeconds();AUCTION_STATE.timer=t;const el=document.getElementById('tabAuctionTimerDisplay');if(el){if(AUCTION_STATE.status==='countdown')el.innerText=`Bidding Starts In: ${t}s`;else el.innerText=t<=3?(t===3?'Going once...':t===2?'Going twice...':t===1?'Final Call!':'Auction ending…'):`Time Remaining: ${t}s`;}} ,250);}
+        function setFaradayConnectionState(state, message) {
+            const el = document.getElementById('ftConnectionStatus'); if (!el) return;
+            el.dataset.state = state;
+            el.textContent = message || ({online:'● Connected',saving:'◌ Saving',offline:'● Offline',error:'● Sync error',connecting:'◌ Connecting'}[state] || state);
+        }
+        window.addEventListener('online', () => { setFaradayConnectionState('connecting','◌ Reconnecting'); if (supabaseClient) loadAllData().then(ok => { if(ok && currentUser){ currentUser=ACCOUNTS_DATA.find(a=>String(a.id)===String(currentUser.id))||currentUser; updateUserDisplays(); renderHomeDashboard(); } }); });
+        window.addEventListener('offline', () => setFaradayConnectionState('offline'));
+
         try {
             if (window.supabase && typeof window.supabase.createClient === 'function') {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -1269,69 +1314,47 @@ MARKET_LISTINGS = Array.isArray(d.market_listings) ? d.market_listings : [];
         }
 
         async function loadAllData() {
-            if (!supabaseClient) {
-                console.warn("Supabase client unavailable; running in offline/local mode.");
-                if (!restoreLocalData()) initDefaults();
-                return;
-            }
+            faradayLastLoadError = null;
+            if (!supabaseClient) { faradayLastLoadError = new Error('Supabase client is unavailable.'); setFaradayConnectionState('offline','● Offline mode'); if(!restoreLocalData()) initDefaults(); return false; }
+            setFaradayConnectionState('connecting');
             try {
-                const { data, error } = await supabaseClient
-                    .from('app_data')
-                    .select('*')
-                    .eq('id', 1)
-                    .maybeSingle();
-
-                if (error) {
-                    console.error("Supabase select error:", error.message, error.details);
-                    if (!restoreLocalData()) initDefaults();
-                    return;
+                let {data,error}=await supabaseClient.from('app_data').select('*').eq('id',1).maybeSingle();
+                if(error) throw error;
+                if(!data) { faradayLastLoadError=new Error('Shared database row id=1 was not found.'); setFaradayConnectionState('error','● Database row missing'); return false; }
+                // Carefully recover browser-cached accounts that never reached the shared database.
+                // The atomic RPC rejects duplicates and retired IDs, so this does not overwrite a remote account.
+                let cachedForRecovery={}; try{cachedForRecovery=JSON.parse(localStorage.getItem(LOCAL_DATA_KEY)||'{}')}catch(_){cachedForRecovery={}}
+                const cachedAccounts=Array.isArray(cachedForRecovery.accounts)?cachedForRecovery.accounts:[];
+                const remoteIds=new Set((Array.isArray(data.accounts)?data.accounts:[]).map(a=>String(a.id)));
+                const removedBeforeRecovery=new Set((Array.isArray(data.removed_accounts)?data.removed_accounts:[]).map(String));
+                let recoveredAny=false;
+                for(const cachedAccount of cachedAccounts){
+                    const cachedId=String(cachedAccount?.id||'');
+                    if(!/^\d{10}$/.test(cachedId)||remoteIds.has(cachedId)||removedBeforeRecovery.has(cachedId))continue;
+                    try{const result=await supabaseClient.rpc('register_faraday_account',{p_account:cachedAccount});if(!result.error&&result.data?.ok===true){remoteIds.add(cachedId);recoveredAny=true;}}
+                    catch(recoveryError){console.warn('A cached account could not be automatically recovered:',cachedId,recoveryError);}
                 }
-
-                if (!data) {
-                    if (restoreLocalData()) { await saveAllData(); return; }
-                    initDefaults();
-                    await saveAllData();
-                } else {
-                    const remoteAccounts = data.accounts && data.accounts.length > 0 ? data.accounts : JSON.parse(JSON.stringify(DEFAULT_ACCOUNTS));
-                    let cachedAccounts = [];
-                    try {
-                        const cachedData = JSON.parse(localStorage.getItem(LOCAL_DATA_KEY) || '{}');
-                        cachedAccounts = Array.isArray(cachedData.accounts) ? cachedData.accounts : [];
-                    } catch (_) { cachedAccounts = []; }
-                    const remoteIds = new Set(remoteAccounts.map(acc => String(acc.id)));
-                    // Keep accounts created on this browser when the remote database has not received them yet.
-                    REMOVED_ACCOUNT_IDS = Array.isArray(data.removed_accounts) ? data.removed_accounts : [];
-                    const removedSet = new Set(REMOVED_ACCOUNT_IDS.map(String));
-                    const localOnlyAccounts = cachedAccounts.filter(acc => !remoteIds.has(String(acc.id)) && !removedSet.has(String(acc.id)));
-                    ACCOUNTS_DATA = normalizeAccounts(normalizeAccounts([...remoteAccounts, ...localOnlyAccounts]).filter(acc => !removedSet.has(String(acc.id))));
-                    GRADE_COLUMNS = data.columns && data.columns.length > 0 ? data.columns : JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
-                    GRADE_WEIGHTS = data.weights || JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
-                    GRADE_CONV_RATE = data.convRate !== undefined && data.convRate !== null ? data.convRate : DEFAULT_CONVERSION_RATE;
-                    LESSONS_DATA = Array.isArray(data.lessons) ? data.lessons : [];
-                    QUIZZES_DATA = Array.isArray(data.quizzes) ? data.quizzes : [];
-                    let cached = {};
-                    try { cached = JSON.parse(localStorage.getItem(LOCAL_DATA_KEY) || "{}"); } catch (_) { cached = {}; }
-PATCH_NOTES = Array.isArray(data.patch_notes) ? data.patch_notes : (Array.isArray(cached.patch_notes) ? cached.patch_notes : []);
-                    ACCOUNTS_DATA = normalizeAccounts(ACCOUNTS_DATA);
-MARKET_LISTINGS = Array.isArray(data.market_listings) ? data.market_listings : [];
-                    BANNED_ACCOUNTS = Array.isArray(data.banned_accounts) ? data.banned_accounts : [];
-                    PATCH_NOTES = Array.isArray(data.patch_notes) ? data.patch_notes : PATCH_NOTES;
-
-                    let loadedCats = data.shop_categories && data.shop_categories.length > 0 ? data.shop_categories : JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
-                    let showcaseCat = loadedCats.find(c => c.id === 'cat_showcase');
-                    if (!showcaseCat) {
-                        loadedCats.push({ id: 'cat_showcase', title: 'AUCTION SHOWCASE', description: 'Have a look around', items: [] });
-                    } else {
-                        showcaseCat.description = 'Have a look around';
-                    }
-                    SHOP_CATEGORIES = loadedCats;
-                    AUCTION_STATE = data.auction || null;
-                        checkShowcasePriceFluctuation();
-                }
-            } catch (err) {
-                console.error("Failed to load data from Supabase:", err);
-                if (!restoreLocalData()) initDefaults();
-            }
+                if(recoveredAny){const refreshed=await supabaseClient.from('app_data').select('*').eq('id',1).maybeSingle();if(refreshed.error)throw refreshed.error;data=refreshed.data;}
+                faradayDataRevision=Number(data.revision||0);
+                const remoteAccounts=Array.isArray(data.accounts)?data.accounts:[];
+                REMOVED_ACCOUNT_IDS=Array.isArray(data.removed_accounts)?data.removed_accounts:[];
+                const removedSet=new Set(REMOVED_ACCOUNT_IDS.map(String));
+                ACCOUNTS_DATA=normalizeAccounts(remoteAccounts.filter(a=>!removedSet.has(String(a.id))));
+                GRADE_COLUMNS=Array.isArray(data.columns)&&data.columns.length?data.columns:JSON.parse(JSON.stringify(DEFAULT_COLUMNS));
+                GRADE_WEIGHTS=data.weights||JSON.parse(JSON.stringify(DEFAULT_WEIGHTS));
+                GRADE_CONV_RATE=data.convRate!==undefined&&data.convRate!==null?data.convRate:DEFAULT_CONVERSION_RATE;
+                LESSONS_DATA=Array.isArray(data.lessons)?data.lessons:[]; QUIZZES_DATA=Array.isArray(data.quizzes)?data.quizzes:[];
+                let cached={}; try{cached=JSON.parse(localStorage.getItem(LOCAL_DATA_KEY)||'{}')}catch(_){cached={}}
+                PATCH_NOTES=Array.isArray(data.patch_notes)?data.patch_notes:(Array.isArray(cached.patch_notes)?cached.patch_notes:[]);
+                MARKET_LISTINGS=Array.isArray(data.market_listings)?data.market_listings:[];
+                BANNED_ACCOUNTS=Array.isArray(data.banned_accounts)?data.banned_accounts:[];
+                let cats=Array.isArray(data.shop_categories)&&data.shop_categories.length?data.shop_categories:JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
+                let showcase=cats.find(c=>c.id==='cat_showcase'); if(!showcase) cats.push({id:'cat_showcase',title:'AUCTION SHOWCASE',description:'Have a look around',items:[]}); else showcase.description='Have a look around';
+                SHOP_CATEGORIES=cats; AUCTION_STATE=data.auction||null; checkShowcasePriceFluctuation();
+                try{localStorage.setItem(LOCAL_DATA_KEY,JSON.stringify(data))}catch(e){console.warn('Local cache update failed',e)}
+                await syncFaradayServerClock();
+                setFaradayConnectionState(navigator.onLine?'online':'offline'); return true;
+            } catch(err) { faradayLastLoadError=err; console.error('Failed to load authoritative Faraday Tech data:',err); setFaradayConnectionState(navigator.onLine?'error':'offline'); if(!restoreLocalData()) initDefaults(); return false; }
         }
 
         function initDefaults() {
@@ -1467,46 +1490,22 @@ MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = [];
 
         async function saveAllData() {
             captureStudentRecoveryFromCachedData();
-            const payload = {
-                    id: 1,
-                    accounts: ACCOUNTS_DATA,
-                    columns: GRADE_COLUMNS,
-                    weights: GRADE_WEIGHTS,
-                    convRate: GRADE_CONV_RATE,
-                    shop_categories: SHOP_CATEGORIES,
-                    lessons: LESSONS_DATA,
-                    quizzes: QUIZZES_DATA,
-                    auction: AUCTION_STATE,
-                    patch_notes: PATCH_NOTES,
-market_listings: MARKET_LISTINGS,
-                    banned_accounts: BANNED_ACCOUNTS,
-                    removed_accounts: REMOVED_ACCOUNT_IDS
-                };
-            try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(payload)); } catch (storageError) { console.warn("Local save failed", storageError); }
-            // Local storage keeps the app usable offline; Supabase sync shares data across accounts.
-            if (!supabaseClient) return true;
-            try {
-                const { error } = await supabaseClient
-                    .from('app_data')
-                    .upsert(payload, { onConflict: 'id' });
-
-                if (error) {
-                    console.error("Supabase upsert error:", error.message, error.details);
-                    showAlert(`Message was not synced to other accounts: ${error.message}`, 'warning');
-                    return false;
-                }
-                return true;
-            } catch (err) {
-                console.error("Failed to save data to Supabase:", err);
-                showAlert(`Message was not synced to other accounts: ${err.message || 'Database connection error'}`, 'warning');
-                return false;
-            }
+            const payload={id:1,accounts:ACCOUNTS_DATA,columns:GRADE_COLUMNS,weights:GRADE_WEIGHTS,convRate:GRADE_CONV_RATE,shop_categories:SHOP_CATEGORIES,lessons:LESSONS_DATA,quizzes:QUIZZES_DATA,auction:AUCTION_STATE,patch_notes:PATCH_NOTES,market_listings:MARKET_LISTINGS,banned_accounts:BANNED_ACCOUNTS,removed_accounts:REMOVED_ACCOUNT_IDS};
+            try{localStorage.setItem(LOCAL_DATA_KEY,JSON.stringify(payload))}catch(e){console.warn('Local save failed',e)}
+            if(!supabaseClient){setFaradayConnectionState('offline','● Offline — not synced');return false;}
+            const run=async()=>{setFaradayConnectionState('saving');try{
+                const {data,error}=await supabaseClient.rpc('save_faraday_app_data',{p_payload:payload,p_expected_revision:faradayDataRevision});
+                if(error) throw error; const rev=Number(data); if(!Number.isFinite(rev)) throw new Error('Database did not return a revision number.');
+                faradayDataRevision=rev; setFaradayConnectionState('online'); return true;
+            }catch(err){console.error('Faraday save failed:',err);const m=String(err?.message||'');if(/revision conflict|stale revision|40001/i.test(m)){setFaradayConnectionState('error','● Update conflict');showAlert('Another device changed Faraday Tech at the same time. Your change was not synced. Reload the latest data before retrying.', 'warning')}else{setFaradayConnectionState(navigator.onLine?'error':'offline');showAlert(`Changes were not synced: ${err.message||'Database unavailable'}. Reconnect and retry.`, 'warning')}return false;}};
+            faradaySaveQueue=faradaySaveQueue.then(run,run); return faradaySaveQueue;
         }
 
         // Apply one authoritative app_data row to the current tab.
         // This is shared by Supabase Realtime and the same-browser storage fallback.
         function applyRemoteAppData(updated, source = 'remote') {
             if (!updated || Number(updated.id) !== 1) return;
+            if (updated.revision !== undefined && updated.revision !== null) faradayDataRevision = Number(updated.revision) || 0;
 
             if (Array.isArray(updated.accounts)) ACCOUNTS_DATA = normalizeAccounts(updated.accounts);
             if (Array.isArray(updated.columns)) GRADE_COLUMNS = updated.columns;
@@ -1735,93 +1734,21 @@ market_listings: MARKET_LISTINGS,
         }
 
         async function handleSignUp(e) {
-            e.preventDefault();
-
-            const customIdInput = document.getElementById('signupCustomId').value.trim();
-            const name = document.getElementById('signupName').value.trim();
-            const nickname = document.getElementById('signupNickname').value.trim();
-            const pass = document.getElementById('signupPass').value;
-            const role = document.getElementById('signupRole').value;
-            const genderSelect = document.getElementById('signupGender').value;
-            const customGenderInput = document.getElementById('signupCustomGender').value.trim();
-            const adminCode = document.getElementById('signupAdminCode').value.trim();
-
-            if (!name || !pass) {
-                showAlert('Please provide your name and password.', 'danger');
-                return;
-            }
-
-            let newId = customIdInput;
-            if (!newId) {
-                newId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-                while (ACCOUNTS_DATA.some(acc => acc.id === newId)) {
-                    newId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-                }
-            } else {
-                if (!/^\d{10}$/.test(newId)) {
-                    showAlert('Account ID must be exactly 10 digits.', 'danger');
-                    return;
-                }
-                if (ACCOUNTS_DATA.some(acc => acc.id === newId) || REMOVED_ACCOUNT_IDS.includes(String(newId))) {
-                    showAlert('This 10-Digit ID is already taken! Please choose another one.', 'danger');
-                    return;
-                }
-            }
-
-            let isAdmin = false;
-            let resolvedGender = genderSelect === 'Other' ? (customGenderInput || 'Custom') : genderSelect;
-            let group = resolvedGender;
-
-            let isWebDeveloper = false;
-            if (role === 'Admin') {
-                if (adminCode !== SECRET_ADMIN_CODE) { showAlert('Invalid Admin Secret Code!', 'danger'); return; }
-                isAdmin = true; group = 'Admin';
-            } else if (role === 'Web Developer') {
-                if (adminCode !== WEBDEV_ACCESS_CODE) { showAlert('Invalid Web Developer Access Code!', 'danger'); return; }
-                isWebDeveloper = true; group = 'Web Developer';
-            }
-
-            const newAccount = {
-                id: newId,
-                name: name,
-                nickname: nickname,
-                group: group,
-                pass: pass,
-                balance: isAdmin ? 99999 : 1000,
-                isAdmin: isAdmin,
-                isWebDeveloper: isWebDeveloper,
-                scores: {},
-                history: [],
-                inventory: [],
-                completedQuizzes: [],
-                privacy: {},
-                avatar: ""
-            };
-
-            ACCOUNTS_DATA.push(newAccount);
-            await saveAllData();
-
-            // Keep the just-created account in the local cache even if Supabase rejects the upsert.
-            try {
-                const cachedData = JSON.parse(localStorage.getItem(LOCAL_DATA_KEY) || '{}');
-                cachedData.accounts = ACCOUNTS_DATA;
-                localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(cachedData));
-            } catch (cacheError) { console.warn('Could not cache new account locally:', cacheError); }
-
-            populateDirectory();
-            populateTransferDropdown();
-            populateAdminDropdown();
-            renderGradebookSheet();
-
-            showAlert(`Account created! Added to Classroom List. Your ID is: ${newId}`, 'success');
-            document.getElementById('signupCustomId').value = '';
-            document.getElementById('signupName').value = '';
-            document.getElementById('signupNickname').value = '';
-            document.getElementById('signupPass').value = '';
-            document.getElementById('signupAdminCode').value = '';
-            document.getElementById('signupCustomGender').value = '';
-            toggleAuthMode(e);
-            document.getElementById('loginId').value = newId;
+            e.preventDefault(); const form=e.currentTarget; const btn=form?.querySelector('button[type="submit"]'); if(btn?.dataset.busy==='1')return;
+            const customId=document.getElementById('signupCustomId').value.trim(), name=document.getElementById('signupName').value.trim(), nickname=document.getElementById('signupNickname').value.trim(), pass=document.getElementById('signupPass').value, role=document.getElementById('signupRole').value, gender=document.getElementById('signupGender').value, customGender=document.getElementById('signupCustomGender').value.trim(), adminCode=document.getElementById('signupAdminCode').value.trim();
+            if(!name||!pass)return showAlert('Please provide your name and password.','danger');
+            if(!navigator.onLine||!supabaseClient)return showAlert('An internet connection is required to create an account. No account has been created.','warning');
+            let newId=customId||Math.floor(1000000000+Math.random()*9000000000).toString(); if(!/^\d{10}$/.test(newId))return showAlert('Account ID must be exactly 10 digits.','danger');
+            let isAdmin=false,isWebDeveloper=false,group=gender==='Other'?(customGender||'Custom'):gender;
+            if(role==='Admin'){if(adminCode!==SECRET_ADMIN_CODE)return showAlert('Invalid Admin Secret Code!','danger');isAdmin=true;group='Admin'}else if(role==='Web Developer'){if(adminCode!==WEBDEV_ACCESS_CODE)return showAlert('Invalid Web Developer Access Code!','danger');isWebDeveloper=true;group='Web Developer'}
+            const account={id:newId,name,nickname,group,pass,balance:isAdmin?99999:1000,isAdmin,isWebDeveloper,scores:{},history:[],inventory:[],completedQuizzes:[],privacy:{},avatar:'',tutorialSeen:false};
+            try{if(btn){btn.dataset.busy='1';btn.disabled=true;btn.textContent='Creating account…'}
+                const {data,error}=await supabaseClient.rpc('register_faraday_account',{p_account:account}); if(error)throw error; if(!data||data.ok!==true)throw new Error(data?.message||'Database did not confirm registration.');
+                const loaded=await loadAllData(); if(!loaded||!ACCOUNTS_DATA.some(a=>String(a.id)===String(data.account_id||newId)))throw new Error('Registration was accepted but could not be verified after reloading. Contact your teacher before trying again.');
+                populateDirectory();populateTransferDropdown();populateAdminDropdown();renderGradebookSheet();showAlert(`Account created and saved successfully. Your ID is: ${newId}`,'success');
+                ['signupCustomId','signupName','signupNickname','signupPass','signupAdminCode','signupCustomGender'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});toggleAuthMode(e);document.getElementById('loginId').value=newId;document.getElementById('loginPass').value='';
+            }catch(err){console.error('Registration failed:',err);showAlert(/duplicate|already exists|taken/i.test(String(err.message))?'That Account ID is already registered. Please choose another ID.':`Account was NOT confirmed as created: ${err.message||'database unavailable'}. Please reconnect and retry.`, 'danger')}
+            finally{if(btn){btn.dataset.busy='0';btn.disabled=false;btn.textContent='Create Account'}}
         }
 
         async function saveNickname() {
@@ -2660,112 +2587,88 @@ market_listings: MARKET_LISTINGS,
         }
 
         async function placeBid(increment) {
-            if (!currentUser || currentUser.isAdmin || !AUCTION_STATE || AUCTION_STATE.status !== 'active') {
-                showAlert('Auction bidding is not currently active!', 'danger');
-                return;
-            }
-
-            const freshUser = ACCOUNTS_DATA.find(acc => String(acc.id) === String(currentUser.id));
-            if (!freshUser) { showAlert('Your account could not be verified. Please sign in again.', 'danger'); return; }
-            if (!Number.isFinite(Number(increment)) || Number(increment) <= 0) { showAlert('Invalid bid amount.', 'danger'); return; }
-            const currentBalance = Number(freshUser.balance) || 0;
-            const newBid = (Number(AUCTION_STATE.currentBid) || 0) + Number(increment);
-
-            if (currentBalance < newBid) {
-                showAlert('You do not have enough FARADS for this bid!', 'danger');
-                return;
-            }
-
-            AUCTION_STATE.currentBid = newBid;
-            AUCTION_STATE.highestBidderId = currentUser.id;
-            AUCTION_STATE.highestBidderName = getDisplayName(currentUser);
-            AUCTION_STATE.bidsHistory.push({ id: currentUser.id, name: getDisplayName(currentUser), amount: newBid });
-            AUCTION_STATE.timer = 10;
-            if (activeBiddingInterval) clearInterval(activeBiddingInterval);
-            activeBiddingInterval = null;
-            startActiveBidding10s(false);
-
-            await saveAllData();
-            handleAuctionRealtimeSync();
+            if (auctionBidInFlight) return;
+            if (!currentUser || currentUser.isAdmin || !AUCTION_STATE || AUCTION_STATE.status !== 'active') { showAlert('Auction bidding is not currently active!', 'danger'); return; }
+            auctionBidInFlight = true;
+            const bidButtons = document.querySelectorAll('#tabAuctionStudentControls button');
+            bidButtons.forEach(b => { b.disabled = true; b.dataset.auctionBusy = '1'; });
+            try {
+                await syncFaradayServerClock();
+                const freshUser = ACCOUNTS_DATA.find(a => String(a.id) === String(currentUser.id));
+                if (!freshUser) throw new Error('Your account could not be verified. Please sign in again.');
+                if (!Number.isFinite(Number(increment)) || Number(increment) <= 0) throw new Error('Invalid bid amount.');
+                const currentBalance = Number(freshUser.balance) || 0;
+                const newBid = (Number(AUCTION_STATE.currentBid) || 0) + Number(increment);
+                if (currentBalance < newBid) throw new Error('You do not have enough FARADS for this bid!');
+                AUCTION_STATE.currentBid = newBid;
+                AUCTION_STATE.highestBidderId = currentUser.id;
+                AUCTION_STATE.highestBidderName = getDisplayName(currentUser);
+                AUCTION_STATE.bidsHistory = Array.isArray(AUCTION_STATE.bidsHistory) ? AUCTION_STATE.bidsHistory : [];
+                AUCTION_STATE.bidsHistory.push({ id: currentUser.id, name: getDisplayName(currentUser), amount: newBid });
+                AUCTION_STATE.endsAt = faradayNow() + 10000;
+                AUCTION_STATE.timer = 10;
+                const saved = await saveAllData();
+                if (!saved) { await loadAllData(); handleAuctionRealtimeSync(); return; }
+                handleAuctionRealtimeSync(); ensureAuctionDisplayTicker();
+            } catch (err) { showAlert(err.message || 'Your bid could not be submitted.', 'danger'); }
+            finally { auctionBidInFlight = false; bidButtons.forEach(b => { b.disabled = false; delete b.dataset.auctionBusy; }); }
         }
 
         async function startAuctionCountdown() {
             if (!AUCTION_STATE || !currentUser?.isAdmin || AUCTION_STATE.status === 'active' || AUCTION_STATE.status === 'countdown') return;
             if (auctionCountdownInterval) { clearInterval(auctionCountdownInterval); auctionCountdownInterval = null; }
-            AUCTION_STATE.status = 'countdown';
-            AUCTION_STATE.timer = 5;
-            await saveAllData();
-
-            let count = 5;
+            await syncFaradayServerClock();
+            AUCTION_STATE.status = 'countdown'; AUCTION_STATE.endsAt = faradayNow() + 5000; AUCTION_STATE.timer = 5;
+            if (!(await saveAllData())) { await loadAllData(); handleAuctionRealtimeSync(); return; }
+            ensureAuctionDisplayTicker();
             auctionCountdownInterval = setInterval(async () => {
-                if (!AUCTION_STATE || AUCTION_STATE.status !== 'countdown') {
-                    clearInterval(auctionCountdownInterval); auctionCountdownInterval = null; return;
-                }
-                count--;
-                AUCTION_STATE.timer = count;
-                await saveAllData();
-                handleAuctionRealtimeSync();
-                if (count <= 0) {
-                    clearInterval(auctionCountdownInterval); auctionCountdownInterval = null;
-                    startActiveBidding10s(true);
-                }
-            }, 1000);
+                if (!AUCTION_STATE || AUCTION_STATE.status !== 'countdown') { clearInterval(auctionCountdownInterval); auctionCountdownInterval = null; return; }
+                AUCTION_STATE.timer = getAuctionSeconds();
+                if (AUCTION_STATE.timer <= 0) { clearInterval(auctionCountdownInterval); auctionCountdownInterval = null; await startActiveBidding10s(true); }
+            }, 200);
         }
 
-        function startActiveBidding10s(resetTimer = true) {
+        async function startActiveBidding10s(resetTimer = true) {
             if (!AUCTION_STATE) return;
+            await syncFaradayServerClock();
             AUCTION_STATE.status = 'active';
-            if (resetTimer) AUCTION_STATE.timer = 10;
-            saveAllData();
-
+            if (resetTimer || !AUCTION_STATE.endsAt) AUCTION_STATE.endsAt = faradayNow() + 10000;
+            AUCTION_STATE.timer = getAuctionSeconds();
+            if (!(await saveAllData())) { await loadAllData(); handleAuctionRealtimeSync(); return; }
             if (activeBiddingInterval) clearInterval(activeBiddingInterval);
-
+            ensureAuctionDisplayTicker();
             activeBiddingInterval = setInterval(async () => {
-                AUCTION_STATE.timer--;
+                if (!AUCTION_STATE || AUCTION_STATE.status !== 'active') { clearInterval(activeBiddingInterval); activeBiddingInterval = null; return; }
+                AUCTION_STATE.timer = getAuctionSeconds();
                 if (AUCTION_STATE.timer <= 0) {
-                    clearInterval(activeBiddingInterval);
-                    activeBiddingInterval = null;
-                    if (currentUser?.isAdmin) finalizeAuctionWinner();
-                } else {
-                    await saveAllData();
+                    clearInterval(activeBiddingInterval); activeBiddingInterval = null;
+                    if (currentUser?.isAdmin) await finalizeAuctionWinner();
                 }
-                handleAuctionRealtimeSync();
-            }, 1000);
+            }, 250);
         }
 
         async function finalizeAuctionWinner() {
             if (!AUCTION_STATE || !currentUser?.isAdmin || AUCTION_STATE.status === 'closed' || AUCTION_STATE.finalizedAt) return;
-            AUCTION_STATE.status = 'closed';
-            AUCTION_STATE.finalizedAt = new Date().toISOString();
-
-            const sortedBids = [...AUCTION_STATE.bidsHistory].reverse();
-            let winner = null;
-            let winningBid = 0;
-
+            if (getAuctionSeconds() > 0) return;
+            AUCTION_STATE.status = 'closed'; AUCTION_STATE.finalizedAt = new Date(faradayNow()).toISOString();
+            const sortedBids = [...(AUCTION_STATE.bidsHistory || [])].reverse();
+            let winner = null, winningBid = 0;
             for (const bid of sortedBids) {
-                const student = ACCOUNTS_DATA.find(a => a.id === bid.id);
-                if (student && student.balance >= bid.amount) {
-                    winner = student;
-                    winningBid = bid.amount;
-                    break;
-                }
+                const student = ACCOUNTS_DATA.find(a => String(a.id) === String(bid.id));
+                if (student && Number(student.balance) >= Number(bid.amount)) { winner = student; winningBid = Number(bid.amount); break; }
             }
-
             if (winner) {
-                winner.balance -= winningBid;
-                if (!winner.inventory) winner.inventory = [];
+                winner.balance = Number(winner.balance) - winningBid;
+                if (!Array.isArray(winner.inventory)) winner.inventory = [];
                 winner.inventory.push({ item: AUCTION_STATE.itemName, paid: winningBid, date: new Date().toLocaleDateString(), auctionId: AUCTION_STATE.id || null });
-                AUCTION_STATE.winnerName = getDisplayName(winner);
-                AUCTION_STATE.winningBid = winningBid;
+                AUCTION_STATE.winnerName = getDisplayName(winner); AUCTION_STATE.winningBid = winningBid;
             } else {
                 AUCTION_STATE.winnerName = 'Nobody (Sent to Showcase)';
-                if (AUCTION_STATE.itemName) {
-                    sendItemToShowcase(AUCTION_STATE.itemName, AUCTION_STATE.currentBid, AUCTION_STATE.imageUrl || "");
-                }
+                if (AUCTION_STATE.itemName) sendItemToShowcase(AUCTION_STATE.itemName, AUCTION_STATE.currentBid, AUCTION_STATE.imageUrl || '');
             }
-            await saveAllData();
-            renderShopItems();
-            handleAuctionRealtimeSync();
+            const saved = await saveAllData();
+            if (!saved) { await loadAllData(); handleAuctionRealtimeSync(); return; }
+            renderShopItems(); handleAuctionRealtimeSync();
         }
 
         function handleAuctionRealtimeSync() {
@@ -2840,13 +2743,9 @@ market_listings: MARKET_LISTINGS,
 
             if (timerDisp) {
                 if (AUCTION_STATE.status === 'waiting') timerDisp.innerText = 'Waiting Area';
-                else if (AUCTION_STATE.status === 'countdown') timerDisp.innerText = `Bidding Starts In: ${AUCTION_STATE.timer}s`;
-                else if (AUCTION_STATE.status === 'active') {
-                    if (AUCTION_STATE.timer > 3) timerDisp.innerText = `Time Remaining: ${AUCTION_STATE.timer}s`;
-                    else if (AUCTION_STATE.timer === 3) timerDisp.innerText = 'Going once...';
-                    else if (AUCTION_STATE.timer === 2) timerDisp.innerText = 'Going twice...';
-                    else if (AUCTION_STATE.timer === 1) timerDisp.innerText = 'Final Call!';
-                }
+                else if (AUCTION_STATE.status === 'countdown') timerDisp.innerText = `Bidding Starts In: ${getAuctionSeconds()}s`;
+                else if (AUCTION_STATE.status === 'active') { const seconds=getAuctionSeconds(); if(seconds>3)timerDisp.innerText=`Time Remaining: ${seconds}s`;else if(seconds===3)timerDisp.innerText='Going once...';else if(seconds===2)timerDisp.innerText='Going twice...';else if(seconds===1)timerDisp.innerText='Final Call!';else timerDisp.innerText='Auction ending…'; }
+                if (['countdown','active'].includes(AUCTION_STATE.status)) ensureAuctionDisplayTicker();
             }
         }
 
@@ -2884,6 +2783,8 @@ market_listings: MARKET_LISTINGS,
             document.getElementById('gradeConvRateInput').value = GRADE_CONV_RATE;
             await tryAutomaticSignIn();
         }
+
+        function renderHomeDashboard(){if(!currentUser)return;const put=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};put('homeWelcome',`Welcome back, ${getDisplayName(currentUser)}!`);put('homeBalance',(Number(currentUser.balance)||0).toLocaleString());put('homeAchievements',String(Array.isArray(currentUser.achievements)?currentUser.achievements.length:0));put('homeInventory',String(Array.isArray(currentUser.inventory)?currentUser.inventory.length:0));put('homeQuizzes',String(Array.isArray(currentUser.completedQuizzes)?currentUser.completedQuizzes.length:0));}
 
         function openUserSession(user) {
             if (!user) return false;
@@ -2923,41 +2824,28 @@ market_listings: MARKET_LISTINGS,
             
             
             renderMarketplace();
+            renderHomeDashboard();
+            switchTab('homeTab');
+            if (!currentUser.tutorialSeen) setTimeout(() => { if(currentUser && !currentUser.tutorialSeen) openWebsiteGuide(); }, 700);
             return true;
         }
 
         async function handleLogin(e) {
-            e.preventDefault();
-            await loadAllData();
-            const idInput = document.getElementById('loginId').value.trim();
-            const passInput = document.getElementById('loginPass').value;
-            const user = ACCOUNTS_DATA.find(acc => String(acc.id).trim() === idInput && String(acc.pass) === passInput);
-
-            if (user && BANNED_ACCOUNTS.some(entry => String(entry.id) === String(user.id))) {
-                return showAlert('This account has been banned from Faraday Tech. Contact the Web Developer.', 'danger');
-            }
-            if (user) {
-                if (user.isWebDeveloper) {
-                    const enteredCode = window.prompt('Enter the Web Developer special code to continue:');
-                    if (enteredCode !== WEBDEV_ACCESS_CODE) return showAlert('Incorrect Web Developer special code.', 'danger');
-                } else if (user.isAdmin || String(user.group).toLowerCase() === 'admin') {
-                    const enteredCode = window.prompt('Enter the Teacher special code to continue:');
-                    if (enteredCode !== SECRET_ADMIN_CODE) return showAlert('Incorrect Teacher special code.', 'danger');
-                }
-                if (document.getElementById('rememberLogin')?.checked) {
-                    try { localStorage.setItem('faradayTechRememberedLogin', JSON.stringify({ id: idInput, pass: passInput })); }
-                    catch (err) { console.warn('Could not save remembered login:', err); }
-                } else {
-                    localStorage.removeItem('faradayTechRememberedLogin');
-                }
-                openUserSession(user);
-                showAlert(`Welcome back, ${getDisplayName(currentUser)}!`, 'success');
-            } else {
-                showAlert('Invalid Account ID or Password!', 'danger');
-            }
+            e.preventDefault(); const idInput=document.getElementById('loginId').value.trim(), passInput=document.getElementById('loginPass').value, btn=e.currentTarget?.querySelector('button[type="submit"]'); if(btn?.dataset.busy==='1')return;
+            try{if(btn){btn.dataset.busy='1';btn.disabled=true;btn.textContent='Checking…'}
+                const loaded=await loadAllData(); if(!loaded&&supabaseClient){showAlert(navigator.onLine?'Faraday Tech could not reach the database. Your credentials were not checked. Please try again.':'You are offline. Reconnect to the internet and try signing in again.','warning');return}
+                const user=ACCOUNTS_DATA.find(a=>String(a.id).trim()===idInput&&String(a.pass)===passInput);
+                if(user&&BANNED_ACCOUNTS.some(x=>String(x.id)===String(user.id)))return showAlert('This account has been banned from Faraday Tech. Contact the Web Developer.','danger');
+                if(!user)return showAlert('Invalid Account ID or Password. Please check both fields and try again.','danger');
+                if(user.isWebDeveloper){const code=window.prompt('Enter the Web Developer special code to continue:');if(code!==WEBDEV_ACCESS_CODE)return showAlert('Incorrect Web Developer special code.','danger')}
+                else if(user.isAdmin||String(user.group).toLowerCase()==='admin'){const code=window.prompt('Enter the Teacher special code to continue:');if(code!==SECRET_ADMIN_CODE)return showAlert('Incorrect Teacher special code.','danger')}
+                if(document.getElementById('rememberLogin')?.checked){try{localStorage.setItem('faradayTechRememberedLogin',JSON.stringify({id:idInput,pass:passInput}))}catch(err){console.warn(err)}}else localStorage.removeItem('faradayTechRememberedLogin');
+                openUserSession(user);showAlert(`Welcome back, ${getDisplayName(currentUser)}!`,'success');
+            }finally{if(btn){btn.dataset.busy='0';btn.disabled=false;btn.textContent='Sign In'}}
         }
 
         async function tryAutomaticSignIn() {
+            if (supabaseClient && faradayLastLoadError) return;
             try {
                 const saved = JSON.parse(localStorage.getItem('faradayTechRememberedLogin') || 'null');
                 if (!saved || !saved.id || typeof saved.pass !== 'string') return;
@@ -3245,9 +3133,10 @@ await saveAllData(); populateDirectory(); populateTransferDropdown(); populateAd
             const role = currentUser?.isWebDeveloper ? 'developer' : currentUser?.isAdmin ? 'teacher' : 'student';
             showGuidePage(role);
         }
-        function closeWebsiteGuide(event) {
+        async function closeWebsiteGuide(event) {
             if (event && event.target !== event.currentTarget) return;
             document.getElementById('websiteGuideModal')?.classList.add('hidden');
+            if(currentUser && !currentUser.tutorialSeen){currentUser.tutorialSeen=true;const a=ACCOUNTS_DATA.find(x=>String(x.id)===String(currentUser.id));if(a)a.tutorialSeen=true;await saveAllData();}
         }
         function showGuidePage(role) {
             ['student','teacher','developer'].forEach(key => {
@@ -3842,5 +3731,6 @@ await saveAllData(); populateDirectory(); populateTransferDropdown(); populateAd
       </div>
     </div>
 
+<script>document.addEventListener('DOMContentLoaded',()=>{if(!navigator.onLine)setFaradayConnectionState('offline');else setFaradayConnectionState('connecting')});</script>
 </body>
 </html>
