@@ -444,7 +444,7 @@
 html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(--text-main)!important;display:block!important}
 #mainHeader{position:sticky;top:0;z-index:900;background:linear-gradient(105deg,#08264d,#104a91 58%,#2563eb)!important;border-bottom:1px solid #4c83c8!important;padding:.75rem 1.25rem!important;min-height:76px;box-shadow:0 5px 20px #092b562e}
 #mainHeader .brand,#mainHeader .brand h2{color:#fff!important}#mainHeader .brand{font-size:1.55rem;letter-spacing:.04em}#mainHeader .btn{background:#eaf3ff!important;color:#103a70!important;border:1px solid #b9d4f5}
-.container{max-width:none!important;width:100%!important;margin:0!important;padding:1.15rem 1.35rem 2rem 252px!important}
+.container{max-width:none!important;width:100%!important;margin:0!important;padding:1rem 1.25rem 2rem!important}
 .card,.modal-card{background:#fff!important;color:var(--text-main)!important;border:1px solid var(--border)!important;box-shadow:0 5px 18px #194c870f!important}.card-title{color:#123f7a!important}
 .form-control,.sheet-input{background:#f8fbff!important;color:#102a43!important;border:1px solid #b8cde8!important}.form-control:focus,.sheet-input:focus{border-color:#2563eb!important;box-shadow:0 0 0 3px #2563eb1f}
 .btn{background:#2563eb!important;color:#fff!important;border:1px solid #1d4ed8!important;border-radius:10px!important}.btn:hover{background:#174ea6!important;color:#fff!important}.btn-warning{background:#dbeafe!important;color:#123f7a!important;border-color:#93b9e8!important}.btn-danger{background:#dc3545!important;color:#fff!important;border-color:#c52b3a!important}
@@ -453,9 +453,9 @@ html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(-
 #appSection{min-height:calc(100vh - 80px)}#alertBox{position:sticky;top:84px;z-index:850}.dashboard-grid{gap:1rem!important}.shop-item{background:#f8fbff!important;border-color:#c7d9f2!important;color:#102a43!important}.item-placeholder{background:#eaf3ff!important;border-color:#bfd3ed!important}.item-price,.balance-badge{color:#1d5fbf!important}.balance-badge{background:#e4efff!important;border-color:#8db5e8!important}table th{background:#eaf2ff!important;color:#244d7c!important}table td{color:#17324f!important}tr.clickable-row:hover{background:#edf5ff!important}.receipt-box{background:#eff6ff!important;color:#123f7a!important}.timer-badge{background:#e7f0ff!important;color:#1d4ed8!important}.alert-success{background:#ecfdf3!important;color:#166534!important}.alert-danger{background:#fff1f2!important;color:#9f1239!important}.alert-warning{background:#fffbeb!important;color:#92400e!important}
 #ftConnectionStatus{display:inline-flex;align-items:center;gap:.45rem;padding:.38rem .72rem;border-radius:999px;background:#ffffff24;color:#fff;border:1px solid #ffffff40;font-size:.78rem;font-weight:700}#ftConnectionStatus[data-state=offline],#ftConnectionStatus[data-state=error]{background:#991b1b}#ftConnectionStatus[data-state=saving]{background:#1e40af}
 #homeTab .home-hero{background:linear-gradient(115deg,#0b2d59,#1d5fbf 68%,#60a5fa);color:#fff;border-radius:18px;padding:1.5rem;margin-bottom:1rem}#homeTab .home-hero h2{color:#fff!important;font-size:1.5rem;margin-bottom:.3rem}#homeTab .home-stat{background:#fff;border:1px solid #c7d9f2;border-radius:14px;padding:1rem;box-shadow:0 4px 12px #194c870f}#homeTab .home-stat strong{display:block;font-size:1.55rem;color:#1d5fbf}#homeTab .quick-link{display:flex;align-items:center;gap:.7rem;min-height:58px;text-align:left;background:#f5f9ff!important;color:#174477!important;border:1px solid #c7d9f2!important}#homeTab .quick-link:hover{background:#e1edff!important}#homeTab .home-section-title{color:#123f7a;font-weight:800;margin:1rem 0 .65rem}
-.container:has(#loginSection:not(.hidden)){padding-left:1.35rem!important}.auth-wrapper{max-width:480px!important;margin:3rem auto!important}.auth-wrapper .card{border-radius:18px!important}.profile-avatar-preview{border-color:#2563eb!important}
-@media(max-width:900px){.container{padding:1rem!important}.tabs{position:sticky!important;top:76px;bottom:auto;width:100%;height:auto;flex-direction:row!important;overflow-x:auto;white-space:nowrap;padding:.6rem!important;z-index:700}.tab-btn{width:auto;min-width:max-content;text-align:center!important;padding:.58rem .85rem!important}}
-@media(max-width:600px){#mainHeader{padding:.65rem .8rem!important;min-height:64px}#mainHeader .brand{font-size:1.15rem}#mainHeader .brand img{width:42px!important;height:42px!important}.container{padding:.65rem!important}.tabs{top:64px}.auth-wrapper{margin:1.2rem auto!important;padding:0 .3rem}.dashboard-grid{grid-template-columns:1fr!important}}
+.container:has(#loginSection:not(.hidden)){padding:1rem 1.25rem 2rem!important}.auth-wrapper{max-width:480px!important;margin:3rem auto!important}.auth-wrapper .card{border-radius:18px!important}.profile-avatar-preview{border-color:#2563eb!important}
+
+
 
 
         .ft-mini-card{background:#f3f8ff;border:1px solid #c7d9f2;border-radius:12px;padding:12px;color:#173e70}
@@ -480,6 +480,101 @@ table { max-width:100%; }
 #appSection, .main-content, .tab-content, .dashboard-grid { min-width:0; max-width:100%; }
 .table-responsive, .ft-table-wrap { display:block; width:100%; max-width:100%; overflow-x:auto; }
 .table-responsive table, .ft-table-wrap table { min-width:680px; }
+
+
+/* === Stable application layout: sidebar and page content occupy separate grid columns === */
+#appSection {
+    display: grid !important;
+    grid-template-columns: 232px minmax(0, 1fr) !important;
+    align-items: start !important;
+    column-gap: 20px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+#appSection > .tabs {
+    position: sticky !important;
+    top: 88px !important;
+    left: auto !important;
+    bottom: auto !important;
+    grid-column: 1 !important;
+    grid-row: 1 / span 100 !important;
+    width: 232px !important;
+    height: calc(100vh - 100px) !important;
+    max-height: calc(100vh - 100px) !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+#appSection > .tab-content {
+    grid-column: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+#appSection > .tab-content > * ,
+#appSection .card,
+#appSection .dashboard-grid {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+#appSection .table-responsive,
+#appSection .ft-table-wrap {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+}
+#appSection table {
+    max-width: 100% !important;
+}
+#appSection .tab-content:not(.hidden) {
+    display: block !important;
+}
+@media (max-width: 900px) {
+    .container { padding: .75rem !important; }
+    #appSection {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+    #appSection > .tabs {
+        position: sticky !important;
+        top: 76px !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        white-space: nowrap !important;
+        padding: .6rem !important;
+        z-index: 700 !important;
+    }
+    #appSection > .tabs .tab-btn {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: max-content !important;
+        text-align: center !important;
+    }
+    #appSection > .tab-content {
+        width: 100% !important;
+    }
+}
+@media (max-width: 600px) {
+    #mainHeader { padding: .65rem .8rem !important; min-height: 64px !important; }
+    #mainHeader .brand { font-size: 1.15rem !important; }
+    #mainHeader .brand img { width: 42px !important; height: 42px !important; }
+    #appSection > .tabs { top: 64px !important; }
+    .auth-wrapper { margin: 1.2rem auto !important; padding: 0 .3rem !important; }
+    .dashboard-grid { grid-template-columns: 1fr !important; }
+}
 
 </style>
 <!-- Faraday Tech sync patch: Realtime status diagnostics + same-browser cross-tab sync + visibility recovery -->
