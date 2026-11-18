@@ -1200,6 +1200,8 @@ html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(-
         let supabaseClient = null;
         let faradayDataRevision = 0;
         let faradaySaveQueue = Promise.resolve();
+        let faradaySaveInProgress = false;
+        let faradayRemoteRefreshInFlight = false;
         let faradayLastLoadError = null;
         let faradayServerOffsetMs = 0;
         let auctionDisplayInterval = null;
@@ -1575,11 +1577,11 @@ MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = [];
             const payload={id:1,accounts:ACCOUNTS_DATA,columns:GRADE_COLUMNS,weights:GRADE_WEIGHTS,convRate:GRADE_CONV_RATE,shop_categories:SHOP_CATEGORIES,lessons:LESSONS_DATA,quizzes:QUIZZES_DATA,auction:AUCTION_STATE,patch_notes:PATCH_NOTES,market_listings:MARKET_LISTINGS,banned_accounts:BANNED_ACCOUNTS,removed_accounts:REMOVED_ACCOUNT_IDS,ft_notifications:FT_NOTIFICATIONS,ft_transactions:FT_TRANSACTIONS,ft_announcements:FT_ANNOUNCEMENTS,ft_tutorial_progress:FT_TUTORIAL_PROGRESS,ft_support_tickets:FT_SUPPORT_TICKETS,ft_audit_logs:FT_AUDIT_LOGS,ft_attendance:FT_ATTENDANCE,ft_duplicate_archive:FT_DUPLICATE_ARCHIVE,ft_auto_delete_duplicates:FT_AUTO_DELETE_DUPLICATES};
             try{localStorage.setItem(LOCAL_DATA_KEY,JSON.stringify(payload))}catch(e){console.warn('Local save failed',e)}
             if(!supabaseClient){setFaradayConnectionState('offline','● Offline — not synced');return false;}
-            const run=async()=>{setFaradayConnectionState('saving');try{
+            const run=async()=>{setFaradayConnectionState('saving');faradaySaveInProgress=true;try{
                 const {data,error}=await supabaseClient.rpc('save_faraday_app_data',{p_payload:payload,p_expected_revision:faradayDataRevision});
                 if(error) throw error; const rev=Number(data); if(!Number.isFinite(rev)) throw new Error('Database did not return a revision number.');
                 faradayDataRevision=rev; setFaradayConnectionState('online'); return true;
-            }catch(err){console.error('Faraday save failed:',err);const m=String(err?.message||'');if(/revision conflict|stale revision|40001/i.test(m)){setFaradayConnectionState('error','● Update conflict');showAlert('Another device changed Faraday Tech at the same time. Your change was not synced. Reload the latest data before retrying.', 'warning')}else{setFaradayConnectionState(navigator.onLine?'error':'offline');showAlert(`Changes were not synced: ${err.message||'Database unavailable'}. Reconnect and retry.`, 'warning')}return false;}};
+            }catch(err){console.error('Faraday save failed:',err);const m=String(err?.message||'');if(/revision conflict|stale revision|40001/i.test(m)){setFaradayConnectionState('error','● Update conflict');showAlert('Another device changed Faraday Tech at the same time. Your change was not synced. Reload the latest data before retrying.', 'warning')}else{setFaradayConnectionState(navigator.onLine?'error':'offline');showAlert(`Changes were not synced: ${err.message||'Database unavailable'}. Reconnect and retry.`, 'warning')}return false;}finally{faradaySaveInProgress=false;}};
             faradaySaveQueue=faradaySaveQueue.then(run,run); return faradaySaveQueue;
         }
 
@@ -1677,10 +1679,16 @@ MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = [];
             }
         });
 
-        // When a tab becomes visible again, pull the latest authoritative database row.
-        // This is a recovery path for sleeping tabs or a dropped WebSocket.
-        document.addEventListener('visibilitychange', async () => {
-            if (document.visibilityState !== 'visible' || !supabaseClient) return;
+        // Pull the authoritative row when a sleeping tab returns or a WebSocket event is missed.
+        // Only apply newer revisions; this prevents stale reads from replacing current data.
+        async function refreshFaradayFromServer(source = 'database polling') {
+            if (!supabaseClient || !navigator.onLine || faradayRemoteRefreshInFlight || faradaySaveInProgress) return false;
+
+            // Avoid replacing a form value while someone is actively editing it.
+            const active = document.activeElement;
+            if (active && (active.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName))) return false;
+
+            faradayRemoteRefreshInFlight = true;
             try {
                 const { data, error } = await supabaseClient
                     .from('app_data')
@@ -1688,11 +1696,31 @@ MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = [];
                     .eq('id', 1)
                     .maybeSingle();
                 if (error) throw error;
-                if (data) applyRemoteAppData(data, 'visibility recovery');
+                if (!data) return false;
+
+                const remoteRevision = Number(data.revision || 0);
+                if (remoteRevision > Number(faradayDataRevision || 0)) {
+                    applyRemoteAppData(data, source);
+                    return true;
+                }
+                return false;
             } catch (err) {
-                console.warn('[Faraday Sync] Could not refresh after tab became visible:', err);
+                console.warn('[Faraday Sync] Server refresh failed:', err);
+                return false;
+            } finally {
+                faradayRemoteRefreshInFlight = false;
             }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') refreshFaradayFromServer('visibility recovery');
         });
+
+        // Realtime is the fast path. This polling fallback catches missed WebSocket events,
+        // including when Supabase Realtime is unavailable or a sleeping browser drops its channel.
+        setInterval(() => {
+            if (document.visibilityState === 'visible') refreshFaradayFromServer('periodic database sync');
+        }, 15000);
 
         function openSelectiveReset() {
             if (!currentUser || (!currentUser.isAdmin && !currentUser.isWebDeveloper && currentUser.group !== "Admin" && currentUser.group !== "Web Developer")) {
