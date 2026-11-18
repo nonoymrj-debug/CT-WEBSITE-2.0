@@ -579,7 +579,7 @@ table { max-width:100%; }
 
 /* === FINAL STRUCTURAL FIX: sibling tab panels + fixed sidebar === */
 #appSection {
-    display: block !important;
+    /* Do not force display here: JavaScript toggles .hidden on login/logout. */
     position: relative !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -683,6 +683,18 @@ table { max-width:100%; }
     #appSection > .tab-content {
         padding: 10px 6px 20px !important;
     }
+}
+
+
+/* Preserve authentication visibility: never override the application's hidden state. */
+#appSection.hidden,
+#mainHeader.hidden,
+#loginSection.hidden,
+.tab-content.hidden {
+    display: none !important;
+}
+#appSection:not(.hidden) {
+    display: block;
 }
 
 </style>
