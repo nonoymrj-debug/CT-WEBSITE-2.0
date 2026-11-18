@@ -469,6 +469,18 @@ html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(-
         .ft-auto-delete-setting{display:flex;align-items:center;gap:.65rem;margin:1rem 0;padding:.8rem 1rem;border:1px solid #93baf0;border-radius:10px;background:#eff6ff;color:#173e70;font-weight:700}
         .ft-auto-delete-setting input{width:18px;height:18px}
 
+
+/* Layout safety: keep wide tables inside their own scroll area instead of pushing the page structure sideways. */
+.table-responsive, .ft-table-wrap { width:100%; max-width:100%; overflow-x:auto; overscroll-behavior-x:contain; }
+.tab-content, .dashboard-grid, .card { min-width:0; }
+table { max-width:100%; }
+
+
+/* Responsive layout repairs */
+#appSection, .main-content, .tab-content, .dashboard-grid { min-width:0; max-width:100%; }
+.table-responsive, .ft-table-wrap { display:block; width:100%; max-width:100%; overflow-x:auto; }
+.table-responsive table, .ft-table-wrap table { min-width:680px; }
+
 </style>
 <!-- Faraday Tech sync patch: Realtime status diagnostics + same-browser cross-tab sync + visibility recovery -->
 </head>
@@ -663,7 +675,7 @@ html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(-
                             <button id="adminEditShopBtn" class="btn btn-warning btn-sm hidden" onclick="toggleShopEditMode()"> Manage Shop</button>
                         </div>
                         <div id="adminShopEditorPanel" class="hidden" style="background: var(--bg-primary); border: 1px solid var(--warning); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <h4 style="color: var(--warning); margin-bottom: 0.75rem;">Admin Store Editor</h4>
+                            <h4 style="color: var(--warning); margin-bottom: 0.75rem;">Item Shop Editor · Teacher/Admin & Web Developer</h4>
                             <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
                                 <form onsubmit="handleAddShopCategory(event)">
                                     <p style="font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem; color: var(--accent);">+ Add New Category</p>
@@ -844,7 +856,6 @@ html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(-
               <div class="card" id="ftTransactionsPanel"><div class="card-title"> Transaction History</div><div id="ftTransactionsList"></div></div>
               <div class="card" id="ftAnnouncementsPanel"><div class="card-title"> Classroom Announcements</div><div id="ftAnnouncementComposer" class="hidden"><form onsubmit="ftPublishAnnouncement(event)"><div class="form-group"><label>Announcement</label><textarea id="ftAnnouncementText" class="form-control" rows="3" maxlength="1500" required placeholder="Write an update for your classroom..."></textarea></div><div class="form-group"><label>Class / Group (optional)</label><input id="ftAnnouncementGroup" class="form-control" placeholder="Leave blank for everyone"></div><button class="btn" type="submit">Publish Announcement</button></form></div><div id="ftAnnouncementsList"></div></div>
               <div class="card" id="ftActivityPanel"><div class="card-title"> Student Activity Dashboard</div><div id="ftActivityContent"></div></div>
-              <div class="card" id="ftAttendancePanel"><div class="card-title"> Attendance Management</div><div id="ftAttendanceControls" class="hidden"><form onsubmit="ftRecordAttendance(event)"><div class="dashboard-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))"><div class="form-group"><label>Student</label><select id="ftAttendanceStudent" class="form-control" required></select></div><div class="form-group"><label>Date</label><input id="ftAttendanceDate" type="date" class="form-control" required></div><div class="form-group"><label>Status</label><select id="ftAttendanceStatus" class="form-control"><option>Present</option><option>Absent</option><option>Late</option><option>Excused</option></select></div></div><button class="btn" type="submit">Save Attendance</button></form></div><div id="ftAttendanceList"></div></div>
               <div class="card" id="ftTutorialPanel"><div class="card-title"> Tutorial Progress</div><p style="color:var(--text-muted)">Complete the chapters for your account role. Your progress is saved separately for each account.</p><div id="ftTutorialContent"></div></div></div>
 </div>
             </div>
@@ -967,7 +978,7 @@ html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(-
                 <div class="card">
                     <div class="card-title"> Faraday Tech Developer Console</div>
                     <p style="color:var(--text-muted); margin-bottom:1rem;">Publish versioned patch notes for everyone using the website.</p>
-                    <form onsubmit="handleCreatePatchNote(event)">
+                    <form id="patchNotesForm" onsubmit="handleCreatePatchNote(event)">
                         <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;">
                             <div class="form-group"><label>Version Name</label><input id="patchVersionName" class="form-control" placeholder="e.g. Winter Update" required></div>
                             <div class="form-group"><label>Version Number</label><input id="patchVersionNumber" class="form-control" placeholder="e.g. 17.0.1" required></div>
@@ -1803,10 +1814,10 @@ html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(-
         let AUCTION_STATE = null;
         let PATCH_NOTES = [];
 let MARKET_LISTINGS = [];
-        let BANNED_ACCOUNTS = [];
+        let BANNED_ACCOUNTS = []; let SUSPENDED_ACCOUNTS = [];
         let REMOVED_ACCOUNT_IDS = [];
         // Faraday Tech 5.1 feature data (additive; existing student data remains intact).
-        let FT_NOTIFICATIONS = [], FT_TRANSACTIONS = [], FT_ANNOUNCEMENTS = [], FT_TUTORIAL_PROGRESS = [], FT_ATTENDANCE = [];
+        let FT_NOTIFICATIONS = [], FT_TRANSACTIONS = [], FT_ANNOUNCEMENTS = [], FT_TUTORIAL_PROGRESS = [];
         const LOCAL_DATA_KEY = "faradayTechAppData_v1";
         const WEBDEV_ACCOUNT = { id: "3333333333", name: "Web Developer", nickname: "Web Developer", group: "Web Developer", pass: "FaradayDev2026!", balance: 0, isAdmin: false, isWebDeveloper: true, scores: {}, history: [], inventory: [], completedQuizzes: [], privacy: {}, avatar: "" };
         const WEBDEV_ACCESS_CODE = "FARADAYDEV";
@@ -1877,14 +1888,12 @@ function onYouTubeIframeAPIReady() {
                 AUCTION_STATE = d.auction || null;
                 PATCH_NOTES = Array.isArray(d.patch_notes) ? d.patch_notes : [];
 MARKET_LISTINGS = Array.isArray(d.market_listings) ? d.market_listings : [];
-                BANNED_ACCOUNTS = Array.isArray(d.banned_accounts) ? d.banned_accounts : [];
+                BANNED_ACCOUNTS = Array.isArray(d.banned_accounts) ? d.banned_accounts : []; SUSPENDED_ACCOUNTS = Array.isArray(d.suspended_accounts) ? d.suspended_accounts : [];
                 REMOVED_ACCOUNT_IDS = Array.isArray(d.removed_accounts) ? d.removed_accounts : [];
                 FT_NOTIFICATIONS = Array.isArray(d.ft_notifications) ? d.ft_notifications : [];
                 FT_TRANSACTIONS = Array.isArray(d.ft_transactions) ? d.ft_transactions : [];
                 FT_ANNOUNCEMENTS = Array.isArray(d.ft_announcements) ? d.ft_announcements : [];
                 FT_TUTORIAL_PROGRESS = Array.isArray(d.ft_tutorial_progress) ? d.ft_tutorial_progress : [];
-
-                FT_ATTENDANCE = Array.isArray(d.ft_attendance) ? d.ft_attendance : [];
 ACCOUNTS_DATA = normalizeAccounts(ACCOUNTS_DATA.filter(a => !REMOVED_ACCOUNT_IDS.includes(String(a.id))));
                 return true;
             } catch (err) { console.warn("Local data restore failed", err); return false; }
@@ -1917,9 +1926,7 @@ ACCOUNTS_DATA = normalizeAccounts(ACCOUNTS_DATA.filter(a => !REMOVED_ACCOUNT_IDS
                 FT_TRANSACTIONS = Array.isArray(data.ft_transactions) ? data.ft_transactions : [];
                 FT_ANNOUNCEMENTS = Array.isArray(data.ft_announcements) ? data.ft_announcements : [];
                 FT_TUTORIAL_PROGRESS = Array.isArray(data.ft_tutorial_progress) ? data.ft_tutorial_progress : [];
-
-                FT_ATTENDANCE = Array.isArray(data.ft_attendance) ? data.ft_attendance : [];
-BANNED_ACCOUNTS=Array.isArray(data.banned_accounts)?data.banned_accounts:[];
+BANNED_ACCOUNTS=Array.isArray(data.banned_accounts)?data.banned_accounts:[]; SUSPENDED_ACCOUNTS=Array.isArray(data.suspended_accounts)?data.suspended_accounts:[];
                 let cats=Array.isArray(data.shop_categories)&&data.shop_categories.length?data.shop_categories:JSON.parse(JSON.stringify(DEFAULT_SHOP_CATEGORIES));
                 let showcase=cats.find(c=>c.id==='cat_showcase'); if(!showcase) cats.push({id:'cat_showcase',title:'AUCTION SHOWCASE',description:'Have a look around',items:[]}); else showcase.description='Have a look around';
                 SHOP_CATEGORIES=cats.map(c=>({...c,items:[]})); AUCTION_STATE=data.auction||null; checkShowcasePriceFluctuation();
@@ -1939,7 +1946,7 @@ BANNED_ACCOUNTS=Array.isArray(data.banned_accounts)?data.banned_accounts:[];
             QUIZZES_DATA = [];
             AUCTION_STATE = null;
             PATCH_NOTES = [];
-MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = []; 
+MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; SUSPENDED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = []; 
         }
 
         function checkShowcasePriceFluctuation() {
@@ -2038,6 +2045,7 @@ MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = [];
         async function returnStudentInfo() {
             if (!currentUser) return;
             const account = ACCOUNTS_DATA.find(item => String(item.id) === String(currentUser.id));
+            if (account && (BANNED_ACCOUNTS.some(x => String(x.id) === String(account.id)) || SUSPENDED_ACCOUNTS.some(x => String(x.id) === String(account.id)))) return showAlert('This account is banned or suspended. Please contact your teacher.', 'danger');
             if (!account || account.isAdmin || account.isWebDeveloper || account.group === "Admin" || account.group === "Web Developer") {
                 showAlert("Return Info is available for student accounts only.", "warning");
                 return;
@@ -2062,7 +2070,7 @@ MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = [];
 
         async function saveAllData() {
             captureStudentRecoveryFromCachedData();
-            const payload={id:1,accounts:ACCOUNTS_DATA,columns:GRADE_COLUMNS,weights:GRADE_WEIGHTS,convRate:GRADE_CONV_RATE,shop_categories:SHOP_CATEGORIES,lessons:LESSONS_DATA,quizzes:QUIZZES_DATA,auction:AUCTION_STATE,patch_notes:PATCH_NOTES,market_listings:MARKET_LISTINGS,banned_accounts:BANNED_ACCOUNTS,removed_accounts:REMOVED_ACCOUNT_IDS,ft_notifications:FT_NOTIFICATIONS,ft_transactions:FT_TRANSACTIONS,ft_announcements:FT_ANNOUNCEMENTS,ft_tutorial_progress:FT_TUTORIAL_PROGRESS,ft_attendance:FT_ATTENDANCE};
+            const payload={id:1,accounts:ACCOUNTS_DATA,columns:GRADE_COLUMNS,weights:GRADE_WEIGHTS,convRate:GRADE_CONV_RATE,shop_categories:SHOP_CATEGORIES,lessons:LESSONS_DATA,quizzes:QUIZZES_DATA,auction:AUCTION_STATE,patch_notes:PATCH_NOTES,market_listings:MARKET_LISTINGS,banned_accounts:BANNED_ACCOUNTS,suspended_accounts:SUSPENDED_ACCOUNTS,removed_accounts:REMOVED_ACCOUNT_IDS,ft_notifications:FT_NOTIFICATIONS,ft_transactions:FT_TRANSACTIONS,ft_announcements:FT_ANNOUNCEMENTS,ft_tutorial_progress:FT_TUTORIAL_PROGRESS};
             try{localStorage.setItem(LOCAL_DATA_KEY,JSON.stringify(payload))}catch(e){console.warn('Local save failed',e)}
             if(!supabaseClient){setFaradayConnectionState('offline','● Offline — not synced');return false;}
             const run=async()=>{setFaradayConnectionState('saving');faradaySaveInProgress=true;try{
@@ -2094,7 +2102,7 @@ MARKET_LISTINGS = []; BANNED_ACCOUNTS = []; REMOVED_ACCOUNT_IDS = [];
             if (Array.isArray(updated.ft_announcements)) FT_ANNOUNCEMENTS = updated.ft_announcements;
             if (Array.isArray(updated.ft_tutorial_progress)) FT_TUTORIAL_PROGRESS = updated.ft_tutorial_progress;
 
-            if (Array.isArray(updated.ft_attendance)) FT_ATTENDANCE = updated.ft_attendance;
+            
 if (Array.isArray(updated.patch_notes)) PATCH_NOTES = updated.patch_notes;
             AUCTION_STATE = updated.auction || null;
 
@@ -2429,20 +2437,36 @@ async function saveNickname() {
                     <h3 style="color:var(--accent);">${escapeHtml(note.versionName || 'Update')} — v${escapeHtml(note.versionNumber || '')}</h3>
                     <p style="color:var(--text-muted);font-size:.85rem;">Released: ${escapeHtml(note.date || '')} · By ${escapeHtml(note.author || 'Web Developer')}</p>
                     <p style="white-space:pre-wrap;margin-top:.5rem;">${escapeHtml(note.contents || '')}</p>
-                    ${currentUser && currentUser.isWebDeveloper ? `<button class="btn btn-danger btn-sm" onclick="deletePatchNote('${note.id}')">Delete</button>` : ''}
+                    ${currentUser && currentUser.isWebDeveloper ? `<button class="btn btn-sm" onclick="editPatchNote('${note.id}')">Edit</button> <button class="btn btn-danger btn-sm" onclick="deletePatchNote('${note.id}')">Delete</button>` : ''}
                 </article>`).join('');
             const empty = '<p style="color:var(--text-muted);">No patch notes have been published yet.</p>';
             if (body) body.innerHTML = html || empty;
             if (list) list.innerHTML = html || empty;
         }
         function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+        function editPatchNote(id) {
+            if (!currentUser?.isWebDeveloper) return;
+            const note = PATCH_NOTES.find(n => String(n.id) === String(id));
+            if (!note) return;
+            document.getElementById('patchVersionName').value = note.versionName || '';
+            document.getElementById('patchVersionNumber').value = note.versionNumber || '';
+            document.getElementById('patchReleaseDate').value = note.date || '';
+            document.getElementById('patchContents').value = note.contents || '';
+            const form = document.getElementById('patchNotesForm');
+            if (form) { form.dataset.editingId = String(id); form.querySelector('button[type="submit"]').textContent = 'Save Patch Note Changes'; }
+            document.getElementById('patchVersionName')?.scrollIntoView({behavior:'smooth',block:'center'});
+        }
         async function handleCreatePatchNote(e) {
             e.preventDefault();
             if (!currentUser || !currentUser.isWebDeveloper) return showAlert('Only the Web Developer can publish patch notes.', 'danger');
-            const note = { id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())), versionName: document.getElementById('patchVersionName').value.trim(), versionNumber: document.getElementById('patchVersionNumber').value.trim(), date: document.getElementById('patchReleaseDate').value, contents: document.getElementById('patchContents').value.trim(), author: getDisplayName(currentUser) };
-            PATCH_NOTES.unshift(note);
+            const form = document.getElementById('patchNotesForm');
+            const editingId = form?.dataset.editingId;
+            const note = { id: editingId || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())), versionName: document.getElementById('patchVersionName').value.trim(), versionNumber: document.getElementById('patchVersionNumber').value.trim(), date: document.getElementById('patchReleaseDate').value, contents: document.getElementById('patchContents').value.trim(), author: getDisplayName(currentUser) };
+            if (editingId) { const index = PATCH_NOTES.findIndex(n => String(n.id) === String(editingId)); if (index >= 0) PATCH_NOTES[index] = note; }
+            else PATCH_NOTES.unshift(note);
             await saveAllData(); renderPatchNotes(); e.target.reset();
-            showAlert('Patch notes published successfully!', 'success');
+            if (form) { delete form.dataset.editingId; form.querySelector('button[type="submit"]').textContent = 'Publish Patch Notes'; }
+            showAlert(editingId ? 'Patch notes updated successfully!' : 'Patch notes published successfully!', 'success');
         }
         async function deletePatchNote(id) {
             if (!currentUser || !currentUser.isWebDeveloper) return;
@@ -2876,6 +2900,7 @@ async function saveNickname() {
         }
 
         function toggleShopEditMode() {
+            if (!currentUser || (!currentUser.isAdmin && !currentUser.isWebDeveloper)) return showAlert('Only Teacher/Admin or Web Developer can edit the item shop.', 'danger');
             shopEditMode = !shopEditMode;
             const editorPanel = document.getElementById('adminShopEditorPanel');
             if (shopEditMode) {
@@ -3361,6 +3386,8 @@ async function saveNickname() {
             const canManagePatches = !!currentUser.isWebDeveloper;
             const devTab = document.getElementById('developerTabBtn');
             if (devTab) devTab.classList.toggle('hidden', !canManagePatches);
+            const shopManageBtn = document.getElementById('adminEditShopBtn');
+            if (shopManageBtn) shopManageBtn.classList.toggle('hidden', !(currentUser.isAdmin || currentUser.isWebDeveloper));
             if (currentUser.isAdmin) {
                 document.getElementById('adminTabBtn').classList.remove('hidden');
                 document.getElementById('adminEditShopBtn').classList.remove('hidden');
@@ -3651,11 +3678,24 @@ await saveAllData(); updateUserDisplays(); renderMarketplace(); showAlert('Purch
         function renderDeveloperAccounts() {
             const box = document.getElementById('developerAccountList');
             if (!box || !currentUser?.isWebDeveloper) return;
-            box.innerHTML = `<table><thead><tr><th>Account</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>${ACCOUNTS_DATA.map(a => {
-                const banned = BANNED_ACCOUNTS.some(b => b.id === a.id);
-                const protectedAccount = a.id === currentUser.id;
-                return `<tr><td>${escapeHtml(getDisplayName(a))}<br><small>${escapeHtml(a.id)}</small></td><td>${escapeHtml(a.isWebDeveloper ? 'Web Developer' : a.isAdmin ? 'Teacher / Admin' : 'Student')}</td><td>${banned ? 'Banned' : 'Active'}</td><td>${protectedAccount ? 'Current account' : `<button class="btn btn-sm ${banned?'':'btn-warning'}" onclick="toggleAccountBan('${a.id}')">${banned?'Unban':'Ban'}</button> <button class="btn btn-danger btn-sm" onclick="removeAccount('${a.id}')">Remove</button>`}</td></tr>`;
-            }).join('')}</tbody></table>`;
+            box.innerHTML = `<div class="table-responsive"><table><thead><tr><th>Account</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>${ACCOUNTS_DATA.map(a => {
+                const banned = BANNED_ACCOUNTS.some(b => String(b.id) === String(a.id));
+                const suspended = SUSPENDED_ACCOUNTS.some(b => String(b.id) === String(a.id));
+                const protectedAccount = String(a.id) === String(currentUser.id);
+                const status = banned ? 'Banned' : suspended ? 'Suspended' : 'Active';
+                return `<tr><td>${escapeHtml(getDisplayName(a))}<br><small>${escapeHtml(a.id)}</small></td><td>${escapeHtml(a.isWebDeveloper ? 'Web Developer' : a.isAdmin ? 'Teacher / Admin' : 'Student')}</td><td>${status}</td><td>${protectedAccount ? 'Current account' : `<button class="btn btn-sm ${banned?'':'btn-warning'}" onclick="toggleAccountBan('${a.id}')">${banned?'Unban':'Ban'}</button> <button class="btn btn-sm" onclick="toggleAccountSuspend('${a.id}')">${suspended?'Unsuspend':'Suspend'}</button> <button class="btn btn-danger btn-sm" onclick="removeAccount('${a.id}')">Remove</button>`}</td></tr>`;
+            }).join('')}</tbody></table></div>`;
+        }
+
+        async function toggleAccountSuspend(id) {
+            if (!currentUser?.isWebDeveloper || String(id) === String(currentUser.id)) return;
+            const existing = SUSPENDED_ACCOUNTS.some(b => String(b.id) === String(id));
+            SUSPENDED_ACCOUNTS = existing
+                ? SUSPENDED_ACCOUNTS.filter(b => String(b.id) !== String(id))
+                : [...SUSPENDED_ACCOUNTS, {id:String(id), reason:'Suspended by Web Developer', suspendedAt:new Date().toISOString()}];
+            const ok = await saveAllData();
+            renderDeveloperAccounts();
+            showAlert(existing ? 'Account suspension lifted.' : 'Account suspended.', ok ? 'success' : 'warning');
         }
 
         async function toggleAccountBan(id) {
@@ -4259,7 +4299,7 @@ await saveAllData(); populateDirectory(); populateTransferDropdown(); populateAd
           if(!currentUser)return;
           const role=ftRole(), id=ftId(), isTeacher=role==='teacher'||role==='developer', isDev=role==='developer';
           const visible=(el,yes)=>{const n=document.getElementById(el);if(n)n.classList.toggle('hidden',!yes)};
-          visible('ftActivityPanel',isTeacher);visible('ftAttendancePanel',isTeacher);visible('ftAnnouncementComposer',isTeacher);visible('ftAttendanceControls',isTeacher);
+          visible('ftActivityPanel',isTeacher);visible('ftAnnouncementComposer',isTeacher);
           const unread=FT_NOTIFICATIONS.filter(n=>String(n.userId)===id&&!n.read).length;
           const myTx=FT_TRANSACTIONS.filter(t=>String(t.accountId)===id);
           const cards=[['Unread notifications',unread],['My transactions',myTx.length],['Announcements',FT_ANNOUNCEMENTS.length]];
@@ -4271,23 +4311,18 @@ await saveAllData(); populateDirectory(); populateTransferDropdown(); populateAd
           document.getElementById('ftAnnouncementsList').innerHTML=announcements.length?announcements.map(a=>`<div class="ft-row">${a.pinned?'<span class="ft-pill">Pinned</span> ':''}<strong>${ftEsc(a.authorName)}</strong><div>${ftEsc(a.message)}</div><small class="ft-muted">${new Date(a.createdAt).toLocaleString()} · ${ftEsc(a.group||'All groups')}</small>${isTeacher?`<div class="ft-actions"><button class="btn btn-sm" onclick="ftTogglePin('${a.id}')">${a.pinned?'Unpin':'Pin'}</button><button class="btn btn-danger btn-sm" onclick="ftDeleteAnnouncement('${a.id}')">Delete</button></div>`:''}</div>`).join(''):'<p class="ft-muted">No announcements have been published.</p>';
           const chapters=FT_TUTORIALS[role], progress=FT_TUTORIAL_PROGRESS.find(p=>p.accountId===id&&p.role===role)||{completed:[]};
           document.getElementById('ftTutorialContent').innerHTML=`<p><strong>${progress.completed.length}/${chapters.length} chapters completed</strong> · ${Math.round(progress.completed.length/chapters.length*100)}%</p><div class="ft-table-wrap"><table class="ft-table"><tbody>${chapters.map((c,i)=>`<tr><td><label><input type="checkbox" ${progress.completed.includes(i)?'checked':''} onchange="ftSetChapter(${i},this.checked)"> ${ftEsc(c)}</label></td></tr>`).join('')}</tbody></table></div><button class="btn btn-sm" onclick="ftResetTutorial()">Reset my tutorial progress</button>`;
-          if(isTeacher){const students=ACCOUNTS_DATA.filter(a=>!a.isAdmin&&!a.isWebDeveloper);document.getElementById('ftAttendanceStudent').innerHTML=students.map(s=>`<option value="${ftEsc(s.id)}">${ftEsc(getDisplayName(s))} (${ftEsc(s.id)})</option>`).join('');}
-          const attend=FT_ATTENDANCE.filter(a=>isTeacher||a.accountId===id).slice(0,60);
-          document.getElementById('ftAttendanceList').innerHTML=attend.length?attend.map(a=>`<div class="ft-row"><strong>${ftEsc(a.studentName)}</strong> · ${ftEsc(a.status)}<div class="ft-muted">${ftEsc(a.date)} · ${ftEsc(a.group||'')}</div></div>`).join(''):'<p class="ft-muted">No attendance records yet.</p>';
-          if(isTeacher){const students=ACCOUNTS_DATA.filter(a=>!a.isAdmin&&!a.isWebDeveloper);document.getElementById('ftActivityContent').innerHTML=`<div class="ft-table-wrap"><table class="ft-table"><thead><tr><th>Student</th><th>Quiz completions</th><th>Recorded activity</th><th>Attendance entries</th></tr></thead><tbody>${students.map(s=>`<tr><td>${ftEsc(getDisplayName(s))}<br><small>${ftEsc(s.id)}</small></td><td>${Array.isArray(s.completedQuizzes)?s.completedQuizzes.length:0}</td><td>${Array.isArray(s.history)?s.history.length:0}</td><td>${FT_ATTENDANCE.filter(a=>a.accountId===String(s.id)).length}</td></tr>`).join('')}</tbody></table></div>`;}
+          if(isTeacher){const students=ACCOUNTS_DATA.filter(a=>!a.isAdmin&&!a.isWebDeveloper);document.getElementById('ftActivityContent').innerHTML=`<div class="ft-table-wrap"><table class="ft-table"><thead><tr><th>Student</th><th>Quiz completions</th><th>Recorded activity</th></tr></thead><tbody>${students.map(s=>`<tr><td>${ftEsc(getDisplayName(s))}<br><small>${ftEsc(s.id)}</small></td><td>${Array.isArray(s.completedQuizzes)?s.completedQuizzes.length:0}</td><td>${Array.isArray(s.history)?s.history.length:0}</td></tr>`).join('')}</tbody></table></div>`;}
         }
         function ftMarkRead(id){const n=FT_NOTIFICATIONS.find(x=>x.id===id&&x.userId===ftId());if(n){n.read=true;ftSave().then(ftRenderHub)}}
         function ftPublishAnnouncement(e){e.preventDefault();if(!currentUser?.isAdmin&&!currentUser?.isWebDeveloper)return showAlert('Teacher permission required.','danger');const message=document.getElementById('ftAnnouncementText').value.trim();if(!message)return;const group=document.getElementById('ftAnnouncementGroup').value.trim();const a={id:'ann_'+Date.now(),message,group,authorId:ftId(),authorName:getDisplayName(currentUser),createdAt:new Date().toISOString(),pinned:false};FT_ANNOUNCEMENTS.unshift(a);ACCOUNTS_DATA.filter(u=>!u.isAdmin&&!u.isWebDeveloper&&(!group||u.group===group)).forEach(u=>ftNotify(u.id,'New classroom announcement',message.slice(0,180),'announcement'));document.getElementById('ftAnnouncementText').value='';ftSave().then(ftRenderHub)}
         function ftTogglePin(id){if(!currentUser?.isAdmin&&!currentUser?.isWebDeveloper)return;const a=FT_ANNOUNCEMENTS.find(x=>x.id===id);if(a){a.pinned=!a.pinned;ftSave().then(ftRenderHub)}}
         function ftDeleteAnnouncement(id){if(!currentUser?.isAdmin&&!currentUser?.isWebDeveloper)return;if(!confirm('Delete this announcement?'))return;FT_ANNOUNCEMENTS=FT_ANNOUNCEMENTS.filter(a=>a.id!==id);ftSave().then(ftRenderHub)}
-
-        function ftRecordAttendance(e){e.preventDefault();if(!currentUser?.isAdmin&&!currentUser?.isWebDeveloper)return;const id=document.getElementById('ftAttendanceStudent').value,s=ACCOUNTS_DATA.find(a=>String(a.id)===String(id));if(!s)return;const date=document.getElementById('ftAttendanceDate').value,status=document.getElementById('ftAttendanceStatus').value;const old=FT_ATTENDANCE.find(a=>a.accountId===String(id)&&a.date===date);if(old){old.status=status;old.updatedAt=new Date().toISOString()}else FT_ATTENDANCE.unshift({id:'att_'+Date.now(),accountId:String(id),studentName:getDisplayName(s),group:s.group,date,status,recordedBy:ftId(),createdAt:new Date().toISOString()});ftNotify(id,'Attendance recorded',`Your attendance for ${date}: ${status}.`,'attendance');ftSave().then(ftRenderHub)}
         function ftSetChapter(index,checked){const role=ftRole(),id=ftId();let p=FT_TUTORIAL_PROGRESS.find(x=>x.accountId===id&&x.role===role);if(!p){p={accountId:id,role,completed:[]};FT_TUTORIAL_PROGRESS.push(p)}p.completed=checked?[...new Set([...p.completed,index])]:p.completed.filter(x=>x!==index);p.updatedAt=new Date().toISOString();ftSave().then(ftRenderHub)}
         function ftResetTutorial(){if(!confirm('Reset your tutorial progress?'))return;FT_TUTORIAL_PROGRESS=FT_TUTORIAL_PROGRESS.filter(p=>!(p.accountId===ftId()&&p.role===ftRole()));ftSave().then(ftRenderHub)}
 
         function ftOpenHub(){switchTab('classroomHubTab');ftRenderHub()}
         const ftOriginalOpenUserSession=openUserSession;
-        openUserSession=function(user){const result=ftOriginalOpenUserSession(user);if(result){const date=document.getElementById('ftAttendanceDate');if(date&&!date.value)date.value=new Date().toISOString().slice(0,10);ftRenderHub();}return result;};
+        openUserSession=function(user){const result=ftOriginalOpenUserSession(user);if(result){ftRenderHub();}return result;};
         const ftOriginalSwitchTab=switchTab;
         switchTab=function(tabId){const result=ftOriginalSwitchTab(tabId);if(tabId==='classroomHubTab')ftRenderHub();return result;};
         // End Faraday Tech 5.1 Classroom Hub
