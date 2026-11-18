@@ -470,231 +470,107 @@ html{scroll-behavior:smooth}body{background:var(--ft-pale)!important;color:var(-
         .ft-auto-delete-setting input{width:18px;height:18px}
 
 
-/* Layout safety: keep wide tables inside their own scroll area instead of pushing the page structure sideways. */
-.table-responsive, .ft-table-wrap { width:100%; max-width:100%; overflow-x:auto; overscroll-behavior-x:contain; }
-.tab-content, .dashboard-grid, .card { min-width:0; }
-table { max-width:100%; }
 
-
-/* Responsive layout repairs */
-#appSection, .main-content, .tab-content, .dashboard-grid { min-width:0; max-width:100%; }
-.table-responsive, .ft-table-wrap { display:block; width:100%; max-width:100%; overflow-x:auto; }
-.table-responsive table, .ft-table-wrap table { min-width:680px; }
-
-
-/* === Stable application layout: sidebar and page content occupy separate grid columns === */
+/* === Clean layout based on the existing Faraday Tech DOM === */
 #appSection {
-    display: grid !important;
-    grid-template-columns: 232px minmax(0, 1fr) !important;
-    align-items: start !important;
-    column-gap: 20px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: calc(100vh - 76px);
 }
 #appSection > .tabs {
-    position: sticky !important;
-    top: 88px !important;
-    left: auto !important;
-    bottom: auto !important;
-    grid-column: 1 !important;
-    grid-row: 1 / span 100 !important;
-    width: 232px !important;
-    height: calc(100vh - 100px) !important;
-    max-height: calc(100vh - 100px) !important;
-    min-width: 0 !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    margin: 0 !important;
-    box-sizing: border-box !important;
+    position: fixed;
+    top: 76px;
+    left: 0;
+    bottom: 0;
+    width: 208px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 800;
+    box-sizing: border-box;
 }
 #appSection > .tab-content {
-    grid-column: 2 !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-#appSection > .tab-content > * ,
-#appSection .card,
-#appSection .dashboard-grid {
-    min-width: 0 !important;
-    max-width: 100% !important;
-}
-#appSection .table-responsive,
-#appSection .ft-table-wrap {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch;
-}
-#appSection table {
-    max-width: 100% !important;
-}
-#appSection .tab-content:not(.hidden) {
-    display: block !important;
-}
-@media (max-width: 900px) {
-    .container { padding: .75rem !important; }
-    #appSection {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 12px !important;
-    }
-    #appSection > .tabs {
-        position: sticky !important;
-        top: 76px !important;
-        width: 100% !important;
-        height: auto !important;
-        max-height: none !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        white-space: nowrap !important;
-        padding: .6rem !important;
-        z-index: 700 !important;
-    }
-    #appSection > .tabs .tab-btn {
-        flex: 0 0 auto !important;
-        width: auto !important;
-        min-width: max-content !important;
-        text-align: center !important;
-    }
-    #appSection > .tab-content {
-        width: 100% !important;
-    }
-}
-@media (max-width: 600px) {
-    #mainHeader { padding: .65rem .8rem !important; min-height: 64px !important; }
-    #mainHeader .brand { font-size: 1.15rem !important; }
-    #mainHeader .brand img { width: 42px !important; height: 42px !important; }
-    #appSection > .tabs { top: 64px !important; }
-    .auth-wrapper { margin: 1.2rem auto !important; padding: 0 .3rem !important; }
-    .dashboard-grid { grid-template-columns: 1fr !important; }
-}
-
-
-/* === FINAL STRUCTURAL FIX: sibling tab panels + fixed sidebar === */
-#appSection {
-    /* Do not force display here: JavaScript toggles .hidden on login/logout. */
-    position: relative !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    min-height: calc(100vh - 76px) !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-}
-#appSection > .tabs {
-    position: fixed !important;
-    display: flex !important;
-    flex-direction: column !important;
-    flex-wrap: nowrap !important;
-    align-items: stretch !important;
-    left: 0 !important;
-    top: 76px !important;
-    bottom: 0 !important;
-    width: 208px !important;
-    height: auto !important;
-    max-height: none !important;
-    margin: 0 !important;
-    padding: 14px 10px !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    box-sizing: border-box !important;
-    z-index: 800 !important;
-}
-#appSection > .tab-content {
-    position: relative !important;
-    float: none !important;
-    clear: both !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    margin: 0 0 0 208px !important;
-    padding: 18px 20px 28px !important;
-    box-sizing: border-box !important;
-    grid-column: auto !important;
-    grid-row: auto !important;
-}
-#appSection > .tab-content.hidden {
+#appSection > .tab-content.hidden,
+#appSection.hidden,
+#mainHeader.hidden,
+#loginSection.hidden {
     display: none !important;
 }
 #appSection > .tab-content:not(.hidden) {
-    display: block !important;
+    display: block;
 }
-#appSection > .tab-content .card,
-#appSection > .tab-content .dashboard-grid,
-#appSection > .tab-content .table-responsive,
-#appSection > .tab-content .ft-table-wrap {
-    min-width: 0 !important;
-    max-width: 100% !important;
-}
-#appSection > .tab-content .table-responsive,
-#appSection > .tab-content .ft-table-wrap {
-    display: block !important;
-    width: 100% !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch !important;
-}
-#appSection > .tab-content table {
+.container:has(#appSection:not(.hidden)) {
+    max-width: none;
     width: 100%;
-    max-width: 100% !important;
+    margin: 0;
+    padding: 1rem 1.25rem 2rem 228px;
+    box-sizing: border-box;
+}
+#appSection .dashboard-grid {
+    width: 100%;
+    min-width: 0;
+}
+#appSection .card,
+#appSection .home-hero,
+#appSection .home-stat {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+#appSection .table-responsive,
+#appSection .ft-table-wrap {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+#appSection .table-responsive table,
+#appSection .ft-table-wrap table {
+    min-width: 680px;
 }
 @media (max-width: 900px) {
     #appSection > .tabs {
-        position: sticky !important;
-        top: 68px !important;
-        left: auto !important;
-        bottom: auto !important;
-        width: 100% !important;
-        height: auto !important;
-        max-height: 78px !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important;
-        gap: 8px !important;
-        padding: 8px !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        white-space: nowrap !important;
+        position: sticky;
+        top: 68px;
+        left: auto;
+        bottom: auto;
+        width: 100%;
+        height: auto;
+        max-height: 76px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: .5rem;
+        padding: .5rem;
+        overflow-x: auto;
+        overflow-y: hidden;
     }
     #appSection > .tabs .tab-btn {
-        flex: 0 0 auto !important;
-        width: auto !important;
-        min-width: max-content !important;
-        margin: 0 !important;
+        flex: 0 0 auto;
+        width: auto;
+        min-width: max-content;
     }
-    #appSection > .tab-content {
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 14px 10px 24px !important;
+    .container:has(#appSection:not(.hidden)) {
+        padding: .75rem;
     }
 }
 @media (max-width: 600px) {
-    #appSection > .tabs {
-        top: 62px !important;
-        max-height: 70px !important;
-    }
-    #appSection > .tab-content {
-        padding: 10px 6px 20px !important;
-    }
-}
-
-
-/* Preserve authentication visibility: never override the application's hidden state. */
-#appSection.hidden,
-#mainHeader.hidden,
-#loginSection.hidden,
-.tab-content.hidden {
-    display: none !important;
-}
-#appSection:not(.hidden) {
-    display: block;
+    #appSection > .tabs { top: 62px; max-height: 68px; }
+    #appSection .dashboard-grid { grid-template-columns: 1fr !important; }
 }
 
 </style>
